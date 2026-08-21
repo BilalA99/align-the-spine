@@ -150,7 +150,7 @@ export default function AutoAccidentsPage() {
 
       <PointToWhereItHurts content={pointToWhereItHurtsContent} />
 
-      <AccidentInjuries />
+      <AccidentInjuries isAccidentPage />
 
       <Section spacing="none" className="bg-navy-900">
         <Container className="flex flex-col gap-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:py-14">
