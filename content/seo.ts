@@ -4,6 +4,7 @@ import { adjustmentsHero } from "@/content/adjustments-page";
 import { backPainHero } from "@/content/back-pain-page";
 import { cervicogenicHeadacheHero } from "@/content/cervicogenic-headache-page";
 import { concussionHero } from "@/content/concussion-page";
+import { conditionsHubHero } from "@/content/conditions-hub";
 import { cuppingTherapyHero } from "@/content/cupping-therapy-page";
 import { massageSoftTissueHero } from "@/content/massage-soft-tissue-page";
 import { neckPainHero } from "@/content/neck-pain-page";
@@ -147,6 +148,22 @@ export const routes: RouteMeta[] = [
     primaryQuery: "car accident chiropractor Deerfield Beach",
     justification:
       "The site's dedicated accident money page (ONPAGE-03) — intended to own accident-specific intent exclusively, but ONPAGE-02's de-duplication against the homepage has not shipped yet (see the KNOWN GAP note on the \"\" route above).",
+  },
+  // ATS-SEO-040: the crawlable discovery hub for the 7 condition routes
+  // below. Not gated by clinician sign-off itself — it's a directory page
+  // (existing summaries/links only, no medical claims of its own) — so it
+  // stays published even while every page it links to is still draft.
+  {
+    path: "/conditions",
+    title: `${conditionsHubHero.h1} | ${siteConfig.business.shortName}`,
+    description: conditionsHubHero.subhead,
+    image: conditionsHubHero.backgroundImage,
+    changeFrequency: "monthly",
+    priority: 0.7,
+    lastModified: "2026-08-21",
+    primaryQuery: "chiropractic conditions overview hub",
+    justification:
+      "Owns the conditions-directory intent — distinct from /car-accident-chiropractor (accident-specific money page), /services (treatment-modality hub), and each /conditions/[slug] page (its own condition-specific intent). Gives crawlers/users a real, linked path into the condition set instead of the 'Conditions' nav item borrowing /car-accident-chiropractor's href.",
   },
   // ATS-E4 (4.14): all 4 condition pages below have a red-flag/warning
   // section (confirmed present on each — RedFlagCard/ConditionWarning) but

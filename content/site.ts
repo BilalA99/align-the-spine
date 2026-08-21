@@ -233,7 +233,7 @@ export const siteConfig: SiteConfig = {
     },
     {
       label: "Conditions",
-      href: "/car-accident-chiropractor",
+      href: "/conditions",
       menu: [
         {
           label: "Lower Back Pain",
