@@ -23,17 +23,17 @@ topic" grouping may reshape a few of these assignments.
 
 ## Broad local cluster
 
-| Keyword                                 | Recommended Align destination        | Status                                 | Notes                                                                |
-| --------------------------------------- | ------------------------------------ | -------------------------------------- | -------------------------------------------------------------------- |
-| chiropractor deerfield beach            | `/` (home)                           | published                              | Owns broad brand+city intent                                         |
-| deerfield beach chiropractor            | `/` (home)                           | published                              | Word-order variant of above — same page                              |
-| chiropractor near me                    | `/` (home)                           | published                              | Geo-modified variant of broad intent                                 |
-| chiropractic care deerfield beach       | `/` (home)                           | published                              | Synonym of broad intent                                              |
-| chiropractic adjustment deerfield beach | `/services/chiropractic-adjustments` | **draft** (clinician sign-off pending) | Owns treatment-specific intent, not the hub                          |
-| spinal decompression deerfield beach    | `/services/spinal-decompression`     | **draft** (clinician sign-off pending) |                                                                      |
-| back pain chiropractor deerfield beach  | `/conditions/back-pain`              | **draft** (clinician sign-off pending) | Non-accident back pain                                               |
-| neck pain chiropractor deerfield beach  | `/conditions/neck-pain`              | **draft** (clinician sign-off pending) | Non-accident neck pain — see cannibalization note vs. whiplash below |
-| sciatica chiropractor deerfield beach   | `/conditions/sciatica`               | **draft** (clinician sign-off pending) |                                                                      |
+| Keyword                                 | Recommended Align destination        | Status                                 | Notes                                                                                                                                                                                                            |
+| --------------------------------------- | ------------------------------------ | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| chiropractor deerfield beach            | `/` (home)                           | published                              | Owns broad brand+city intent. Closest Ahrefs match ("chiropractor in deerfield beach"): vol 60, KD 25, CPC $2.35 — Bartell ranks pos 11 for it (ATS-SEO-003).                                                    |
+| deerfield beach chiropractor            | `/` (home)                           | published                              | Word-order variant of above — same page                                                                                                                                                                          |
+| chiropractor near me                    | `/` (home)                           | published                              | Geo-modified variant of broad intent                                                                                                                                                                             |
+| chiropractic care deerfield beach       | `/` (home)                           | published                              | Synonym of broad intent                                                                                                                                                                                          |
+| chiropractic adjustment deerfield beach | `/services/chiropractic-adjustments` | **draft** (clinician sign-off pending) | Owns treatment-specific intent, not the hub                                                                                                                                                                      |
+| spinal decompression deerfield beach    | `/services/spinal-decompression`     | **draft** (clinician sign-off pending) |                                                                                                                                                                                                                  |
+| back pain chiropractor deerfield beach  | `/conditions/back-pain`              | **draft** (clinician sign-off pending) | Non-accident back pain. Closest Ahrefs match ("back pain deerfield"): vol 60, KD 0 — Bartell's `/back-pain-2/` ranks pos 10 for it, direct proof this query is winnable even by a weak competitor (ATS-SEO-003). |
+| neck pain chiropractor deerfield beach  | `/conditions/neck-pain`              | **draft** (clinician sign-off pending) | Non-accident neck pain — see cannibalization note vs. whiplash below                                                                                                                                             |
+| sciatica chiropractor deerfield beach   | `/conditions/sciatica`               | **draft** (clinician sign-off pending) |                                                                                                                                                                                                                  |
 
 ## Car accident cluster
 
@@ -154,14 +154,20 @@ enforces that every checked card/region only links to published routes. Anchors 
 
 ---
 
-## Ahrefs fields — pending ATS-SEO-003
+## Ahrefs fields — partially filled in from ATS-SEO-003
 
-The following required fields per keyword/cluster are **not yet available** and must be filled in
-once the Ahrefs export lands: `volume`, `KD`, `traffic potential`, `CPC`, `parent topic`,
-`current ranking URL if any`, `top ranking page types`, `local-pack presence`,
-`AI Overview / other SERP-feature presence`, `competitor URLs ranking`. `intent` has been
-inferred manually above (commercial vs. informational) but should be confirmed against Ahrefs's
-own intent classification.
+ATS-SEO-003's competitor exports (docs/ATS-SEO-003-competitor-organic-research.md) landed 2 real
+data points, folded into the tables above — but they only cover keywords a _researched
+competitor happens to already rank for_; they don't give volume/KD/CPC for the rest of this doc's
+seed list. The following remain **not yet available** for most rows: `volume`, `KD`,
+`traffic potential`, `CPC`, `parent topic`, `current ranking URL if any`, `top ranking page
+types`, `local-pack presence`, `AI Overview / other SERP-feature presence`, `competitor URLs
+ranking`. `intent` has been inferred manually above (commercial vs. informational) but should be
+confirmed against Ahrefs's own intent classification.
+
+Closing this fully needs a direct **Keywords Explorer** pull on this doc's own seed list (not
+another competitor export) — see ATS-SEO-003's cross-reference note for why competitor exports
+can't substitute for that.
 
 **Also pending:** the "expand in Ahrefs" instruction on the seed clusters — this doc only covers
 the seed keywords listed in the ticket. Once Ahrefs data is available, expand each cluster with
