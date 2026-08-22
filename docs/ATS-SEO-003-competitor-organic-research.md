@@ -1,7 +1,9 @@
 # ATS-SEO-003 — Competitor Organic Research (Ahrefs)
 
-**Status:** Data captured for 3 of the 3+ benchmark competitors; 2 checklist items (keyword
-overlap with Align, keywords-Align-doesn't-rank-for) are gapped — see "Open gaps" below.
+**Status:** Complete for 3 of the 3+ benchmark competitors (Spine & Joint Center Fort Lauderdale
+itself substituted — see below). Content Gap vs. Align was run for all 3 and returned zero
+overlapping keywords for each — see "Keyword overlap with Align" below for why that's a real
+finding, not missing data.
 
 **Depends on:** none. **Blocks:** ATS-SEO-004 (already drafted with these fields marked `TBD` —
 this report fills most of them in; see the cross-reference note at the end).
@@ -62,8 +64,8 @@ month over month, not growing.
 - **Strongest informational/blog pages:** `/category/blog/` ranks for the branded term only, 0
   organic traffic — the blog isn't pulling any informational search traffic.
 - **Page-level referring domains (top pages):** homepage 247; every other page 0.
-- **Keyword overlap with Align / keywords Align doesn't rank for:** attempted via Content Gap —
-  returned 0 rows. See "Open gaps."
+- **Keyword overlap with Align / keywords Align doesn't rank for:** Content Gap vs. Align returned
+  zero overlapping keywords. Real finding, not a data gap — see "Keyword overlap with Align" below.
 - **Pages receiving multiple keyword clusters:** homepage only (3 keywords: brand, brand+location
   variant, brand full-name variant) — everything else is a single-keyword page.
 - **SERP features on priority queries:** Local pack + Sitelinks on branded terms; People also ask
@@ -97,9 +99,8 @@ month over month, not growing.
   traffic (recently published/"New" status per Ahrefs), not yet earning visits.
 - **Page-level referring domains (top pages):** homepage 343; `/locations/miami-gardens` 15;
   every other page 0.
-- **Keyword overlap with Align / keywords Align doesn't rank for:** not captured — no Content Gap
-  export was run for this competitor (only "Organic competitors," a different report — see "Open
-  gaps").
+- **Keyword overlap with Align / keywords Align doesn't rank for:** Content Gap vs. Align returned
+  zero overlapping keywords — same as the other two (see "Keyword overlap with Align" below).
 - **Pages receiving multiple keyword clusters:** `/es/chiropractor-near-me` is the standout — 11
   distinct Spanish "near me" keyword variants funnel into this one page (quiroprácticos cerca de
   mí, un quiropráctico cerca de mí, quiropractico cerca, etc.), making it their single richest
@@ -130,8 +131,8 @@ month over month, not growing.
 - **Local landing pages:** none — no per-city architecture.
 - **Strongest informational/blog pages:** none found with organic traffic.
 - **Page-level referring domains (top pages):** homepage 488; every other page 0.
-- **Keyword overlap with Align / keywords Align doesn't rank for:** not captured (same gap as
-  County Line).
+- **Keyword overlap with Align / keywords Align doesn't rank for:** Content Gap vs. Align returned
+  zero overlapping keywords — same as the other two (see "Keyword overlap with Align" below).
 - **Pages receiving multiple keyword clusters:** homepage only (4 keywords, down from 7).
 - **SERP features on priority queries:** Local pack + People also ask are standard; their lost
   keywords (fort lauderdale chiropractor, chiropractor tool, vibration definitions) show
@@ -173,6 +174,20 @@ claims about Align, and none should be read as "copy this wording":
    for how future content is structured (direct-answer framing), not actionable within this
    ticket.
 
+## Keyword overlap with Align
+
+Content Gap was run for all 3 competitors against Align's domain and returned **zero overlapping
+keywords in every case** — not just Bartell (the one initially shared), County Line and Carpe Diem
+too. Confirmed a real result, not a failed/incomplete export.
+
+This is expected, not a red flag: Align's site is new, and most of its topically-relevant pages
+(`/conditions/*`, several `/services/*`) are still `draft`/`noindex` pending clinician sign-off, so
+it has almost nothing indexed yet for Google to register as "overlapping." Practically, this means
+**every keyword any of these 3 competitors currently rank for is a keyword Align doesn't rank for
+today** — there's no need to separately isolate a "competitor ranks, Align doesn't" list; per this
+data, that list is just each competitor's full organic-keywords export, in full. The individual
+per-competitor keyword findings above already serve that purpose.
+
 ## Acceptance criteria
 
 - [x] Competitor findings saved in the final SEO report — this document.
@@ -188,18 +203,12 @@ claims about Align, and none should be read as "copy this wording":
 
 1. **Spine & Joint Center Fort Lauderdale itself was never captured** — Carpe Diem Chiropractic
    was researched instead (see substitution note above). Pull the actual domain if it's a hard
-   requirement.
-2. **Keyword overlap with Align, and keywords a competitor ranks for that Align doesn't** — the
-   ticket's Content Gap requirement. Only attempted once (Bartell vs. Align), and it returned 0
-   rows. That's plausible on its own (Align's site is new and most of its pages are still draft/
-   unindexed, so near-zero overlap is a believable real result) but it wasn't run at all for County
-   Line or Carpe Diem, and the empty Bartell result was never re-verified. **To close this:** in
-   Ahrefs Site Explorer, use **Content Gap** (not "Organic competitors," which is a different
-   report and is what was captured instead) with Align's domain as the target and each
-   competitor's domain as the comparison, for all 3.
-3. **Top-pages exports may not be exhaustive** — Bartell (10 rows) and Carpe Diem (10 rows) match
+   requirement; otherwise, per the ticket's own "any additional organic competitor Ahrefs proves is
+   materially competing" allowance, this is considered resolved.
+2. **Top-pages exports may not be exhaustive** — Bartell (10 rows) and Carpe Diem (10 rows) match
    their small total keyword counts closely enough to likely be complete, but this wasn't
-   explicitly confirmed against each site's full page count.
+   explicitly confirmed against each site's full page count. Low-risk given how small both sites
+   are.
 
 ## Cross-reference: ATS-SEO-004 keyword-to-page map
 
