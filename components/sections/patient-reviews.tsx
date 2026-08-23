@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { GoogleIcon } from "@/components/ui/icons/google";
@@ -94,6 +96,19 @@ export function PatientReviews({ featured, reviews, variant = "dark" }: PatientR
             </div>
           ))}
         </div>
+
+        {/* ATS-SEO-050: this component never renders on /reviews itself
+         * (13 usages, none of them that page), so this is never a
+         * same-page self-link. */}
+        <Link
+          href="/reviews"
+          className={cn(
+            "font-sans text-card-body underline underline-offset-4",
+            dark ? "text-white" : "text-navy-900",
+          )}
+        >
+          Read all patient reviews
+        </Link>
       </Container>
     </Section>
   );
