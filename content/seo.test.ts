@@ -61,6 +61,24 @@ describe("IA-01: every route has a recorded, justified indexing decision", () =>
   });
 });
 
+/** ATS-SEO-021: acceptance criteria "no duplicate published-page titles" /
+ * "no duplicate published-page descriptions unless deliberately justified"
+ * — structurally enforced the same way IA-01 enforces primaryQuery
+ * uniqueness above, so a future route can't silently ship a copy-pasted
+ * title/description. Draft routes are excluded (same as primaryQuery) since
+ * they're noindex/out of the sitemap — not competing for a SERP slot. */
+describe("ATS-SEO-021: metadata uniqueness across published routes", () => {
+  it("never lets two published routes share a title", () => {
+    const publishedTitles = routes.filter(isPublished).map((route) => route.title);
+    expect(new Set(publishedTitles).size).toBe(publishedTitles.length);
+  });
+
+  it("never lets two published routes share a description", () => {
+    const publishedDescriptions = routes.filter(isPublished).map((route) => route.description);
+    expect(new Set(publishedDescriptions).size).toBe(publishedDescriptions.length);
+  });
+});
+
 describe("getRoute", () => {
   it("returns the matching route", () => {
     expect(getRoute("/services").path).toBe("/services");

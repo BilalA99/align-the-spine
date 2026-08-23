@@ -69,6 +69,19 @@ describe("content/service-areas.ts", () => {
     }
   });
 
+  // ATS-SEO-021: same "no duplicate published-page titles/descriptions"
+  // acceptance criterion content/seo.test.ts enforces for the static route
+  // registry, applied here since these 19 pages are published content too.
+  it("has no duplicate seoTitle across entries", () => {
+    const titles = serviceAreas.map((entry) => entry.seoTitle);
+    expect(new Set(titles).size).toBe(titles.length);
+  });
+
+  it("has no duplicate metaDescription across entries", () => {
+    const descriptions = serviceAreas.map((entry) => entry.metaDescription);
+    expect(new Set(descriptions).size).toBe(descriptions.length);
+  });
+
   it("no longer lists riviera-beach or homestead", () => {
     expect(slugs).not.toContain("riviera-beach");
     expect(slugs).not.toContain("homestead");

@@ -350,10 +350,21 @@ export const routes: RouteMeta[] = [
   // ATS-E3 (3.2): flipped to published once real, client-supplied reviews
   // landed in content/testimonials.ts (2026-08-12) — see ReviewsCarousel.
   {
+    // ATS-SEO-021: title previously omitted Deerfield Beach entirely
+    // (every other indexable page includes local relevance) — added the
+    // same "| {location} | {brand}" suffix pattern /book-an-appointment and
+    // /car-accident-chiropractor already use. Also previously had no
+    // `image`, so shares had no OG/Twitter preview — added the same photo
+    // + alt already used for this page's own nav mega-menu entry
+    // (content/site.ts) rather than introducing a new asset.
     path: "/reviews",
-    title: `Patient Reviews | ${siteConfig.business.shortName}`,
+    title: `Patient Reviews | Deerfield Beach, FL | ${siteConfig.business.shortName}`,
     description:
       "Verified patient reviews for Align the Spine Chiropractic in Deerfield Beach, FL.",
+    image: {
+      src: "/figma-exports/interior-table.png",
+      alt: "Treatment room at Align the Spine Chiropractic",
+    },
     changeFrequency: "monthly",
     priority: 0.6,
     lastModified: "2026-08-12",
@@ -380,9 +391,17 @@ export const routes: RouteMeta[] = [
       "Owns the doctor-entity query and every health page's Physician schema reference (ONPAGE-06); no other route asserts credential/bio content.",
   },
   {
+    // ATS-SEO-021: had no `image`, so shares had no OG/Twitter preview —
+    // added the office exterior photo (already used on /service-areas,
+    // which is a reasonable double-use of one real photo asset, same as
+    // dr-abe-neck.png across /about and /services).
     path: "/contact-us",
     title: `Contact ${siteConfig.business.shortName} | Deerfield Beach, FL`,
     description: `Contact Align the Spine Chiropractic at 811 SE 8th Ave, Suite 101, Deerfield Beach, FL, or call ${siteConfig.business.phone} about an appointment or visit.`,
+    image: {
+      src: "/figma-exports/exterior-img.png",
+      alt: "Exterior of the Deerfield Beach office building",
+    },
     changeFrequency: "monthly",
     priority: 0.6,
     lastModified: "2026-08-12",
@@ -419,10 +438,22 @@ export const routes: RouteMeta[] = [
       "Owns long-tail informational/blog intent distinct from every commercial page — individual articles (/blog/[slug]) are the actual ranking targets, this index just lists them.",
   },
   {
+    // ATS-SEO-021: "Service Areas" alone was generic — didn't lead with
+    // any natural intent phrase or include local relevance, unlike every
+    // other indexable page. Rewritten to lead with what the page is
+    // actually about (chiropractic service-area coverage) and anchor it to
+    // Deerfield Beach. Also found this route's real page
+    // (app/service-areas/page.tsx) was hardcoding its own metadata literal
+    // instead of pulling from this registry entry via getRoute() like every
+    // other static page does — the two had drifted (different title,
+    // slightly different description wording). Fixed both: the page now
+    // uses this entry directly, and the description below is the page's
+    // more specific live wording ("car-accident/PIP," not just "accident"),
+    // kept as the single source of truth going forward.
     path: "/service-areas",
-    title: `Service Areas | ${siteConfig.business.shortName}`,
+    title: `Chiropractic Service Areas Near Deerfield Beach, FL | ${siteConfig.business.shortName}`,
     description:
-      "See the verified Deerfield Beach office and how nearby in-office visits differ from limited, case-and-location-confirmed accident home-visit eligibility.",
+      "See the verified Deerfield Beach office and learn how nearby in-office visits differ from limited, case-and-location-confirmed car-accident/PIP home-visit eligibility.",
     image: {
       src: "/figma-exports/exterior-img.png",
       alt: "Exterior of the Deerfield Beach office building",
