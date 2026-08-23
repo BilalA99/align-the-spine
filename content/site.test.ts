@@ -37,7 +37,7 @@ describe("resolveSiteUrl", () => {
   it("falls back to the real production domain outside production when unset", () => {
     vi.stubEnv("SITE_URL", undefined);
     vi.stubEnv("VERCEL_ENV", undefined);
-    expect(resolveSiteUrl()).toBe("https://chirobackpain.com");
+    expect(resolveSiteUrl()).toBe("https://www.chirobackpain.com");
   });
 
   it("throws in production when SITE_URL is unset — never falls back silently", () => {

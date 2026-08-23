@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
 import { LocationFooter } from "@/components/layout/location-footer";
 import { LocationIntro } from "@/components/layout/location-intro";
@@ -183,6 +184,18 @@ export default function ReviewsPage() {
 
       <Section spacing="lg" className="container">
         <ReviewsCarousel reviews={testimonials} />
+        {/* ATS-SEO-041: the page's own request path was a same-page form
+         * scroll (ScrollToFormButton, a <button>, not a link) plus a tel:
+         * link — no real <a href> to /book-an-appointment or /contact-us
+         * anywhere in the page's own body content. */}
+        <div className="mt-10 flex flex-wrap justify-center gap-8 text-center font-sans text-card-body">
+          <Link href="/book-an-appointment" className="text-navy-900 underline underline-offset-4">
+            Request an appointment
+          </Link>
+          <Link href="/contact-us" className="text-navy-900 underline underline-offset-4">
+            Contact our Deerfield Beach office
+          </Link>
+        </div>
       </Section>
 
       <LocationIntro />

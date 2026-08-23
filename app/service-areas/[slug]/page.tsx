@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AccidentImpactVisual } from "@/components/content/accident-impact-visual";
@@ -6,7 +7,9 @@ import { ContentArticle } from "@/components/content/content-article";
 import { ServiceAreaHero } from "@/components/content/service-area-hero";
 import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
 import { JsonLd } from "@/components/seo/json-ld";
+import { Container } from "@/components/ui/container";
 import { LeadFormPopup } from "@/components/ui/lead-form-popup";
+import { Section } from "@/components/ui/section";
 import { siteConfig } from "@/content/site";
 import { getPublicContentBySlug, listPublicContentByIds } from "@/lib/content/public-content";
 import { buildMedicalWebPage, buildServiceAreaSchema } from "@/lib/schema";
@@ -118,6 +121,24 @@ export default async function ServiceAreaPage({ params }: { params: Promise<{ sl
           ) : undefined
         }
       />
+      {/* ATS-SEO-041: no service-area page linked to the verified
+       * Deerfield Beach office or the dedicated accident-care page —
+       * ContentArticle's own closing CTA only links to
+       * /book-an-appointment. Scoped to this page (not ContentArticle
+       * itself) so /blog/[slug] posts aren't affected. */}
+      <Section spacing="sm">
+        <Container className="flex flex-wrap justify-center gap-8 text-center font-sans text-card-body">
+          <Link href="/contact-us" className="text-navy-900 underline underline-offset-4">
+            Our verified Deerfield Beach office
+          </Link>
+          <Link
+            href="/car-accident-chiropractor"
+            className="text-navy-900 underline underline-offset-4"
+          >
+            Car accident chiropractic care
+          </Link>
+        </Container>
+      </Section>
     </>
   );
 }

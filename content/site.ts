@@ -153,14 +153,24 @@ export function isProduction(): boolean {
  * deploy — that's exactly how every canonical/sitemap/schema URL on this
  * site ended up pointing at the wrong (legacy) domain before. Local dev and
  * CI never set VERCEL_ENV=production, so they still get a safe, real-domain
- * fallback instead of failing every command that touches this module. */
+ * fallback instead of failing every command that touches this module.
+ *
+ * ATS-SEO-041: this fallback (and the production SITE_URL value it was
+ * modeled on) was "https://chirobackpain.com" — no `www` — while Vercel's
+ * only configured production domain is www.chirobackpain.com (bare
+ * chirobackpain.com isn't attached to the project at all). Every canonical/
+ * OG/sitemap/schema URL built from the wrong value pointed cross-host from
+ * whatever Ahrefs (or Google) actually crawled, which is exactly why a
+ * fresh Site Audit crawl showed 0 of 36 pages as indexable — every one
+ * "Canonicalized" to a URL on a host that was never actually crawled as
+ * itself. Fixed to match the real, only production domain. */
 export function resolveSiteUrl(): string {
   const envUrl = process.env.SITE_URL;
   if (envUrl) return envUrl;
   if (isProduction()) {
     throw new Error("content/site.ts: SITE_URL must be set in production — refusing to fall back.");
   }
-  return "https://chirobackpain.com";
+  return "https://www.chirobackpain.com";
 }
 
 export const siteConfig: SiteConfig = {
@@ -451,7 +461,12 @@ export const siteConfig: SiteConfig = {
       { label: "Reviews", href: "/reviews" },
       { label: "Blog", href: "/blog" },
       { label: "Service Areas", href: "/service-areas" },
-      // { label: "Contact Us", href: "/contact-us" },
+      // ATS-SEO-041: was commented out, making /contact-us a genuine orphan
+      // indexable page — content/seo.ts's own `/contact-us` justification
+      // says it's meant to be "the canonical location block," but nothing
+      // linked to it (footer.tsx renders this list server-side, in raw
+      // HTML, on every page — confirmed via curl before restoring this).
+      { label: "Contact Us", href: "/contact-us" },
     ],
     copyrightName: "Align the Spine Chiropractic",
   },
