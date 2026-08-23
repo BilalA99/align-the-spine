@@ -27,7 +27,7 @@ import {
   massageSoftTissueHero,
   massageTechniques,
 } from "@/content/massage-soft-tissue-page";
-import { sciaticaRelatedBottom } from "@/content/sciatica-page";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { servicesGrid } from "@/content/services-grid";
 import { siteConfig } from "@/content/site";
@@ -39,6 +39,24 @@ import { buildRouteMetadata } from "@/lib/seo/metadata";
 export const metadata: Metadata = buildRouteMetadata(getRoute("/services/soft-tissue-therapy"));
 
 const service = servicesGrid.find((item) => item.slug === "massage-soft-tissue")!;
+
+// ATS-SEO-043: previously reused sciatica-page.ts's `sciaticaRelatedBottom`
+// wholesale on this unrelated page (its own doc comment above already flags
+// "No bottom RelatedConditions pill row or ... massage-specific ones" as a
+// known gap) — now a real, page-specific list.
+const relatedBottom = buildRelatedLinks({
+  currentPath: "/services/soft-tissue-therapy",
+  paths: [
+    "/conditions/whiplash",
+    "/conditions/neck-pain",
+    "/conditions/back-pain",
+    "/services",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+});
 
 /** /services/massage-soft-tissue — dedicated, hand-built page, same
  * per-page pattern as the condition pages (ATS-137) and
@@ -231,7 +249,7 @@ export default function MassageSoftTissuePage() {
       <ComparisonTable />
 
       <RelatedConditions
-        items={sciaticaRelatedBottom}
+        items={relatedBottom}
         heading="Often needed alongside other post-accident care"
       />
 

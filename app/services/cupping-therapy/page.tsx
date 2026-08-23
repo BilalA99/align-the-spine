@@ -4,13 +4,19 @@ import Link from "next/link";
 import { ConditionFaq } from "@/components/sections/condition-faq";
 import { DoctorProfile } from "@/components/sections/doctor-profile";
 import { HeroSolidPanel } from "@/components/sections/hero-solid-panel";
+import { RelatedConditions } from "@/components/sections/related-conditions";
 import { ServiceIntro } from "@/components/sections/service-intro";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { cuppingTherapyFaq, cuppingTherapyHero } from "@/content/cupping-therapy-page";
+import {
+  cuppingTherapyFaq,
+  cuppingTherapyHero,
+  cuppingTherapyRelatedConfig,
+} from "@/content/cupping-therapy-page";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { buildRouteMetadata } from "@/lib/seo/metadata";
@@ -26,7 +32,8 @@ export const metadata: Metadata = buildRouteMetadata(getRoute("/services/cupping
  * avoid. Section order: Hero → short explainer (linking to
  * /services/soft-tissue-therapy, which covers the other soft-tissue
  * techniques) → DoctorProfile (short, reused trust signal) → CTA band →
- * FAQ. */
+ * RelatedConditions (ATS-SEO-043 — this page previously had exactly one
+ * outbound link in its whole body) → FAQ. */
 export default function CuppingTherapyPage() {
   return (
     <>
@@ -88,6 +95,13 @@ export default function CuppingTherapyPage() {
           </Button>
         </Container>
       </Section>
+
+      <RelatedConditions
+        items={buildRelatedLinks({
+          currentPath: "/services/cupping-therapy",
+          ...cuppingTherapyRelatedConfig,
+        })}
+      />
 
       <ConditionFaq faq={cuppingTherapyFaq} />
     </>

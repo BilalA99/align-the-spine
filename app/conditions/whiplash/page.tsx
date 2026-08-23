@@ -25,6 +25,7 @@ import { Section } from "@/components/ui/section";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
 import { pointToWhereItHurtsContent } from "@/content/point-to-where-it-hurts";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { heroReviewsCarousel, homeFeaturedTestimonial, homeReviews } from "@/content/testimonials";
@@ -34,8 +35,8 @@ import {
   whiplashFeelsLike,
   whiplashHero,
   whiplashHowWeTreat,
-  whiplashRelatedBottom,
-  whiplashRelatedMidPage,
+  whiplashRelatedBottomConfig,
+  whiplashRelatedMidPageConfig,
   whiplashSymptoms,
   whiplashWarning,
 } from "@/content/whiplash-page";
@@ -210,7 +211,10 @@ export default function WhiplashPage() {
           causesHeading="Classic Whiplash Symptoms"
           causes={whiplashSymptoms}
           relatedHeading="Related Whiplash conditions"
-          relatedLinks={whiplashRelatedMidPage}
+          relatedLinks={buildRelatedLinks({
+            currentPath: "/conditions/whiplash",
+            ...whiplashRelatedMidPageConfig,
+          })}
           typesHeading="Types"
           categories={whiplashTypes}
         />
@@ -259,7 +263,12 @@ export default function WhiplashPage() {
         </Container>
       </Section>
 
-      <RelatedConditions items={whiplashRelatedBottom} />
+      <RelatedConditions
+        items={buildRelatedLinks({
+          currentPath: "/conditions/whiplash",
+          ...whiplashRelatedBottomConfig,
+        })}
+      />
 
       <ConditionFaq faq={whiplashFaq} />
     </>

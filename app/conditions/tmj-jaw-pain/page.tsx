@@ -18,13 +18,14 @@ import { autoAccidentAttorneyQuote } from "@/content/auto-accident";
 import { autoAccidentCondition } from "@/content/conditions/auto-accident";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { heroReviewsCarousel, homeFeaturedTestimonial, homeReviews } from "@/content/testimonials";
 import {
   tmjJawPainFaq,
   tmjJawPainHero,
-  tmjJawPainRelatedBottom,
+  tmjJawPainRelatedBottomConfig,
 } from "@/content/tmj-jaw-pain-page";
 import { buildRouteMetadata } from "@/lib/seo/metadata";
 
@@ -152,7 +153,12 @@ export default function TmjJawPainPage() {
         </Container>
       </Section>
 
-      <RelatedConditions items={tmjJawPainRelatedBottom} />
+      <RelatedConditions
+        items={buildRelatedLinks({
+          currentPath: "/conditions/tmj-jaw-pain",
+          ...tmjJawPainRelatedBottomConfig,
+        })}
+      />
 
       <ConditionFaq faq={tmjJawPainFaq} />
     </>

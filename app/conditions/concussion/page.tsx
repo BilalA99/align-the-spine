@@ -22,9 +22,9 @@ import {
   concussionCauseCategories,
   concussionFaq,
   concussionHero,
-  concussionRelatedMidPage,
+  concussionRelatedMidPageConfig,
   concussionRelatedMidPageHeading,
-  concussionRelatedTypes,
+  concussionRelatedTypesConfig,
   concussionRelatedTypesHeading,
   concussionSupportItems,
   concussionSymptomNote,
@@ -35,6 +35,7 @@ import {
 import { autoAccidentCondition } from "@/content/conditions/auto-accident";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { heroReviewsCarousel, homeFeaturedTestimonial, homeReviews } from "@/content/testimonials";
@@ -147,7 +148,10 @@ export default function ConcussionPage() {
         symptomsHeading={concussionSymptomsHeading}
         symptoms={concussionSymptoms}
         relatedHeading={concussionRelatedTypesHeading}
-        relatedLinks={concussionRelatedTypes}
+        relatedLinks={buildRelatedLinks({
+          currentPath: "/conditions/concussion",
+          ...concussionRelatedTypesConfig,
+        })}
         categories={concussionCauseCategories}
       />
 
@@ -159,7 +163,10 @@ export default function ConcussionPage() {
       <ComparisonTable />
 
       <RelatedConditions
-        items={concussionRelatedMidPage}
+        items={buildRelatedLinks({
+          currentPath: "/conditions/concussion",
+          ...concussionRelatedMidPageConfig,
+        })}
         heading={concussionRelatedMidPageHeading}
         className="bg-[#F5F6F8]"
       />

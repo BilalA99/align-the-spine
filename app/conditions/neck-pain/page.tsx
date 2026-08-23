@@ -29,11 +29,12 @@ import {
   neckPainFeelsLike,
   neckPainHero,
   neckPainHowWeTreat,
-  neckPainRelatedBottom,
-  neckPainRelatedMidPage,
+  neckPainRelatedBottomConfig,
+  neckPainRelatedMidPageConfig,
   neckPainWarning,
 } from "@/content/neck-pain-page";
 import { pointToWhereItHurtsContent } from "@/content/point-to-where-it-hurts";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { heroReviewsCarousel, homeFeaturedTestimonial, homeReviews } from "@/content/testimonials";
@@ -176,7 +177,10 @@ export default function NeckPainPage() {
           causesHeading="Common Causes"
           causes={neckPainCauses}
           relatedHeading="Related Neck Pain conditions"
-          relatedLinks={neckPainRelatedMidPage}
+          relatedLinks={buildRelatedLinks({
+            currentPath: "/conditions/neck-pain",
+            ...neckPainRelatedMidPageConfig,
+          })}
           typesHeading="Types"
           categories={neckPainTypeCategories}
         />
@@ -225,7 +229,12 @@ export default function NeckPainPage() {
         </Container>
       </Section>
 
-      <RelatedConditions items={neckPainRelatedBottom} />
+      <RelatedConditions
+        items={buildRelatedLinks({
+          currentPath: "/conditions/neck-pain",
+          ...neckPainRelatedBottomConfig,
+        })}
+      />
 
       <ConditionFaq faq={neckPainFaq} />
     </>

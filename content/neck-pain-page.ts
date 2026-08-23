@@ -3,7 +3,6 @@ import type {
   ConditionAccident,
   ConditionFaq,
   ConditionFeelsLikeItem,
-  ConditionRelatedLink,
   ConditionTreatmentItem,
   ConditionWarning,
 } from "@/content/conditions/types";
@@ -41,11 +40,12 @@ export const neckPainCauses: string[] = [
   "Degenerative joint changes",
 ];
 
-export const neckPainRelatedMidPage: ConditionRelatedLink[] = [
-  { label: "Whiplash", href: "/conditions/whiplash" },
-  { label: "Herniated Disc", href: "/services/spinal-decompression", highlighted: true },
-  { label: "Auto Accident Injuries", href: "/car-accident-chiropractor" },
-];
+// ATS-SEO-043: plain path config — see content/back-pain-page.ts's
+// identical note for why (circular import via content/seo.ts).
+export const neckPainRelatedMidPageConfig = {
+  paths: ["/conditions/whiplash", "/services/spinal-decompression", "/car-accident-chiropractor"],
+  highlightPath: "/services/spinal-decompression",
+};
 
 export const neckPainHowWeTreat: ConditionTreatmentItem[] = [
   {
@@ -136,20 +136,19 @@ export const neckPainAccident: ConditionAccident = {
   smallprint: DEFAULT_ACCIDENT_SMALLPRINT,
 };
 
-export const neckPainRelatedBottom: ConditionRelatedLink[] = [
-  { label: "Lower Back Pain", href: "/conditions/back-pain" },
-  {
-    label: "Auto Accident Injuries",
-    href: "/car-accident-chiropractor",
-    highlighted: true,
-  },
-  { label: "Neck Pain", href: "/conditions/neck-pain" },
-  { label: "Spinal Decompression", href: "/services/spinal-decompression" },
-  { label: "Whiplash", href: "/conditions/whiplash" },
-  { label: "Home Visit Care", href: "/home-visit-chiropractor" },
-  { label: "Herniated Disc", href: "/services/spinal-decompression" },
-  { label: "View All Treatments", href: "/services" },
-];
+// Plain path config — see neckPainRelatedMidPageConfig's doc comment above.
+export const neckPainRelatedBottomConfig = {
+  paths: [
+    "/conditions/back-pain",
+    "/conditions/whiplash",
+    "/services/spinal-decompression",
+    "/conditions",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+};
 
 export const neckPainFaq: ConditionFaq = {
   headerTail: "neck pain",

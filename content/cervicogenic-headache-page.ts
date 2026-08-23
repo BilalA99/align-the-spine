@@ -110,6 +110,28 @@ export const cervicogenicHeadacheConditions: CervicogenicHeadacheCondition[] = [
   },
 ];
 
+// ATS-SEO-043: this page's own doc comment (app/conditions/
+// cervicogenic-headache/page.tsx) already documented a "RelatedConditions
+// (8-pill bottom row)" section in its stated section order, but no such
+// component was ever actually rendered — a real doc/implementation drift,
+// and this page's own family (condition pages) is exactly where this
+// ticket's audit was scoped to look. Plain path config, resolved by
+// buildRelatedLinks() (content/related-links.ts) from the page component,
+// not here — content/seo.ts imports cervicogenicHeadacheHero from this
+// same file, so importing related-links.ts here (which itself imports
+// content/seo.ts) would be a circular import.
+export const cervicogenicHeadacheRelatedBottomConfig = {
+  paths: [
+    "/conditions/whiplash",
+    "/conditions/neck-pain",
+    "/conditions",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+};
+
 export const cervicogenicHeadacheFaq: ConditionFaq = {
   headerTail: "cervicogenic headaches",
   items: [

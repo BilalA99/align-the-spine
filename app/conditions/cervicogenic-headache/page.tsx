@@ -10,6 +10,7 @@ import { FeelsLikeBand } from "@/components/sections/feels-like-band";
 import { HeroReviewsCarousel } from "@/components/sections/hero-reviews-carousel";
 import { HeroSolidPanel } from "@/components/sections/hero-solid-panel";
 import { PatientReviews } from "@/components/sections/patient-reviews";
+import { RelatedConditions } from "@/components/sections/related-conditions";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -22,10 +23,12 @@ import {
   cervicogenicHeadacheFaq,
   cervicogenicHeadacheFeelsLike,
   cervicogenicHeadacheHero,
+  cervicogenicHeadacheRelatedBottomConfig,
 } from "@/content/cervicogenic-headache-page";
 import { autoAccidentCondition } from "@/content/conditions/auto-accident";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { heroReviewsCarousel, homeFeaturedTestimonial, homeReviews } from "@/content/testimonials";
@@ -201,6 +204,13 @@ export default function CervicogenicHeadachePage() {
           </Button>
         </Container>
       </Section>
+
+      <RelatedConditions
+        items={buildRelatedLinks({
+          currentPath: "/conditions/cervicogenic-headache",
+          ...cervicogenicHeadacheRelatedBottomConfig,
+        })}
+      />
 
       <ConditionFaq faq={cervicogenicHeadacheFaq} />
     </>

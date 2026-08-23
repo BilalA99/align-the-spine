@@ -28,14 +28,15 @@ import {
   backPainFeelsLike,
   backPainHero,
   backPainHowWeTreat,
-  backPainRelatedBottom,
-  backPainRelatedMidPage,
+  backPainRelatedBottomConfig,
+  backPainRelatedMidPageConfig,
   backPainWarning,
   backPainWhenToSee,
 } from "@/content/back-pain-page";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
 import { pointToWhereItHurtsContent } from "@/content/point-to-where-it-hurts";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { heroReviewsCarousel, homeFeaturedTestimonial, homeReviews } from "@/content/testimonials";
@@ -222,7 +223,10 @@ export default function BackPainPage() {
         causesHeading="Common Causes"
         causes={backPainCauses}
         relatedHeading="Related Back Pain Conditions"
-        relatedLinks={backPainRelatedMidPage}
+        relatedLinks={buildRelatedLinks({
+          currentPath: "/conditions/back-pain",
+          ...backPainRelatedMidPageConfig,
+        })}
         whenToSee={backPainWhenToSee}
       />
 
@@ -267,7 +271,12 @@ export default function BackPainPage() {
         </Container>
       </Section>
 
-      <RelatedConditions items={backPainRelatedBottom} />
+      <RelatedConditions
+        items={buildRelatedLinks({
+          currentPath: "/conditions/back-pain",
+          ...backPainRelatedBottomConfig,
+        })}
+      />
 
       <ConditionFaq faq={backPainFaq} />
     </>

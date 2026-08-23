@@ -20,6 +20,25 @@ export const cuppingTherapyHero = {
   },
 };
 
+// ATS-SEO-043: this page had exactly one outbound link in its entire body
+// (to /services/soft-tissue-therapy) — no accident-care, condition, or
+// blog link at all, a genuinely weak-links page per this ticket's audit.
+// Plain path config, resolved by buildRelatedLinks()
+// (content/related-links.ts) from the page component, not here —
+// content/seo.ts imports cuppingTherapyHero from this same file, so
+// importing related-links.ts here (which itself imports content/seo.ts)
+// would be a circular import.
+export const cuppingTherapyRelatedConfig = {
+  paths: [
+    "/conditions/whiplash",
+    "/conditions/neck-pain",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+};
+
 export const cuppingTherapyFaq: ConditionFaq = {
   headerTail: "cupping therapy",
   items: [
