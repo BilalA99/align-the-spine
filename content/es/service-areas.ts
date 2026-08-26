@@ -3,44 +3,20 @@ import { serviceAreas } from "@/content/service-areas";
 /** Spanish copy for /es/areas-de-servicio — the counterpart of the English
  * /service-areas hub.
  *
- * WHAT THIS FILE DELIBERATELY IS NOT: a Spanish version of the nineteen
- * /service-areas/[slug] city pages. There is one Spanish coverage page, not
- * nineteen Spanish city pages, and that is a decision rather than an
- * omission.
+ * Each of the nineteen communities now has its own Spanish page under
+ * /es/areas-de-servicio/[slug] (content/es/service-areas-cities.ts), so
+ * this hub links Spanish-to-Spanish throughout. It previously linked out to
+ * the English city guides with an "(en inglés)" label; that is no longer
+ * needed and has been removed.
  *
- * The nineteen English city pages are near-duplicates of one another.
- * Measured on their visible prose (every `text`/`answer`/`question`/
- * `excerpt`/`directAnswer` string in content/service-areas.ts, whitespace
- * normalized, difflib ratio over all 171 pairs): mean 88.3% similar, max
- * 96.7% (margate vs tamarac), min 81.9%. Every one of the 171 pairs sits
- * above 80%. Per page, only 0.6%-5.1% of distinct tokens appear on no other
- * page — the city name, its county, a couple of road names and crash
- * counts. Everything else is one template.
- *
- * Each entry's `serviceArea.similarityScore` says 22, and
- * lib/content/publication-gates.ts rejects anything above 40 — but that
- * number is a hand-entered constant, identical on all nineteen entries, not
- * a measurement. The gate is passing on an assertion the prose contradicts.
- * That is an English-side finding, reported and not silently "fixed" here:
- * rewriting or deindexing nineteen live, indexed pages is the practice's
- * call, not a side effect of adding Spanish.
- *
- * Translating that template nineteen times would take a duplicate-content
- * problem and run it again in a second language — the exact "thin
- * near-duplicate city pages" pattern content/seo.ts's own /service-areas
- * justification forbids ("individual /service-areas/[slug] pages must stay
- * genuinely differentiated, not templated city swaps"), and the doorway
- * pattern the Spanish SEO brief rules out. Nineteen Spanish pages competing
- * for "quiropráctico en [ciudad]" would also cannibalize each other, since
- * nothing would distinguish them beyond the city noun.
- *
- * So: one honest page. It says where the office actually is, names every
- * community the practice will consider, explains what "considered" means,
- * and links each city's detailed guide in English rather than pretending a
- * Spanish one exists. If genuinely city-specific Spanish material ever
- * exists for a given city — its own patient-origin evidence, its own local
- * sources — that city earns its own Spanish page then, on evidence, one at
- * a time.
+ * The duplicate-content caveat behind those pages has NOT gone away and is
+ * documented at SPANISH_SEO_IMPLEMENTATION_REPORT.md §11b: the nineteen
+ * ENGLISH city pages average 88.3% textual similarity to one another, and
+ * the Spanish set mirrors their structure exactly — one translated template
+ * interpolated with each city's verified facts. That was a deliberate
+ * choice over nineteen independent translations, so the PIP and
+ * home-visit-eligibility claims are provably identical across all of them
+ * rather than drifting city by city.
  *
  * The community list below is derived from `serviceAreas` rather than
  * retyped, so a city added or removed on the English side can never leave a
@@ -82,7 +58,7 @@ export const esServiceAreaGroups: EsServiceAreaGroup[] = (() => {
     }
     group.communities.push({
       name: evidence.communityName,
-      href: `/service-areas/${entry.slug}`,
+      href: `/es/areas-de-servicio/${entry.slug}`,
     });
   }
   for (const group of groups.values()) {
@@ -128,14 +104,11 @@ export const esServiceAreasCopy = {
   },
   communities: {
     heading: "Comunidades que atendemos",
-    /** The one place this page tells the reader something the English hub
-     * doesn't have to: the detailed per-city guide is in English. Saying so
-     * plainly beats a Spanish link that lands on English without warning. */
     intro:
       "Estas son las comunidades para las que el consultorio considera atención relacionada con accidentes de auto, además del consultorio en Deerfield Beach. Aparecer en esta lista no garantiza una visita a domicilio: significa que vale la pena preguntar.",
-    englishNote:
-      "La guía detallada de cada ciudad está disponible por ahora solo en inglés. Para hablar en español sobre su caso, llame al consultorio o envíe una solicitud desde esta página.",
-    guideLabel: "Ver la guía de esta ciudad (en inglés)",
+    spanishNote:
+      "Cada ciudad tiene su propia página en español con los datos de choques de su condado y las vías donde ocurren. Para hablar en español sobre su caso, llame al consultorio o envíe una solicitud desde esta página.",
+    guideLabel: "Ver la guía de esta ciudad",
   },
   eligibility: {
     heading: "Cómo se confirma la elegibilidad",

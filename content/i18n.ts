@@ -19,6 +19,8 @@
  *    returns Spanish HTML on the first response with no JS and no API call.
  */
 
+import { esServiceAreaCities } from "@/content/es/service-areas-cities";
+
 export const LOCALES = ["en", "es"] as const;
 export type Locale = (typeof LOCALES)[number];
 
@@ -193,11 +195,46 @@ export const localizedRoutes: LocalizedRoute[] = [
   },
 ];
 
+/** The nineteen service-area city pairs, derived rather than typed.
+ *
+ * These live OUTSIDE `localizedRoutes` on purpose. That array is checked
+ * against the two static route registries (content/seo.ts and
+ * content/es/seo.ts) by content/i18n.test.ts — every entry must appear in
+ * both — and the English city pages are not in content/seo.ts at all: they
+ * are served through the content repository (`listPublicContent`,
+ * `contentType: "service_area"`), the same mechanism the blog uses. Adding
+ * them to `localizedRoutes` would mean either breaking that registry check
+ * or registering nineteen English routes that the English sitemap would
+ * then emit twice.
+ *
+ * So they are a second, derived table. Everything downstream —
+ * `findRouteByPath`, `counterpartPath`, `buildAlternates` — consults both,
+ * which means hreflang, the language switcher and the sitemap's alternates
+ * all behave identically for a city page and a static page.
+ *
+ * Derived from `esServiceAreaCities` (which is itself checked against
+ * content/service-areas.ts at module load) so the pairing cannot drift: a
+ * city cannot appear on one side only.
+ */
+export const serviceAreaLocalizedRoutes: LocalizedRoute[] = esServiceAreaCities.map((city) => ({
+  id: `serviceArea:${city.slug}`,
+  en: `/service-areas/${city.slug}`,
+  es: `/es/areas-de-servicio/${city.slug}`,
+}));
+
+/** Every pair the site knows about, static and service-area alike. Use this
+ * for path lookups; use `localizedRoutes` when you specifically mean the
+ * statically-registered routes. */
+export const allLocalizedRoutes: LocalizedRoute[] = [
+  ...localizedRoutes,
+  ...serviceAreaLocalizedRoutes,
+];
+
 /** Looks a pair up by its stable id — throws rather than returning
  * undefined so a typo in a link fails at build time, matching
  * content/seo.ts's getRoute(). */
 export function getLocalizedRoute(id: string): LocalizedRoute {
-  const route = localizedRoutes.find((entry) => entry.id === id);
+  const route = allLocalizedRoutes.find((entry) => entry.id === id);
   if (!route) throw new Error(`content/i18n.ts: no localized route registered for id "${id}"`);
   return route;
 }
@@ -225,7 +262,7 @@ function normalizePath(path: string): string {
  * path isn't a registered route for that locale. */
 export function findRouteByPath(path: string, locale: Locale): LocalizedRoute | null {
   const normalized = normalizePath(path);
-  return localizedRoutes.find((entry) => entry[locale] === normalized) ?? null;
+  return allLocalizedRoutes.find((entry) => entry[locale] === normalized) ?? null;
 }
 
 /** The equivalent page in the other language, for the language switcher.

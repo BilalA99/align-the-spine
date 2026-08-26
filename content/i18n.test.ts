@@ -8,6 +8,7 @@ import {
   HREFLANG,
   LOCALES,
   localizedRoutes,
+  serviceAreaLocalizedRoutes,
 } from "@/content/i18n";
 import { isPublished, routes } from "@/content/seo";
 import { siteConfig } from "@/content/site";
@@ -212,9 +213,19 @@ describe("Spanish internal link graph", () => {
     ...esFooter.links.map((link) => link.href),
   ];
 
+  // The Áreas de Servicio dropdown links the nineteen city pages, which
+  // live in the derived pair table rather than the static Spanish registry
+  // (see serviceAreaLocalizedRoutes in content/i18n.ts for why). They are
+  // still real, registered Spanish routes — just registered elsewhere.
+  const esCityPaths = new Set(
+    serviceAreaLocalizedRoutes.map((entry) => entry.es).filter((path): path is string => !!path),
+  );
+
   it("points every Spanish nav, CTA and footer link at a registered Spanish route", () => {
     for (const href of spanishHrefs) {
-      expect(esPaths.has(href)).toBe(true);
+      expect(esPaths.has(href) || esCityPaths.has(href), `unregistered Spanish link: ${href}`).toBe(
+        true,
+      );
     }
   });
 

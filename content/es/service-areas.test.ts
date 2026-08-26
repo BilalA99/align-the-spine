@@ -1,23 +1,29 @@
 import { describe, expect, it } from "vitest";
 
-import { esRoutes } from "@/content/es/seo";
 import { esServiceAreaGroups } from "@/content/es/service-areas";
-import { localizedRoutes } from "@/content/i18n";
+import { esServiceAreaPages } from "@/content/es/service-areas-cities";
+import {
+  buildAlternates,
+  counterpartPath,
+  localizedRoutes,
+  serviceAreaLocalizedRoutes,
+} from "@/content/i18n";
 import { serviceAreas } from "@/content/service-areas";
+import { siteConfig } from "@/content/site";
 
 describe("Spanish service-area coverage", () => {
   it("lists every English service-area community exactly once", () => {
     const listed = esServiceAreaGroups.flatMap((group) =>
       group.communities.map((community) => community.href),
     );
-    const expected = serviceAreas.map((entry) => `/service-areas/${entry.slug}`);
+    const expected = serviceAreas.map((entry) => `/es/areas-de-servicio/${entry.slug}`);
     expect([...listed].sort()).toEqual([...expected].sort());
     expect(new Set(listed).size).toBe(listed.length);
   });
 
   it("uses each community's real name and county from the English data", () => {
     const byHref = new Map(
-      serviceAreas.map((entry) => [`/service-areas/${entry.slug}`, entry.serviceArea]),
+      serviceAreas.map((entry) => [`/es/areas-de-servicio/${entry.slug}`, entry.serviceArea]),
     );
     for (const group of esServiceAreaGroups) {
       for (const community of group.communities) {
@@ -29,21 +35,36 @@ describe("Spanish service-area coverage", () => {
     }
   });
 
-  it("pairs the hub, and only the hub", () => {
+  it("pairs the hub and all nineteen city pages", () => {
     const hub = localizedRoutes.find((entry) => entry.id === "serviceAreas");
     expect(hub?.es).toBe("/es/areas-de-servicio");
 
-    // The nineteen city pages must have no Spanish counterpart registered.
-    // This is the guard on the whole decision: the moment someone adds
-    // `/es/areas-de-servicio/miami` to either registry, this fails.
-    for (const entry of localizedRoutes) {
-      expect(entry.en.startsWith("/service-areas/")).toBe(false);
+    // Every English city page has a Spanish counterpart and vice versa.
+    // The pair table is derived (content/i18n.ts), so this is really a
+    // check that the derivation covers the whole city set.
+    const pairs = serviceAreaLocalizedRoutes;
+    expect(pairs).toHaveLength(serviceAreas.length);
+    for (const entry of serviceAreas) {
+      const pair = pairs.find((candidate) => candidate.en === `/service-areas/${entry.slug}`);
+      expect(pair, `no Spanish pair for /service-areas/${entry.slug}`).toBeDefined();
+      expect(pair?.es).toBe(`/es/areas-de-servicio/${entry.slug}`);
     }
-    for (const route of esRoutes) {
-      expect(
-        route.path.startsWith("/es/areas-de-servicio/"),
-        `${route.path}: per-city Spanish service-area pages are deliberately not built — see content/es/service-areas.ts`,
-      ).toBe(false);
+  });
+
+  it("round-trips every city pair through the language switcher", () => {
+    for (const pair of serviceAreaLocalizedRoutes) {
+      expect(counterpartPath(pair.en, "en", "es")).toBe(pair.es);
+      expect(counterpartPath(pair.es!, "es", "en")).toBe(pair.en);
+    }
+  });
+
+  it("emits reciprocal hreflang for every city pair", () => {
+    for (const pair of serviceAreaLocalizedRoutes) {
+      const fromEn = buildAlternates(siteConfig.siteUrl, pair.en, "en");
+      const fromEs = buildAlternates(siteConfig.siteUrl, pair.es!, "es");
+      expect(fromEn).not.toBeNull();
+      expect(fromEs?.languages).toEqual(fromEn?.languages);
+      expect(fromEn?.languages["x-default"]).toBe(`${siteConfig.siteUrl}${pair.en}`);
     }
   });
 });
@@ -105,5 +126,76 @@ describe("the English service-area pages are near-duplicates (why there is one S
     expect(min, `least-similar pair: ${minPair} at ${(min * 100).toFixed(1)}%`).toBeGreaterThan(
       0.7,
     );
+  });
+});
+
+/** The city pages are one translated template interpolated with per-city
+ * facts (content/es/service-areas-cities.ts). These are the guards on what
+ * that buys: the legally-sensitive claims must be byte-identical across all
+ * nineteen, and the city-specific facts must actually differ. */
+describe("Spanish city pages", () => {
+  it("covers every English city exactly once", () => {
+    expect(esServiceAreaPages.map((page) => page.slug).sort()).toEqual(
+      serviceAreas.map((entry) => entry.slug).sort(),
+    );
+  });
+
+  it("renders identical PIP, EMC and claim-denial text on every page", () => {
+    // These four blocks carry the statutory claims. If one city's Spanish
+    // ever differs from another's, a legal claim has drifted.
+    const CLAIM_BLOCKS = ["block-4", "block-6", "block-14", "block-24"];
+    for (const id of CLAIM_BLOCKS) {
+      const texts = new Set(
+        esServiceAreaPages.map((page) => {
+          const block = page.blocks.find((candidate) => candidate.id === id);
+          return block && "text" in block ? block.text : undefined;
+        }),
+      );
+      expect(texts.size, `block ${id} differs across cities`).toBe(1);
+      expect([...texts][0]).toBeTruthy();
+    }
+  });
+
+  it("gives every page a unique title, description and H2", () => {
+    for (const key of ["seoTitle", "metaDescription"] as const) {
+      const values = esServiceAreaPages.map((page) => page[key]);
+      expect(new Set(values).size, `duplicate ${key}`).toBe(values.length);
+    }
+    const h2s = esServiceAreaPages.map(
+      (page) => page.blocks.find((block) => block.id === "block-1")?.["text" as never],
+    );
+    expect(new Set(h2s).size).toBe(h2s.length);
+  });
+
+  it("carries the same county crash figures the English pages cite", () => {
+    const enByCounty = new Map<string, string>();
+    for (const entry of serviceAreas) {
+      const block = entry.blocks.find((candidate) => candidate.id === "block-8");
+      const county = entry.serviceArea?.county;
+      if (block && "text" in block && county) enByCounty.set(county, block.text);
+    }
+    for (const page of esServiceAreaPages) {
+      const block = page.blocks.find((candidate) => candidate.id === "block-8");
+      expect(block && "text" in block).toBe(true);
+      const enText = enByCounty.get(page.county) ?? "";
+      // Every comma-grouped figure in the English sentence must appear in
+      // the Spanish one — a statistic that changes in translation is a
+      // different claim.
+      for (const figure of enText.match(/\d{1,3}(,\d{3})+/g) ?? []) {
+        expect(
+          block && "text" in block ? block.text : "",
+          `${page.slug}: missing figure ${figure}`,
+        ).toContain(figure);
+      }
+    }
+  });
+
+  it("keeps every Spanish city page inside Spanish", () => {
+    for (const page of esServiceAreaPages) {
+      expect(page.path.startsWith("/es/areas-de-servicio/")).toBe(true);
+      for (const related of page.relatedSlugs) {
+        expect(esServiceAreaPages.some((candidate) => candidate.slug === related)).toBe(true);
+      }
+    }
   });
 });

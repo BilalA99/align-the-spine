@@ -1,5 +1,6 @@
 import Image from "next/image";
 
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 import type { ContentBlock } from "@/lib/content/types";
 
 type HeadingBlock = Extract<ContentBlock, { type: "heading" }>;
@@ -139,16 +140,27 @@ function groupHeadings(headings: HeadingBlock[]) {
   return groups;
 }
 
-export function TableOfContents({ blocks }: { blocks: ContentBlock[] }) {
+/** The only two strings this component owns, so the Spanish service-area
+ * pages can reuse it rather than fork it. */
+const TOC_LABEL: Record<Locale, string> = { en: "On this page", es: "En esta página" };
+
+export function TableOfContents({
+  blocks,
+  locale = DEFAULT_LOCALE,
+}: {
+  blocks: ContentBlock[];
+  locale?: Locale;
+}) {
   const headings = blocks.filter(
     (block): block is HeadingBlock => block.type === "heading" && block.level <= 3,
   );
   if (headings.length < 3) return null;
   const groups = groupHeadings(headings);
+  const label = TOC_LABEL[locale];
   return (
-    <nav aria-label="On this page" className="rounded-20 bg-panel-100 p-6">
+    <nav aria-label={label} className="rounded-20 bg-panel-100 p-6">
       <h2 className="font-sans text-sm font-semibold uppercase tracking-[0.12em] text-navy-800">
-        On this page
+        {label}
       </h2>
       <ol className="mt-4 space-y-4">
         {groups.map((group, index) => (

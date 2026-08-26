@@ -10,10 +10,28 @@ const IMPACT_VIDEO_SRC = "https://align-the-spine.b-cdn.net/car-accident.mp4";
  * sources cited on each city page) — kept here as the single place a
  * count matches what the page's own prose already states, so this visual
  * can never drift out of sync with the cited figure. */
-const COUNTY_STATS: Record<string, { crashes: number; perDay: number; label: string }> = {
-  "Miami-Dade": { crashes: 55530, perDay: 152, label: "Miami-Dade County, 2025" },
-  Broward: { crashes: 36871, perDay: 101, label: "Broward County, 2025" },
-  "Palm Beach": { crashes: 25349, perDay: 69, label: "Palm Beach County, 2025" },
+const COUNTY_STATS: Record<
+  string,
+  { crashes: number; perDay: number; label: string; labelEs: string }
+> = {
+  "Miami-Dade": {
+    crashes: 55530,
+    perDay: 152,
+    label: "Miami-Dade County, 2025",
+    labelEs: "condado de Miami-Dade, 2025",
+  },
+  Broward: {
+    crashes: 36871,
+    perDay: 101,
+    label: "Broward County, 2025",
+    labelEs: "condado de Broward, 2025",
+  },
+  "Palm Beach": {
+    crashes: 25349,
+    perDay: 69,
+    label: "Palm Beach County, 2025",
+    labelEs: "condado de Palm Beach, 2025",
+  },
 };
 
 /** Looping background video for the "why timing matters" card. Muted/loop/
@@ -92,8 +110,33 @@ function useCountUp(target: number, active: boolean) {
  * cited in the page's prose once scrolled into view — illustrative, not a
  * claim about this specific patient's accident; the numbers are the
  * county's own cited statistic, not a fabricated one. */
-export function AccidentImpactVisual({ county }: { county: string }) {
+/** The four strings this card owns, per locale. The county `label` stays
+ * in COUNTY_STATS and is localized here rather than duplicated, so the
+ * figure and its caption can't drift apart. */
+const COPY = {
+  en: {
+    eyebrow: "Why timing matters",
+    crashes: (label: string) => `Traffic crashes — ${label}`,
+    perDay: "Crashes every day, county-wide",
+    body: "Whiplash and soft-tissue injuries from a collision often don't peak until a day or two later. Florida's PIP timing rules run on a clock regardless — an early evaluation is what creates the documentation your claim needs, whether or not you feel hurt yet.",
+  },
+  es: {
+    eyebrow: "Por qué importa el tiempo",
+    crashes: (label: string) => `Choques de tránsito — ${label}`,
+    perDay: "Choques por día en todo el condado",
+    body: "El latigazo cervical y las lesiones de tejidos blandos por una colisión a menudo no alcanzan su punto máximo hasta uno o dos días después. Las reglas de tiempo del PIP de Florida corren igual — una evaluación temprana es lo que crea la documentación que su reclamo necesita, se sienta lesionado o no.",
+  },
+} as const;
+
+export function AccidentImpactVisual({
+  county,
+  locale = "en",
+}: {
+  county: string;
+  locale?: "en" | "es";
+}) {
   const stats = COUNTY_STATS[county];
+  const copy = COPY[locale];
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const crashes = useCountUp(stats?.crashes ?? 0, inView);
@@ -138,25 +181,23 @@ export function AccidentImpactVisual({ county }: { county: string }) {
 
       <div className="relative p-8 pt-6 sm:p-10 sm:pt-8 lg:flex-1 lg:p-12">
         <p className="text-sm font-semibold uppercase tracking-[0.14em] text-teal-300">
-          Why timing matters
+          {copy.eyebrow}
         </p>
         <div className="mt-4 flex flex-wrap items-end gap-x-10 gap-y-4">
           <div>
             <p className="font-display text-5xl leading-none sm:text-6xl">
               {crashes.toLocaleString()}
             </p>
-            <p className="mt-2 text-sm text-white">Traffic crashes — {stats.label}</p>
+            <p className="mt-2 text-sm text-white">
+              {copy.crashes(locale === "es" ? stats.labelEs : stats.label)}
+            </p>
           </div>
           <div>
             <p className="font-display text-5xl leading-none sm:text-6xl">~{perDay}</p>
-            <p className="mt-2 text-sm text-white">Crashes every day, county-wide</p>
+            <p className="mt-2 text-sm text-white">{copy.perDay}</p>
           </div>
         </div>
-        <p className="mt-6 max-w-xl text-base leading-7 text-white">
-          Whiplash and soft-tissue injuries from a collision often don&apos;t peak until a day or
-          two later. Florida&apos;s PIP timing rules run on a clock regardless — an early evaluation
-          is what creates the documentation your claim needs, whether or not you feel hurt yet.
-        </p>
+        <p className="mt-6 max-w-xl text-base leading-7 text-white">{copy.body}</p>
       </div>
     </div>
   );

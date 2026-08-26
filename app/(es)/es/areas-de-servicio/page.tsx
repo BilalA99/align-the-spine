@@ -19,23 +19,14 @@ export const metadata: Metadata = buildEsRouteMetadata(route);
 
 /** /es/areas-de-servicio — Spanish counterpart of the /service-areas hub.
  *
- * ONE Spanish page, not nineteen. content/es/service-areas.ts carries the
- * full reasoning and the measurements behind it; the short version is that
- * the nineteen English city pages are 88.3% textually identical to each
- * other on average, so translating them would reproduce a duplicate-content
- * problem in a second language rather than serve anyone.
+ * Links Spanish-to-Spanish: each of the nineteen communities has its own
+ * page at /es/areas-de-servicio/[slug]. The hub pair AND all nineteen city
+ * pairs are registered in content/i18n.ts (the city pairs are derived, see
+ * `serviceAreaLocalizedRoutes` there), so every one of them annotates its
+ * English counterpart reciprocally.
  *
- * The per-city guides are therefore linked in English, each marked
- * `hrefLang="en"` and labeled "(en inglés)" in the visible text — the same
- * pattern the Spanish footer already uses for /privacy-policy. A Spanish
- * reader is told they're crossing into English before they click, and
- * Google is told the same thing in the markup.
- *
- * Those cross-language links are the reason this page carries no hreflang
- * annotation pointing at the individual city pages: /service-areas/[slug]
- * has no Spanish counterpart and must not claim one. Only the hub pair
- * (/service-areas <-> /es/areas-de-servicio) is registered in
- * content/i18n.ts, and content/i18n.test.ts enforces that.
+ * The duplicate-content caveat behind the city pages is documented in
+ * content/es/service-areas-cities.ts and the report's §11b.
  */
 export default function EsServiceAreasPage() {
   const breadcrumbs = [
@@ -107,7 +98,7 @@ export default function EsServiceAreasPage() {
           {communities.heading}
         </h2>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-ink-500">{communities.intro}</p>
-        <p className="mt-3 max-w-3xl leading-7 text-ink-500">{communities.englishNote}</p>
+        <p className="mt-3 max-w-3xl leading-7 text-ink-500">{communities.spanishNote}</p>
 
         {esServiceAreaGroups.map((group) => (
           <div key={group.county} className="mt-10">
@@ -115,14 +106,8 @@ export default function EsServiceAreasPage() {
             <ul className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {group.communities.map((community) => (
                 <li key={community.href}>
-                  {/* Plain <a hrefLang="en">, not next/link: this leaves the
-                   * Spanish site for an English page. Marking the language
-                   * on the anchor is what keeps the crossing honest — the
-                   * label says it too, so the disclosure survives for a
-                   * reader who never sees the markup. */}
-                  <a
+                  <Link
                     href={community.href}
-                    hrefLang="en"
                     className="group flex min-h-11 flex-col gap-2 rounded-30 bg-white p-6 shadow-comparison transition-transform duration-300 hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-500"
                   >
                     <span className="text-xs font-semibold uppercase tracking-[0.1em] text-teal-500">
@@ -133,7 +118,7 @@ export default function EsServiceAreasPage() {
                       {communities.guideLabel}
                       <ArrowRightIcon className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                     </span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

@@ -27,6 +27,66 @@ import type { NavLink } from "@/content/site";
  * content/i18n.test.ts asserts that, so a nav link can't point at a
  * Spanish URL that no page serves.
  */
+const ES_MENU_TREATMENT_ROOM = {
+  src: "https://align-the-spine.b-cdn.net/images/WhatsApp%20Image%202026-08-17%20at%2017.38.56%20(1).jpeg",
+  alt: "Sala de tratamiento de Align the Spine",
+};
+const ES_MENU_SIGNAGE = {
+  src: "https://align-the-spine.b-cdn.net/images/PHOTO-2026-08-17-17-38-56.jpg",
+  alt: "Rótulo del consultorio de Align the Spine",
+};
+
+/** The eight cities the English nav surfaces directly, in the same order
+ * and with the same two alternating photos. A table rather than eight
+ * literal menu entries so the shared description sentence is written once —
+ * it makes a home-visit eligibility claim, and it must read identically for
+ * every city. */
+const ES_MENU_CITIES: {
+  slug: string;
+  label: string;
+  county: string;
+  image: { src: string; alt: string };
+}[] = [
+  {
+    slug: "lighthouse-point",
+    label: "Lighthouse Point",
+    county: "condado de Broward",
+    image: ES_MENU_TREATMENT_ROOM,
+  },
+  {
+    slug: "fort-lauderdale",
+    label: "Fort Lauderdale",
+    county: "condado de Broward",
+    image: ES_MENU_TREATMENT_ROOM,
+  },
+  { slug: "hollywood", label: "Hollywood", county: "condado de Broward", image: ES_MENU_SIGNAGE },
+  {
+    slug: "pompano-beach",
+    label: "Pompano Beach",
+    county: "condado de Broward",
+    image: ES_MENU_TREATMENT_ROOM,
+  },
+  {
+    slug: "pembroke-pines",
+    label: "Pembroke Pines",
+    county: "condado de Broward",
+    image: ES_MENU_SIGNAGE,
+  },
+  {
+    slug: "west-palm-beach",
+    label: "West Palm Beach",
+    county: "condado de Palm Beach",
+    image: ES_MENU_TREATMENT_ROOM,
+  },
+  {
+    slug: "boca-raton",
+    label: "Boca Raton",
+    county: "condado de Palm Beach",
+    image: ES_MENU_SIGNAGE,
+  },
+  { slug: "miami", label: "Miami", county: "condado de Miami-Dade", image: ES_MENU_TREATMENT_ROOM },
+];
+
 export const esNav: NavLink[] = [
   {
     label: "Servicios",
@@ -157,6 +217,7 @@ export const esNav: NavLink[] = [
     // No blog entry: the blog is CMS-driven and English-only. Adding it
     // would drop a Spanish reader into English on their first click — the
     // Spanish nav stays inside Spanish (content/i18n.test.ts enforces it).
+    // Áreas de Servicio has its own dropdown below, mirroring English.
     menu: [
       {
         label: "Sobre el Dr. Abe",
@@ -188,18 +249,28 @@ export const esNav: NavLink[] = [
           alt: "Pasillo de recepción de Align the Spine",
         },
       },
-      // The English nav gives Service Areas its own dropdown listing
-      // individual cities. The Spanish nav gives it one link instead, on
-      // purpose: there are no Spanish city pages to list, and a menu of
-      // nineteen items that all leave Spanish would be worse on mobile and
-      // dishonest on any screen. The hub itself names every community and
-      // links each city's English guide with a visible "(en inglés)"
-      // label. See content/es/service-areas.ts.
-      {
-        label: "Áreas de servicio",
-        href: "/es/areas-de-servicio",
-        description: "Un consultorio en Deerfield Beach y las comunidades que consideramos.",
+    ],
+  },
+  // Mirrors the English "Service Areas" dropdown (content/site.ts): the
+  // same eight cities in the same order, plus the "view all" entry. Every
+  // destination is a real Spanish page, so unlike an English-linking menu
+  // this one never leaves Spanish — content/i18n.test.ts enforces that.
+  {
+    label: "Áreas de Servicio",
+    href: "/es/areas-de-servicio",
+    menu: [
+      ...ES_MENU_CITIES.map((city) => ({
+        label: city.label,
+        href: `/es/areas-de-servicio/${city.slug}`,
+        description: `Elegibilidad para visita a domicilio en el ${city.county} para casos de accidente de auto y PIP.`,
         icon: PinIcon,
+        image: city.image,
+      })),
+      {
+        label: "Ver las 19 áreas de servicio",
+        href: "/es/areas-de-servicio",
+        description: "La lista completa, más el único consultorio verificado en Deerfield Beach.",
+        icon: WavesIcon,
         image: {
           src: "/figma-exports/exterior-img.png",
           alt: "Exterior del edificio del consultorio en Deerfield Beach",

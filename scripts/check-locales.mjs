@@ -62,6 +62,13 @@ const PAIRS = [
   ["/book-an-appointment", "/es/solicitar-cita"],
   ["/conditions", "/es/condiciones"],
   ["/service-areas", "/es/areas-de-servicio"],
+  // Spot checks across all three counties. The full nineteen-city pairing
+  // is asserted as data by content/es/service-areas.test.ts; these confirm
+  // the annotation actually reaches the wire on a dynamic English route
+  // paired with a statically-generated Spanish one.
+  ["/service-areas/miami", "/es/areas-de-servicio/miami"],
+  ["/service-areas/fort-lauderdale", "/es/areas-de-servicio/fort-lauderdale"],
+  ["/service-areas/boca-raton", "/es/areas-de-servicio/boca-raton"],
   // Draft on both sides (noindex, out of the sitemap) but still a real
   // hreflang pair — the annotation has to be reciprocal regardless of
   // indexing status, so these are checked like any other pair. The sitemap
@@ -85,19 +92,8 @@ const SITEMAP_PAIRS = PAIRS.filter(
   ([, es]) => !es.startsWith("/es/condiciones/") && !es.startsWith("/es/servicios/"),
 );
 
-/** Pages that must NOT advertise a Spanish alternate. The three city
- * pages are spot checks on the deliberate decision NOT to build Spanish
- * city pages (content/es/service-areas.ts): the Spanish hub links them in
- * English, which must never harden into an hreflang claim that a Spanish
- * version exists. */
-const ENGLISH_ONLY = [
-  "/privacy-policy",
-  "/home-visit-chiropractor",
-  "/blog",
-  "/service-areas/miami",
-  "/service-areas/fort-lauderdale",
-  "/service-areas/boca-raton",
-];
+/** Pages that must NOT advertise a Spanish alternate. */
+const ENGLISH_ONLY = ["/privacy-policy", "/home-visit-chiropractor", "/blog"];
 
 const failures = [];
 

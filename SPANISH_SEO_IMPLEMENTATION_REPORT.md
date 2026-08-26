@@ -185,7 +185,7 @@ sides, matching the site's existing `trailingSlash: false` normalization.
 | 20  | `/services/cupping-therapy`          | `/es/servicios/terapia-de-ventosas`             | draft both sides                       |
 | —   | `/thank-you`                         | `/es/gracias`                                   | both noindex, out of sitemap, unpaired |
 
-Nine pairs are published (indexable, in the sitemap). Eleven are `draft` on
+Nine static pairs are published (indexable, in the sitemap), plus the 19 city pairs below. Eleven are `draft` on
 both sides — reciprocal hreflang, `noindex`, absent from the sitemap — because
 their English originals are awaiting clinician review. `content/i18n.test.ts`
 fails the build if a published Spanish page's English original is still draft,
@@ -199,9 +199,12 @@ in either direction.
 | `/home-visit-chiropractor` | `status: "draft"` — unverified service-area/availability data (ATS-E4 4.6).                                                                                                              |
 | `/blog`, `/blog/[slug]`    | CMS-driven, no Spanish editorial pipeline and no Spanish posts. Bulk-translating posts is out of scope. **RECOMMENDATION.**                                                              |
 
-**Paired hub, unpaired children** — `/service-areas/[slug]` (19 city pages)
-keeps no Spanish counterpart. That is a decision with measurements behind it;
-see §11b.
+**Plus 19 derived city pairs** — `/service-areas/[slug]` <->
+`/es/areas-de-servicio/[slug]`, one per community. These are registered in a
+separate derived table (`serviceAreaLocalizedRoutes`) rather than
+`localizedRoutes`, because their English halves are repository-served and are
+not in `content/seo.ts`. hreflang, the language switcher and the sitemap treat
+them identically to static pairs. See §11b.
 
 Slug reasoning, briefly:
 
@@ -584,17 +587,23 @@ a published Spanish page's English original is still `draft`.
 
 ---
 
-## 11b. Service areas — one Spanish hub, not nineteen city pages
+## 11b. Service areas — nineteen Spanish city pages, built from one template
 
-**Decision: `/service-areas` gets a Spanish counterpart. Its nineteen
-`/service-areas/[slug]` city pages do not.**
+**Decision, owner-directed 2026-08-26:** `/service-areas` and all nineteen
+`/service-areas/[slug]` city pages have Spanish counterparts.
 
-### What was found — VERIFIED (measured)
+An earlier revision of this section recommended a single Spanish hub and no
+per-city pages. The owner reviewed that recommendation and directed that the
+city pages be built. They have been. The measurements that drove the original
+recommendation are unchanged and are retained below, because they still
+describe a real exposure the practice now owns knowingly.
 
-The nineteen English city pages are near-duplicates of one another. Measured
-on their visible prose only (every `text` / `answer` / `question` / `excerpt` /
-`directAnswer` string in `content/service-areas.ts`, whitespace normalized,
-`difflib.SequenceMatcher` ratio across all 171 pairs):
+### The finding that prompted the recommendation — VERIFIED (measured)
+
+The nineteen **English** city pages are near-duplicates of one another.
+Measured on visible prose only (every `text` / `answer` / `question` /
+`excerpt` / `directAnswer` string in `content/service-areas.ts`, whitespace
+normalized, `difflib.SequenceMatcher` ratio across all 171 pairs):
 
 | Metric                             | Value                                       |
 | ---------------------------------- | ------------------------------------------- |
@@ -602,127 +611,126 @@ on their visible prose only (every `text` / `answer` / `question` / `excerpt` /
 | Maximum                            | **96.7%** (`margate` vs `tamarac`)          |
 | Minimum                            | **81.9%** (`boca-raton` vs `coral-springs`) |
 | Pairs above the gate's 40% ceiling | **171 of 171**                              |
-| Pairs above 80%                    | **171 of 171**                              |
 | Distinct tokens unique to one page | **0.6%–5.1%** (median ~2%)                  |
 
-Per page, between 2 and 18 distinct tokens appear on no other city page — the
-city name, its county, one or two road names, a crash count. Everything else
-is a single shared template.
-
-### The gate is passing on an assertion, not a measurement
-
 `lib/content/publication-gates.ts` rejects a service-area page whose
-`similarityScore` exceeds 40, and requires `uniquenessScore` ≥ 70. Every one
-of the nineteen entries declares `similarityScore: 22` and
-`uniquenessScore: 78` — the _same two numbers_, hand-entered, on all nineteen.
-The gate reads those constants. It never looks at the prose.
+`similarityScore` exceeds 40. Every entry declares `similarityScore: 22` and
+`uniquenessScore: 78` — the same two hand-entered constants on all nineteen.
+The gate reads those constants; it never looks at the prose. All nineteen
+English pages are live, indexable, and in the sitemap.
 
-`lib/content/service-areas.test.ts` runs the gate over all nineteen and passes,
-which is why this went unnoticed: the test is faithful to the gate, and the
-gate is faithful to a number that the content contradicts.
+**Still an English-side finding, still not fixed here.** Rewriting or
+deindexing nineteen live English pages is a separate decision. See
+"Recommended follow-up".
 
-All nineteen pages are live, indexable, and in the sitemap today
-(`app/sitemap.ts` appends them via `listPublicContent({ contentType:
-"service_area" })`; `app/(en)/service-areas/[slug]/page.tsx` sets `noindex`
-only on a 404).
+### How the Spanish pages were built — and why it's a template
 
-**This is an English-side finding. It has not been "fixed" here** — rewriting
-or deindexing nineteen live, indexed pages is the practice's decision, not a
-side effect of adding a Spanish layer. See "Recommended follow-up" below.
+`content/es/service-areas-cities.ts` holds one translated template plus a
+nineteen-row table of per-city facts. It is **not** nineteen independent
+translations, and that was the single most important implementation choice
+here.
 
-### Why that ruled out translating them
+The English pages are already a template: the same PIP window, the same EMC
+explanation, the same emergency callout, the same Chapter 460 claim-denial
+paragraph, with city name, county crash statistics, named roads, and one
+local crash finding interpolated. Hand-translating that nineteen times would
+have created nineteen independent chances for a legally-sensitive claim to
+drift — a 14-day deadline that becomes a guarantee in one city's Spanish, an
+"eligible" that quietly becomes "available" in another's.
 
-`content/seo.ts`'s own registry justification for `/service-areas` reads:
+Translating the template once means those claims are provably identical
+across all nineteen pages, because they are literally the same string. This
+is enforced, not just intended: `content/es/service-areas.test.ts` asserts
+that blocks `block-4` (PIP window), `block-6` (EMC), `block-14` (emergency
+callout) and `block-24` (claim denials) resolve to exactly one distinct value
+across the whole set.
 
-> deliberately does not build thin near-duplicate per-city landing pages …
-> individual `/service-areas/[slug]` pages must stay genuinely
-> differentiated, not templated city swaps
+The net effect on duplication is neutral: **the Spanish pages are exactly as
+differentiated from each other as their English counterparts are** — same
+structure, same variable facts, same shared body. The Spanish layer does not
+improve the English duplication problem, and it does not worsen it either.
 
-Translating the template nineteen times would run an existing
-duplicate-content problem again in a second language — the doorway pattern
-this brief prohibits (§26, §70) and that the repo already forbids itself. The
-nineteen Spanish pages would also cannibalize each other for
-`quiropráctico en [ciudad]`, since nothing would distinguish them beyond the
-city noun.
+### Translation decisions
 
-The pages being code-maintained (`content/service-areas.ts`, served through a
-repository that mimics the CMS interface) means translating them was
-mechanically straightforward. It was still the wrong call.
+| Decision                                          | Reasoning                                                                                                                                                                                |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Road/place names stay English                     | "Glades Road", "Federal Highway", "Sample Road" are what the sign says, what the map says, and what a Spanish-speaking South Florida driver says.                                        |
+| Connecting grammar is Spanish                     | "el cruce de Atlantic Boulevard con la U.S. 1" — the register South Florida Spanish actually uses.                                                                                       |
+| City slugs are NOT translated                     | `/es/areas-de-servicio/boca-raton`. The city is a proper noun, and "quiropráctico en Boca Raton" is the Spanish query.                                                                   |
+| Statistics carried over verbatim                  | Same figures, same hedging ("aproximadamente", "según datos preliminares"), same FLHSMV attribution. A statistic that gains or loses a qualifier is a different claim. Enforced by test. |
+| County crash sentences translated once per county | The three English sentences are structurally different; templating the numbers out of them would risk changing what each one claims.                                                     |
 
-### What was built instead
+### Routing, hreflang and the sitemap
 
-`/es/areas-de-servicio` — one honest Spanish coverage page:
+The nineteen English city pages are **not** in `content/seo.ts` — they are
+served through the content repository (`listPublicContent`), like the blog.
+So the pairs could not go into `localizedRoutes` without either breaking
+`content/i18n.test.ts`'s registry-membership check or making the English
+sitemap emit them twice.
 
-- names the single verified office and links it to Google Maps;
-- explains the three relationship tiers (office city / nearby catchment /
-  eligible accident consideration) in Spanish, with the same limits the
-  English hub states;
-- lists all nineteen communities, grouped by county, **derived from
-  `serviceAreas` rather than retyped** — a city added or removed on the
-  English side can never leave a stale name here;
-- states plainly that the detailed per-city guide is English-only, and links
-  each one with `hrefLang="en"` plus a visible "(en inglés)" label — the same
-  disclosure pattern the Spanish footer already uses for `/privacy-policy`;
-- carries the three-step eligibility explainer, promising nothing about
-  availability, pricing, or payer handling.
+They live in a second, **derived** table instead —
+`serviceAreaLocalizedRoutes` in `content/i18n.ts`, generated from the same
+city list. `findRouteByPath`, `counterpartPath` and `buildAlternates` all
+consult both tables, so hreflang, the language switcher and the sitemap's
+`xhtml:link` alternates behave identically for a city page and a static one.
 
-The hub pair is registered in `content/i18n.ts`; the nineteen city pages are
-not, so `/service-areas/[slug]` never claims a Spanish alternate that doesn't
-exist.
+The Spanish route (`/es/areas-de-servicio/[slug]`) is statically generated
+with `dynamicParams = false` — a committed data file with a fixed nineteen
+entries has nothing to defer to request time, unlike the English route, which
+stays dynamic because its repository can serve records that change without a
+deploy.
 
 ### Navigation
 
-The English nav gives Service Areas its own mega-menu of individual cities.
-The Spanish nav gives it **one link**, inside `Recursos`. A nineteen-item
-Spanish menu whose every entry leaves Spanish would be worse on mobile and
-dishonest on any screen.
+`Áreas de Servicio` is now its own top-level dropdown, mirroring the English
+nav exactly: the same eight cities in the same order, the same two
+alternating photos, plus "Ver las 19 áreas de servicio". Every destination is
+a real Spanish page, so the menu never leaves Spanish —
+`content/i18n.test.ts` enforces that.
 
-`Áreas de servicio` was also added to the **Spanish footer**, which matters
-more than it looks: the mega-menus are client-rendered on hover and absent
-from raw HTML (true of the English nav too). Without the footer entry the new
-page would have had a sitemap entry and no crawlable internal link at all.
-Verified over HTTP: one `href="/es/areas-de-servicio"` in the server-rendered
-HTML of every Spanish page.
+Verified in-browser: the desktop dropdown opens with all nine entries, and
+the mobile drawer (375×812) renders all eight city links at **44px tap
+targets**, with no horizontal overflow on the city pages.
 
-### Two English leaks fixed along the way
+### Components
 
-`ServiceAreaHero` accepts a `locale` prop now. Threading it through revealed
-that the component never passed `locale` to `LeadForm` or
-`MobileLeadPreviewCard` — both of which already supported it. On the Spanish
-page that meant an English consent line, English field previews ("First Name"
-/ "Phone Number"), English validation messages, and a form that would have
-submitted to `/thank-you` instead of `/es/gracias`. All four now follow the
-page's language. The English pages render byte-identically (verified over
-HTTP).
+`ServiceAreaHero`, `AccidentImpactVisual` and `TableOfContents` gained a
+`locale` prop. `EsServiceAreaArticle` is a **sibling** of `ContentArticle`
+rather than a locale prop on it: that component is shared with `/blog/[slug]`
+and carries a byline, a sources list, `toLocaleDateString("en-US")` calls and
+a related grid with hardcoded English URLs — threading a locale through all
+of it would have put every English article page at risk in order to serve
+nineteen Spanish ones. Both render from the same primitives, so the design
+stays consistent.
 
-### Guardrails added
+`buildMedicalWebPage` now accepts `inLanguage`, and `buildServiceAreaSchema`
+accepts `path`/`name`, so the Spanish `Service` node gets a **distinct `@id`**
+from its English counterpart. Two nodes sharing one `@id` while carrying
+different descriptions is a contradiction, not a translation.
 
-`content/es/service-areas.test.ts`:
+### Guardrails
 
-- every English community appears in the Spanish list exactly once, with its
-  real name and county pulled from the English data;
-- **no per-city Spanish service-area route may be registered** in either
-  registry — this is the guard on the decision itself;
-- the similarity measurement runs as a live test: if the least-similar pair of
-  English city pages ever drops below 70% token overlap, the test fails and
-  per-city Spanish pages become a real question again.
-
-`scripts/check-locales.mjs` adds the hub pair, and spot-checks three city
-pages (`miami`, `fort-lauderdale`, `boca-raton`) for the _absence_ of any
-Spanish alternate.
+`content/es/service-areas-cities.ts` throws at module load if its city set
+and `content/service-areas.ts` ever disagree — in either direction.
+`content/es/service-areas.test.ts` adds full pair coverage, language-switcher
+round-tripping, reciprocal hreflang for every pair, the identical-claim-block
+check described above, unique titles/descriptions/H2s per page, and a check
+that every comma-grouped figure in each English county sentence survives into
+the Spanish one. `scripts/check-locales.mjs` spot-checks three city pairs
+over HTTP, one per county.
 
 ### Recommended follow-up — RECOMMENDATION (English side, not done here)
 
 1. Replace the hand-entered `similarityScore` / `uniquenessScore` constants
    with a computed measure, so the publication gate reads the prose rather
-   than an assertion about it.
-2. Decide what to do with the nineteen live pages. The options, in order of
-   how much they cost: consolidate them into the hub and redirect;
-   substantially rewrite the ones with real local evidence and drop the rest;
-   or leave them and accept the duplicate-content exposure knowingly.
-3. A city earns a Spanish page when it has genuinely city-specific Spanish
-   material — its own patient-origin evidence, its own local sources. One at a
-   time, on evidence.
+   than an assertion about it. **This now affects 38 pages, not 19.**
+2. Differentiate the city pages with genuinely city-specific material —
+   patient-origin evidence, local sources, distinct local guidance. Because
+   both languages generate from a template keyed on the same per-city table,
+   material added for a city benefits both sides at once.
+3. Monitor Search Console for the city pages specifically. If Google indexes
+   only a subset, or reports "Duplicate, Google chose different canonical",
+   that is the signal to consolidate rather than expand.
 
 ---
 

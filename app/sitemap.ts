@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { esRoutes } from "@/content/es/seo";
+import { esServiceAreaPages } from "@/content/es/service-areas-cities";
 import { buildAlternates, type Locale } from "@/content/i18n";
 import { isPublished, routes, type RouteMeta } from "@/content/seo";
 import { siteConfig } from "@/content/site";
@@ -41,6 +42,30 @@ function toSitemapEntry(route: RouteMeta, locale: Locale): MetadataRoute.Sitemap
   };
 }
 
+/** Sitemap entry for a path that isn't in either static registry — the
+ * service-area city pages in both languages. Same alternates treatment
+ * toSitemapEntry() gives registry routes: `buildAlternates` is the single
+ * source of truth, and a path with no counterpart gets no `alternates` key
+ * rather than a useless one-entry set. */
+function dynamicEntry(
+  path: string,
+  locale: Locale,
+  lastModified: string,
+): MetadataRoute.Sitemap[number] {
+  const alternates = buildAlternates(siteConfig.siteUrl, path, locale);
+  return {
+    url: `${siteConfig.siteUrl}${path}`,
+    lastModified,
+    changeFrequency: "monthly",
+    priority: 0.6,
+    ...(alternates ? { alternates: { languages: alternates.languages } } : {}),
+  };
+}
+
+/** The Spanish city pages are a committed data file with no per-entry
+ * timestamp, so they share the date that file was last revised. */
+const ES_AREAS_LAST_MODIFIED = "2026-08-26";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries: MetadataRoute.Sitemap = [
     ...routes.filter(isPublished).map((route) => toSitemapEntry(route, "en")),
@@ -58,12 +83,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
-    ...areas.items.map((item) => ({
-      url: `${siteConfig.siteUrl}/service-areas/${item.slug}`,
-      lastModified: item.updatedAt,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    })),
+    ...areas.items.map((item) => dynamicEntry(`/service-areas/${item.slug}`, "en", item.updatedAt)),
+    // The nineteen Spanish city pages. Sourced from the committed data file
+    // rather than the content repository (which holds English records
+    // only), but emitted through the same helper, so both halves of each
+    // city pair carry reciprocal hreflang exactly as the static routes do.
+    ...esServiceAreaPages.map((page) => dynamicEntry(page.path, "es", ES_AREAS_LAST_MODIFIED)),
   ];
 
   return [...staticEntries, ...dynamicEntries];
