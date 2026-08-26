@@ -19,13 +19,26 @@ describe("robots", () => {
     expect(robots().rules).toEqual({ userAgent: "*", disallow: "/" });
   });
 
-  it("allows crawling except /api/ and /thank-you in production", () => {
+  it("allows crawling except /api/ and the thank-you pages in production", () => {
     vi.stubEnv("VERCEL_ENV", "production");
     expect(robots().rules).toEqual({
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/admin/", "/preview/", "/thank-you"],
+      disallow: ["/api/", "/admin/", "/preview/", "/thank-you", "/es/gracias"],
     });
+  });
+
+  // Guards the single most damaging way this file could break the Spanish
+  // layer: a disallow rule broad enough to swallow /es. Every Spanish page
+  // is primary content, not a duplicate of its English counterpart, so
+  // nothing under /es may be blocked apart from the post-conversion page.
+  it("never blocks the /es subtree in production", () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    const rules = robots().rules as { disallow?: string[] };
+    for (const rule of rules.disallow ?? []) {
+      expect(rule === "/es" || rule === "/es/").toBe(false);
+    }
+    expect(rules.disallow).toContain("/es/gracias");
   });
 
   it("always references the canonical sitemap URL", () => {

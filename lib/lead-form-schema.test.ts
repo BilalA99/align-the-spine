@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { buildLeadFormSchema, type LeadFieldConfig } from "./lead-form-schema";
+import {
+  buildLeadFormSchema,
+  enLeadFormMessages,
+  esLeadFormMessages,
+  type LeadFieldConfig,
+  type LeadFormMessages,
+} from "./lead-form-schema";
 
 function schemaFor(field: LeadFieldConfig) {
   return buildLeadFormSchema([field]);
@@ -110,5 +116,69 @@ describe("zip validation", () => {
   it("rejects malformed ZIP codes", () => {
     expect(schema.safeParse({ zip: "abc" }).success).toBe(false);
     expect(schema.safeParse({ zip: "1234" }).success).toBe(false);
+  });
+});
+
+describe("localized validation messages", () => {
+  /** §Forms: a Spanish form must report its errors in Spanish. The rules
+   * themselves are shared and identical — only the wording is localized —
+   * so a Spanish submission can never pass validation an English one would
+   * fail, and vice versa. */
+  const fields: LeadFieldConfig[] = [
+    { name: "firstName", label: "Nombre" },
+    { name: "phone", label: "Teléfono", type: "tel" },
+    { name: "email", label: "Correo electrónico", type: "email" },
+    { name: "accidentDate", label: "Fecha del accidente", type: "date" },
+  ];
+
+  function messagesFor(values: Record<string, string>, msgs: LeadFormMessages) {
+    const result = buildLeadFormSchema(fields, msgs).safeParse(values);
+    if (result.success) return [];
+    return result.error.issues.map((issue) => issue.message);
+  }
+
+  const empty = { firstName: "", phone: "", email: "", accidentDate: "" };
+
+  it("reports required fields in Spanish", () => {
+    const messages = messagesFor(empty, esLeadFormMessages);
+    expect(messages).toContain("Campo obligatorio");
+    expect(messages).not.toContain("Required");
+  });
+
+  it("reports format errors in Spanish", () => {
+    const messages = messagesFor(
+      { firstName: "Ana", phone: "123", email: "no-arroba", accidentDate: "31/12/2026" },
+      esLeadFormMessages,
+    );
+    expect(messages).toContain("Ingrese un número de teléfono válido de 10 dígitos");
+    expect(messages).toContain("Ingrese un correo electrónico válido");
+    expect(messages).toContain("Ingrese una fecha válida");
+  });
+
+  it("defaults to English so existing call sites are unaffected", () => {
+    expect(messagesFor(empty, enLeadFormMessages)).toContain("Required");
+    // No explicit messages argument at all -> English.
+    const result = buildLeadFormSchema(fields).safeParse(empty);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.map((i) => i.message)).toContain("Required");
+    }
+  });
+
+  it("applies identical rules in both languages", () => {
+    const values = {
+      firstName: "Ana",
+      phone: "9545737192",
+      email: "a@b.com",
+      accidentDate: "2026-01-05",
+    };
+    expect(buildLeadFormSchema(fields, esLeadFormMessages).safeParse(values).success).toBe(
+      buildLeadFormSchema(fields, enLeadFormMessages).safeParse(values).success,
+    );
+
+    const bad = { firstName: "", phone: "1", email: "x", accidentDate: "nope" };
+    expect(buildLeadFormSchema(fields, esLeadFormMessages).safeParse(bad).success).toBe(
+      buildLeadFormSchema(fields, enLeadFormMessages).safeParse(bad).success,
+    );
   });
 });

@@ -11,7 +11,62 @@ describe("buildMetadata", () => {
       description: "Description",
       path: "/services",
     });
-    expect(metadata.alternates).toEqual({ canonical: `${siteConfig.siteUrl}/services` });
+    expect(metadata.alternates?.canonical).toBe(`${siteConfig.siteUrl}/services`);
+  });
+
+  // /services has a Spanish counterpart registered in content/i18n.ts, so
+  // it gets reciprocal hreflang alongside its self-canonical.
+  it("adds reciprocal hreflang for a route that has a counterpart in the other language", () => {
+    const metadata = buildMetadata({
+      title: "Title",
+      description: "Description",
+      path: "/services",
+    });
+    expect(metadata.alternates?.languages).toEqual({
+      "en-US": `${siteConfig.siteUrl}/services`,
+      "es-US": `${siteConfig.siteUrl}/es/servicios`,
+      "x-default": `${siteConfig.siteUrl}/services`,
+    });
+  });
+
+  // A Spanish page must self-canonicalize to its own /es URL — canonicalizing
+  // it to the English page would collapse a legitimate translated primary
+  // page out of the index.
+  it("self-canonicalizes a Spanish page and points x-default at the English one", () => {
+    const metadata = buildMetadata({
+      title: "Título",
+      description: "Descripción",
+      path: "/es/servicios",
+      locale: "es",
+    });
+    expect(metadata.alternates?.canonical).toBe(`${siteConfig.siteUrl}/es/servicios`);
+    expect(metadata.alternates?.languages).toEqual({
+      "en-US": `${siteConfig.siteUrl}/services`,
+      "es-US": `${siteConfig.siteUrl}/es/servicios`,
+      "x-default": `${siteConfig.siteUrl}/services`,
+    });
+  });
+
+  // /privacy-policy is English-only (es: null in content/i18n.ts). A
+  // one-entry hreflang set annotates nothing, so none is emitted.
+  it("omits hreflang entirely for a route with no counterpart", () => {
+    const metadata = buildMetadata({
+      title: "Title",
+      description: "Description",
+      path: "/privacy-policy",
+    });
+    expect(metadata.alternates?.canonical).toBe(`${siteConfig.siteUrl}/privacy-policy`);
+    expect(metadata.alternates?.languages).toBeUndefined();
+  });
+
+  it("sets og:locale from the page's locale", () => {
+    expect(
+      buildMetadata({ title: "T", description: "D", path: "/services" }).openGraph?.locale,
+    ).toBe("en_US");
+    expect(
+      buildMetadata({ title: "T", description: "D", path: "/es/servicios", locale: "es" }).openGraph
+        ?.locale,
+    ).toBe("es_US");
   });
 
   it("wraps title in { absolute } so the root layout's title.template can't double-suffix it", () => {

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { buildAlternates, DEFAULT_LOCALE, OG_LOCALE, type Locale } from "@/content/i18n";
 import { isPublished, type RouteMeta } from "@/content/seo";
 import { isProduction, siteConfig } from "@/content/site";
 
@@ -13,6 +14,9 @@ export interface BuildMetadataInput {
    * OpenGraph/Twitter degrade gracefully to a text-only card. */
   image?: { src: string; alt: string };
   robots?: Metadata["robots"];
+  /** Which language this page is rendered in. Defaults to English so every
+   * existing English call site keeps working untouched. */
+  locale?: Locale;
 }
 
 /** Builds the title/description/canonical/OpenGraph/Twitter metadata shared by every
@@ -30,22 +34,40 @@ export function buildMetadata({
   path,
   image,
   robots,
+  locale = DEFAULT_LOCALE,
 }: BuildMetadataInput): Metadata {
   const url = `${siteConfig.siteUrl}${path}`;
   const effectiveRobots: Metadata["robots"] = isProduction()
     ? robots
     : { index: false, follow: false };
 
+  // Every page self-canonicalizes — a Spanish page must never canonicalize
+  // to its English counterpart (that would collapse two legitimate primary
+  // pages into one and discard the Spanish version from the index). The two
+  // are connected by hreflang instead, below.
+  //
+  // `alternates.languages` is emitted only for routes that actually have a
+  // counterpart in the other language (buildAlternates returns null
+  // otherwise), so English-only pages like /privacy-policy are untouched by
+  // this and keep emitting a bare canonical exactly as before. app/sitemap.ts
+  // reads the same buildAlternates() for its per-URL <xhtml:link> alternates,
+  // so the HTML annotations and the sitemap annotations cannot disagree.
+  const alternates = buildAlternates(siteConfig.siteUrl, path, locale);
+
   return {
     title: { absolute: title },
     description,
-    alternates: { canonical: url },
+    alternates: {
+      canonical: url,
+      ...(alternates ? { languages: alternates.languages } : {}),
+    },
     openGraph: {
       title,
       description,
       url,
       siteName: siteConfig.business.name,
       type: "website",
+      locale: OG_LOCALE[locale],
       images: image ? [{ url: image.src, alt: image.alt }] : undefined,
     },
     twitter: {
@@ -71,5 +93,23 @@ export function buildRouteMetadata(route: RouteMeta): Metadata {
     path: route.path,
     image: route.image,
     robots: isPublished(route) ? undefined : { index: false, follow: false },
+  });
+}
+
+/** Spanish counterpart of buildRouteMetadata() — the only thing a page
+ * under app/(es)/ should call. Passing `locale: "es"` is what switches
+ * `og:locale` to es_US and orients buildAlternates()'s reciprocal hreflang
+ * lookup around the Spanish path, so the Spanish page self-canonicalizes to
+ * its own /es URL and points at the English one as the alternate (never the
+ * other way round). Draft-gating works identically to English: a Spanish
+ * route that isn't `status: "published"` is served noindex. */
+export function buildEsRouteMetadata(route: RouteMeta): Metadata {
+  return buildMetadata({
+    title: route.title,
+    description: route.description,
+    path: route.path,
+    image: route.image,
+    robots: isPublished(route) ? undefined : { index: false, follow: false },
+    locale: "es",
   });
 }

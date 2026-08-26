@@ -19,6 +19,10 @@ export interface DoctorProfileProps {
    * variant is "long" — reserved for ATS-091's History + HOW HE PRACTICES
    * cards. */
   extended?: ReactNode;
+  /** The "Meet Dr. Abe" cross-link rendered under the CTA on the "short"
+   * variant. Defaults to the English /about page; the Spanish pages pass
+   * their own so a Spanish reader isn't dropped into English. */
+  doctorLink?: { href: string; label: string };
 }
 
 /** "THE DOCTOR BEHIND YOUR CARE" block per condition-page-spec §B6: portrait
@@ -36,7 +40,12 @@ export interface DoctorProfileProps {
  * `extended` renders as a sibling of this component's own <Section>, not
  * nested inside it — the "long" variant's History band has its own
  * full-bleed navy background, distinct from this block's white one. */
-export function DoctorProfile({ variant, content, extended }: DoctorProfileProps) {
+export function DoctorProfile({
+  variant,
+  content,
+  extended,
+  doctorLink = { href: "/about", label: "Meet Dr. Abe" },
+}: DoctorProfileProps) {
   const { eyebrow, name, bio, cta, rating, portrait } = content;
   return (
     <>
@@ -90,8 +99,11 @@ export function DoctorProfile({ variant, content, extended }: DoctorProfileProps
                * itself (the one page that passes it) — every "short" usage
                * elsewhere is a real cross-page link, never a self-link. */}
               {variant === "short" && (
-                <Link href="/about" className="font-sans text-body-lg text-navy-900 underline">
-                  Meet Dr. Abe
+                <Link
+                  href={doctorLink.href}
+                  className="font-sans text-body-lg text-navy-900 underline"
+                >
+                  {doctorLink.label}
                 </Link>
               )}
             </div>

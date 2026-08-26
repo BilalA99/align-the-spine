@@ -405,3 +405,50 @@ export function buildFAQPage(items: FAQ[]): FAQPageSchema {
     })),
   };
 }
+
+export interface WebPageSchema {
+  "@context": "https://schema.org";
+  "@type": "WebPage";
+  "@id": string;
+  url: string;
+  name: string;
+  description: string;
+  inLanguage: string;
+  isPartOf: { "@id": string };
+  about: { "@id": string };
+}
+
+/** WebPage entity for a localized page.
+ *
+ * Added with the Spanish layer, and rendered only on the /es pages. Its
+ * whole job is to state two things a Spanish page can't otherwise assert in
+ * structured data: `inLanguage` (this page is es-US, not the site's default
+ * en-US), and `about` -> the one MedicalBusiness entity, so a consumer sees
+ * the Spanish pages as the same practice rather than a second, same-named
+ * business. `name`/`description` are the page's own localized title and
+ * description — the same strings the <title>/<meta description> carry, per
+ * the rule that structured data must match visible/declared content.
+ *
+ * Deliberately not added to the English pages: they'd inherit the same
+ * WebSite/Organization graph anyway, and retrofitting a new entity type
+ * across already-indexed English URLs is an unrelated change with its own
+ * risk. Nothing here duplicates a type the English pages already emit. */
+export function buildWebPage(input: {
+  path: string;
+  name: string;
+  description: string;
+  inLanguage: string;
+}): WebPageSchema {
+  const url = `${siteConfig.siteUrl}${input.path}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: input.name,
+    description: input.description,
+    inLanguage: input.inLanguage,
+    isPartOf: { "@id": WEBSITE_ID },
+    about: { "@id": MEDICAL_BUSINESS_ID },
+  };
+}

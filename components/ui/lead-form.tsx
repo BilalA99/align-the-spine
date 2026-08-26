@@ -11,11 +11,14 @@ import { Input } from "@/components/ui/input";
 import { LeadConsent } from "@/components/ui/lead-consent";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 import { siteConfig } from "@/content/site";
 import { trackLeadSuccess } from "@/lib/analytics/lead-events";
 import { cn } from "@/lib/cn";
 import {
   buildLeadFormSchema,
+  enLeadFormMessages,
+  esLeadFormMessages,
   type LeadFieldConfig,
   type LeadFieldType,
 } from "@/lib/lead-form-schema";
@@ -72,8 +75,37 @@ export interface LeadFormProps {
    * isn't the semantic one, so the DOM never carries two identical <h2>s at
    * once — see hero-solid-panel.tsx and service-area-hero.tsx. */
   headingAs?: "h2" | "p";
+  /** Language this form renders in. Drives the zod validation messages, the
+   * consent line, the generic submit-failure message, and which thank-you
+   * page a successful submission lands on. Defaults to English so every
+   * existing English call site is unaffected. */
+  locale?: Locale;
+  /** Where a successful default submission redirects. Defaults to the
+   * English /thank-you; the Spanish forms send visitors to /es/gracias so
+   * the conversion path doesn't switch language at the last step. */
+  successHref?: string;
   className?: string;
 }
+
+/** Strings the form renders itself, as opposed to the ones its caller
+ * supplies (heading, field labels, submit label). */
+const FORM_COPY: Record<
+  Locale,
+  { submitError: string; success: string; honeypotLabel: string; successHref: string }
+> = {
+  en: {
+    submitError: "Something went wrong. Please try again.",
+    success: "Thanks — we'll be in touch shortly.",
+    honeypotLabel: "Website",
+    successHref: "/thank-you",
+  },
+  es: {
+    submitError: "Algo salió mal. Vuelva a intentarlo.",
+    success: "Gracias — nos comunicaremos con usted en breve.",
+    honeypotLabel: "Sitio web",
+    successHref: "/es/gracias",
+  },
+};
 
 function inputType(type: LeadFieldType) {
   if (type === "tel" || type === "email" || type === "date") return type;
@@ -189,7 +221,7 @@ export function LeadForm({
   fields,
   submitLabel,
   onSubmit,
-  successMessage = "Thanks — we'll be in touch shortly.",
+  successMessage,
   fieldVariant = "dark",
   fieldOutline = false,
   labelCase = "upper",
@@ -197,15 +229,23 @@ export function LeadForm({
   headingClassName,
   consentClassName,
   headingAs = "h2",
+  locale = DEFAULT_LOCALE,
+  successHref,
   className,
 }: LeadFormProps) {
   const router = useRouter();
+  const copy = FORM_COPY[locale];
+  const validationMessages = locale === "es" ? esLeadFormMessages : enLeadFormMessages;
+  const resolvedSuccessMessage = successMessage ?? copy.success;
+  const resolvedSuccessHref = successHref ?? copy.successHref;
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting, touchedFields, isSubmitted },
   } = useForm<LeadFormValues>({
-    resolver: zodResolver(buildLeadFormSchema(fields)) as Resolver<LeadFormValues>,
+    resolver: zodResolver(
+      buildLeadFormSchema(fields, validationMessages),
+    ) as Resolver<LeadFormValues>,
     defaultValues: Object.fromEntries(fields.map((field) => [field.name, ""])),
   });
   const [submitted, setSubmitted] = useState(false);
@@ -260,9 +300,9 @@ export function LeadForm({
         setSubmitted(true);
         return;
       }
-      router.push("/thank-you");
+      router.push(resolvedSuccessHref);
     } catch {
-      setSubmitError("Something went wrong. Please try again.");
+      setSubmitError(copy.submitError);
     }
   };
 
@@ -293,7 +333,7 @@ export function LeadForm({
       </HeadingTag>
 
       <div aria-hidden="true" className="absolute h-0 w-0 overflow-hidden">
-        <label htmlFor="lead-form-website">Website</label>
+        <label htmlFor="lead-form-website">{copy.honeypotLabel}</label>
         <input id="lead-form-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
@@ -308,7 +348,11 @@ export function LeadForm({
         {submitLabel}
       </Button>
 
-      <LeadConsent dark={fieldVariant === "dark"} className={cn("col-span-2", consentClassName)} />
+      <LeadConsent
+        dark={fieldVariant === "dark"}
+        locale={locale}
+        className={cn("col-span-2", consentClassName)}
+      />
 
       {submitError && (
         <p role="alert" className="col-span-2 font-sans text-field text-error">
@@ -324,7 +368,7 @@ export function LeadForm({
             fieldVariant === "dark" ? "text-white" : "text-navy-900",
           )}
         >
-          {successMessage}
+          {resolvedSuccessMessage}
         </p>
       )}
     </form>

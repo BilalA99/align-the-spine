@@ -9,11 +9,14 @@ import { Button } from "@/components/ui/button";
 import { errorId } from "@/components/ui/field";
 import { LeadConsent } from "@/components/ui/lead-consent";
 import type { LeadFormValues } from "@/components/ui/lead-form";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 import { siteConfig } from "@/content/site";
 import { trackLeadSuccess } from "@/lib/analytics/lead-events";
 import { cn } from "@/lib/cn";
 import {
   buildLeadFormSchema,
+  enLeadFormMessages,
+  esLeadFormMessages,
   type LeadFieldConfig,
   type LeadFieldType,
 } from "@/lib/lead-form-schema";
@@ -26,8 +29,24 @@ export interface UnderlineFormProps {
   fields: LeadFieldConfig[];
   submitLabel: string;
   successMessage?: string;
+  /** Language for validation messages, the consent line, the failure
+   * notice and the post-submit redirect. Defaults to English. */
+  locale?: Locale;
   className?: string;
 }
+
+const FORM_COPY: Record<Locale, { submitError: string; success: string; successHref: string }> = {
+  en: {
+    submitError: "Something went wrong. Please try again.",
+    success: "Thanks — we'll be in touch shortly.",
+    successHref: "/thank-you",
+  },
+  es: {
+    submitError: "Algo salió mal. Vuelva a intentarlo.",
+    success: "Gracias — nos comunicaremos con usted en breve.",
+    successHref: "/es/gracias",
+  },
+};
 
 function inputType(type: LeadFieldType) {
   if (type === "tel" || type === "email") return type;
@@ -46,17 +65,23 @@ export function UnderlineForm({
   variant = "contact",
   fields,
   submitLabel,
-  successMessage = "Thanks — we'll be in touch shortly.",
+  successMessage,
+  locale = DEFAULT_LOCALE,
   className,
 }: UnderlineFormProps) {
   const router = useRouter();
+  const copy = FORM_COPY[locale];
+  const validationMessages = locale === "es" ? esLeadFormMessages : enLeadFormMessages;
+  const resolvedSuccessMessage = successMessage ?? copy.success;
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<LeadFormValues>({
-    resolver: zodResolver(buildLeadFormSchema(fields)) as Resolver<LeadFormValues>,
+    resolver: zodResolver(
+      buildLeadFormSchema(fields, validationMessages),
+    ) as Resolver<LeadFormValues>,
     defaultValues: Object.fromEntries(fields.map((field) => [field.name, ""])),
   });
   const [submitted, setSubmitted] = useState(false);
@@ -88,9 +113,9 @@ export function UnderlineForm({
       // Conversion == a durably-stored lead: only fire on the server-confirmed ID.
       if (confirmedId) trackLeadSuccess(confirmedId);
       setSubmissionId(null);
-      router.push("/thank-you");
+      router.push(copy.successHref);
     } catch {
-      setSubmitError("Something went wrong. Please try again.");
+      setSubmitError(copy.submitError);
     }
   };
 
@@ -165,7 +190,7 @@ export function UnderlineForm({
         </Button>
       </div>
 
-      <LeadConsent className="sm:col-span-2" />
+      <LeadConsent locale={locale} className="sm:col-span-2" />
 
       {submitError && (
         <p role="alert" className="font-sans text-field-error text-error sm:col-span-2">
@@ -175,7 +200,7 @@ export function UnderlineForm({
 
       {submitted && (
         <p role="status" className="font-sans text-field text-navy-900 sm:col-span-2">
-          {successMessage}
+          {resolvedSuccessMessage}
         </p>
       )}
     </form>

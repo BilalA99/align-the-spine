@@ -18,8 +18,11 @@ const appDir = join(__dirname);
  * nothing there. Not in content/seo.ts's registry either, for the same
  * reason (see that file's own comment). /admin/* is internal, auth-gated
  * tooling, not part of the site's public SEO structure — LINK-02 is about
- * crawlable pages, and admin routes are neither crawlable nor meant to be. */
-const EXCLUDED_ROUTES = new Set(["", "/thank-you"]);
+ * crawlable pages, and admin routes are neither crawlable nor meant to be.
+ * /es and /es/gracias are the Spanish home page and the Spanish
+ * post-conversion page — excluded for exactly the same reasons as their
+ * English counterparts. */
+const EXCLUDED_ROUTES = new Set(["", "/thank-you", "/es", "/es/gracias"]);
 const EXCLUDED_PREFIXES = ["/admin"];
 
 /** /blog/[slug] genuinely renders visible breadcrumbs, just through nested
@@ -36,7 +39,14 @@ function collectPageFiles(dir: string, routePath = ""): { route: string; file: s
     const fullPath = join(dir, entry.name);
     if (entry.isDirectory()) {
       if (entry.name === "api") continue; // route handlers, not pages
-      found.push(...collectPageFiles(fullPath, `${routePath}/${entry.name}`));
+      // Route groups — a directory wrapped in parentheses, e.g. `(en)` /
+      // `(es)` — are organizational only and contribute nothing to the URL.
+      // The app uses them to give each locale its own root layout (and so
+      // its own `<html lang>`) without changing a single URL; see
+      // app/(en)/layout.tsx.
+      const isRouteGroup = entry.name.startsWith("(") && entry.name.endsWith(")");
+      const nextPath = isRouteGroup ? routePath : `${routePath}/${entry.name}`;
+      found.push(...collectPageFiles(fullPath, nextPath));
     } else if (entry.name === "page.tsx") {
       found.push({ route: routePath, file: fullPath });
     }

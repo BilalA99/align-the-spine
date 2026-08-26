@@ -15,8 +15,8 @@ describe("static ATS tracking contract", () => {
   });
 
   it("the thank-you page does not produce a conversion", () => {
-    expect(read("app/thank-you/page.tsx")).not.toContain("ats_lead_success");
-    expect(read("app/thank-you/page.tsx")).not.toContain("trackLeadSuccess");
+    expect(read("app/(en)/thank-you/page.tsx")).not.toContain("ats_lead_success");
+    expect(read("app/(en)/thank-you/page.tsx")).not.toContain("trackLeadSuccess");
   });
 
   it("Enhanced Conversions infrastructure remains isolated from ATS forms", () => {

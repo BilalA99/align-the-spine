@@ -4,12 +4,31 @@ import { useEffect, useState } from "react";
 
 import { TopStatsBar } from "@/components/layout/top-stats-bar";
 import { StarIcon } from "@/components/ui/icons/star";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 import type { Testimonial } from "@/content/testimonials";
 import { cn } from "@/lib/cn";
 import { highlightReviewKeywords } from "@/lib/highlight-review-keywords";
 
 export interface HeroReviewsCarouselProps {
   testimonials: Testimonial[];
+  /** Language for the embedded TopStatsBar's labels. Without this the
+   * Spanish pages rendered the English stat row ("Reviews / Visits / When
+   * it applies / ...") under Spanish headings. */
+  locale?: Locale;
+  /** Language of the review text itself.
+   *
+   * Patient reviews are published verbatim, in whatever language the patient
+   * wrote them — they are never translated (a rewritten testimonial presented
+   * as someone's own words is a fabricated one). Today every review in
+   * content/testimonials.ts is English, so on a Spanish page these quotes are
+   * a foreign-language passage inside an `es-US` document. Marking them keeps
+   * a screen reader from reading English words with Spanish pronunciation
+   * (WCAG 3.1.2, Language of Parts) and tells a crawler the passage is quoted
+   * source material rather than untranslated page copy.
+   *
+   * Undefined on English pages: the quotes match the document language there,
+   * and a redundant `lang` would just be noise. */
+  quoteLang?: string;
 }
 
 const AUTO_ADVANCE_MS = 7000;
@@ -22,7 +41,11 @@ const AUTO_ADVANCE_MS = 7000;
  * that stat row visible. Quote/author slide via a translateX track (current
  * exits left, next enters from the right) — pagination dots sit outside the
  * sliding viewport so they never move. */
-export function HeroReviewsCarousel({ testimonials }: HeroReviewsCarouselProps) {
+export function HeroReviewsCarousel({
+  testimonials,
+  locale = DEFAULT_LOCALE,
+  quoteLang,
+}: HeroReviewsCarouselProps) {
   const [index, setIndex] = useState(0);
   // WCAG 2.2.2 (Pause, Stop, Hide): auto-advance stops while a pointer or
   // keyboard focus is anywhere in the carousel, and never starts at all for
@@ -77,7 +100,7 @@ export function HeroReviewsCarousel({ testimonials }: HeroReviewsCarouselProps) 
                           <StarIcon key={s} className="h-4 w-4 text-yellow-400" />
                         ))}
                       </span>
-                      <p className="min-w-0 font-sans text-card-body text-ink-900">
+                      <p className="min-w-0 font-sans text-card-body text-ink-900" lang={quoteLang}>
                         &ldquo;{highlightReviewKeywords(testimonial.quote)}&rdquo;
                       </p>
                       <span className="shrink-0 font-sans text-stat-label uppercase text-mute-400 sm:ml-auto">
@@ -114,7 +137,7 @@ export function HeroReviewsCarousel({ testimonials }: HeroReviewsCarouselProps) 
             </div>
           )}
 
-          <TopStatsBar className="pt-6" />
+          <TopStatsBar locale={locale} className="pt-6" />
         </div>
       </div>
     </div>

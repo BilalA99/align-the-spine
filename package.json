@@ -12,7 +12,8 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "test": "vitest run",
-    "verify:canonicals": "node scripts/check-canonicals.mjs"
+    "verify:canonicals": "node scripts/check-canonicals.mjs",
+    "verify:locales": "node scripts/check-locales.mjs"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

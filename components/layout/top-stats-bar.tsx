@@ -1,7 +1,9 @@
-import { getVerifiedStats } from "@/content/site";
+import { getLocalizedStats } from "@/content/chrome";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 
 interface TopStatsBarProps {
   className?: string;
+  locale?: Locale;
 }
 
 /** Stat row built from getVerifiedStats() (content/site.ts) — each claim is
@@ -11,8 +13,11 @@ interface TopStatsBarProps {
  * approved values). Renders nothing at all once every claim is unverified,
  * and only the individually-verified stats otherwise — never a placeholder
  * or an empty grid cell for the rest. */
-export function TopStatsBar({ className }: TopStatsBarProps) {
-  const stats = getVerifiedStats();
+export function TopStatsBar({ className, locale = DEFAULT_LOCALE }: TopStatsBarProps) {
+  // getLocalizedStats() translates the labels of whatever getVerifiedStats()
+  // already approved — it never adds or broadens a claim, so the per-claim
+  // verification gate described above still governs both languages.
+  const stats = getLocalizedStats(locale);
 
   if (stats.length === 0) return null;
 

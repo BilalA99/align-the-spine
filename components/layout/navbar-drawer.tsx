@@ -7,8 +7,10 @@ import { createPortal } from "react-dom";
 
 import { ChevronDownIcon } from "@/components/ui/icons/chevron-down";
 import { CloseIcon } from "@/components/ui/icons/close";
-import { siteConfig } from "@/content/site";
+import { getBookingCta, getChromeLabels, getNav } from "@/content/chrome";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 
+import { LanguageSwitcher } from "./language-switcher";
 import { useFocusTrap } from "./use-focus-trap";
 
 const noopSubscribe = () => () => {};
@@ -28,8 +30,19 @@ function useHasMounted() {
   );
 }
 
-export function NavbarDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+export function NavbarDrawer({
+  open,
+  onClose,
+  locale = DEFAULT_LOCALE,
+}: {
+  open: boolean;
+  onClose: () => void;
+  locale?: Locale;
+}) {
   const containerRef = useFocusTrap(open);
+  const nav = getNav(locale);
+  const bookingCta = getBookingCta(locale);
+  const labels = getChromeLabels(locale);
   // Which nav-item labels have their submenu accordion expanded — a Set
   // rather than a single value since there's no reason opening one should
   // close another in this short a list.
@@ -82,7 +95,7 @@ export function NavbarDrawer({ open, onClose }: { open: boolean; onClose: () => 
         ref={containerRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Site navigation"
+        aria-label={locale === "es" ? "Navegación del sitio" : "Site navigation"}
         // A plain shell now, not itself the scroll/padding container — with
         // 19 service areas the nav list can genuinely be taller than the
         // screen, and this used to be one big `flex-col overflow-y-auto`
@@ -102,7 +115,7 @@ export function NavbarDrawer({ open, onClose }: { open: boolean; onClose: () => 
         <div className="flex shrink-0 justify-end p-8 pb-4">
           <button
             type="button"
-            aria-label="Close menu"
+            aria-label={labels.closeMenu}
             onClick={onClose}
             className="flex h-11 w-11 items-center justify-center text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
@@ -111,7 +124,7 @@ export function NavbarDrawer({ open, onClose }: { open: boolean; onClose: () => 
         </div>
 
         <ul className="flex flex-1 flex-col gap-6 overflow-y-auto px-8 pb-8">
-          {siteConfig.nav.map((link) => {
+          {nav.map((link) => {
             if (!link.menu) {
               return (
                 <li key={link.label}>
@@ -179,13 +192,20 @@ export function NavbarDrawer({ open, onClose }: { open: boolean; onClose: () => 
           })}
         </ul>
 
+        {/* Mobile language switch. Pinned above the CTA and inside the focus
+         * trap so it's keyboard-reachable, and it renders nothing at all on
+         * a page with no counterpart in the other language. */}
+        <div className="shrink-0 border-t border-white/10 px-8 pt-4 text-white">
+          <LanguageSwitcher locale={locale} variant="block" />
+        </div>
+
         <div className="shrink-0 border-t border-white/10 p-8 pt-6">
           <Link
-            href={siteConfig.bookingCta.href}
+            href={bookingCta.href}
             onClick={onClose}
             className="flex h-[52px] w-full items-center justify-center rounded-full bg-white px-6 text-button text-navy-900 transition-colors duration-300 hover:bg-teal-500 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy-900"
           >
-            {siteConfig.bookingCta.label}
+            {bookingCta.label}
           </Link>
         </div>
       </div>
