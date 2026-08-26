@@ -74,7 +74,7 @@ export default function EsBookingPage() {
           footerNote: esBookingPage.hero.footerNote,
         }}
       />
-      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" quoteLang="en-US" />
+      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" />
 
       <Section spacing="lg">
         <Container className="flex flex-col gap-10">

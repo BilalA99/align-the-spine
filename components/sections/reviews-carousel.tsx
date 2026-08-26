@@ -7,27 +7,19 @@ import { ArrowButton } from "@/components/ui/arrow-button";
 import { GoogleIcon } from "@/components/ui/icons/google";
 import { QuoteIcon } from "@/components/ui/icons/quote";
 import { Rating } from "@/components/ui/rating";
-import type { Testimonial } from "@/content/testimonials";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
+import { resolveTestimonialQuote, type Testimonial } from "@/content/testimonials";
 import { cn } from "@/lib/cn";
 import { highlightReviewKeywords } from "@/lib/highlight-review-keywords";
 
 export interface ReviewsCarouselProps {
   reviews: Testimonial[];
   className?: string;
-  /** Language of the review text itself.
-   *
-   * Patient reviews are published verbatim, in whatever language the patient
-   * wrote them — they are never translated (a rewritten testimonial presented
-   * as someone's own words is a fabricated one). Today every review in
-   * content/testimonials.ts is English, so on a Spanish page these quotes are
-   * a foreign-language passage inside an `es-US` document. Marking them keeps
-   * a screen reader from reading English words with Spanish pronunciation
-   * (WCAG 3.1.2, Language of Parts) and tells a crawler the passage is quoted
-   * source material rather than untranslated page copy.
-   *
-   * Undefined on English pages: the quotes match the document language there,
-   * and a redundant `lang` would just be noise. */
-  quoteLang?: string;
+  /** Language this carousel renders in. On "es" each review shows its
+   * Spanish translation (content/testimonials.ts's `quoteEs`) marked
+   * `lang="es-US"`, with a visible "traducidas del inglés" note — falling
+   * back to the untouched English original where no translation exists. */
+  locale?: Locale;
 }
 
 const AUTO_ADVANCE_MS = 6500;
@@ -58,17 +50,18 @@ function ReviewCard({
   reduceMotion,
   draggable,
   onDragEnd,
-  quoteLang,
+  locale,
 }: {
   review: Testimonial;
   offset: number;
   reduceMotion: boolean;
   draggable: boolean;
   onDragEnd: (offsetX: number) => void;
-  quoteLang?: string;
+  locale: Locale;
 }) {
   const isCenter = offset === 0;
   const isAdjacent = Math.abs(offset) === 1;
+  const quote = resolveTestimonialQuote(review, locale);
 
   return (
     <motion.div
@@ -101,9 +94,9 @@ function ReviewCard({
       <Rating value={5} filledClassName="text-yellow-400" emptyClassName="text-white/20" />
       <p
         className="line-clamp-7 max-w-lg font-display text-xl !leading-snug text-white sm:text-2xl"
-        lang={quoteLang}
+        lang={quote.lang}
       >
-        &ldquo;{highlightReviewKeywords(review.quote)}&rdquo;
+        &ldquo;{highlightReviewKeywords(quote.text)}&rdquo;
       </p>
       <span className="inline-flex items-center gap-2 font-sans text-stat-label uppercase tracking-wide text-mute-300">
         {review.author}
@@ -121,7 +114,11 @@ function ReviewCard({
  * cards on a track rather than a flat slideshow. Same pause-on-hover/focus
  * and prefers-reduced-motion discipline as HeroReviewsCarousel (WCAG
  * 2.2.2). No photos/dates per content brief — quote + author only. */
-export function ReviewsCarousel({ reviews, className, quoteLang }: ReviewsCarouselProps) {
+export function ReviewsCarousel({
+  reviews,
+  className,
+  locale = DEFAULT_LOCALE,
+}: ReviewsCarouselProps) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const reduceMotion = Boolean(useReducedMotion());
@@ -167,7 +164,7 @@ export function ReviewsCarousel({ reviews, className, quoteLang }: ReviewsCarous
               if (offsetX < -SWIPE_THRESHOLD_PX) goTo(index + 1);
               else if (offsetX > SWIPE_THRESHOLD_PX) goTo(index - 1);
             }}
-            quoteLang={quoteLang}
+            locale={locale}
           />
         ))}
       </div>

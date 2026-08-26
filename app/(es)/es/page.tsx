@@ -53,10 +53,10 @@ export const metadata: Metadata = buildEsRouteMetadata(route);
  * /es/quiropractico-accidentes-de-auto carries that intent.
  *
  * PatientReviews/HeroReviewsCarousel render the same real reviews the
- * English page does, in the language each patient wrote them. They are
- * deliberately NOT translated: a rewritten review presented as the
- * patient's own words isn't their review any more. /es/resenas carries a
- * visible note explaining that to Spanish readers.
+ * English page does, shown in Spanish via content/testimonials.ts's
+ * `quoteEs` translations. Each block carries a visible "traducidas del
+ * inglés" note, because a translation is not the reviewer's own wording and
+ * the reader has to be told which they're reading.
  */
 export default function EsHome() {
   return (
@@ -100,7 +100,7 @@ export default function EsHome() {
           footerNote: esHomeHero.form.footerNote,
         }}
       />
-      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" quoteLang="en-US" />
+      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" />
       <ServicesSection
         items={esServices}
         heading={esHomeSections.servicesHeading}
@@ -133,7 +133,7 @@ export default function EsHome() {
       <PatientReviews
         featured={homeFeaturedTestimonial}
         reviews={homeReviews.slice(1, 4)}
-        quoteLang="en-US"
+        locale="es"
         reviewsLink={{ href: "/es/resenas", label: "Ver todas las reseñas" }}
       />
       <LocationIntro locale="es" />

@@ -81,7 +81,7 @@ export default function EsDoctorPage() {
           phone: `Llamar al ${siteConfig.business.phone}`,
         }}
       />
-      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" quoteLang="en-US" />
+      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" />
       <DoctorProfile
         variant="long"
         content={esDoctorProfileContent}

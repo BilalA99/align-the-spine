@@ -76,7 +76,7 @@ export default function EsServicesPage() {
           footerNote: esServicesPage.hero.form.footerNote,
         }}
       />
-      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" quoteLang="en-US" />
+      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" />
       <ServiceCatalog
         items={esServicesGrid}
         eyebrow={esServicesPage.catalog.eyebrow}
@@ -94,7 +94,7 @@ export default function EsServicesPage() {
       <PatientReviews
         featured={homeFeaturedTestimonial}
         reviews={homeReviews.slice(1, 4)}
-        quoteLang="en-US"
+        locale="es"
         reviewsLink={{ href: "/es/resenas", label: "Ver todas las reseñas" }}
       />
       <LocationIntro locale="es" />

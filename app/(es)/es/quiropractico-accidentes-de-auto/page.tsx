@@ -134,7 +134,7 @@ export default function EsAutoAccidentPage() {
         }}
       />
 
-      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" quoteLang="en-US" />
+      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" />
 
       <ComparisonTable variant="auto-accident" locale="es" />
 
@@ -215,7 +215,7 @@ export default function EsAutoAccidentPage() {
         featured={homeFeaturedTestimonial}
         reviews={homeReviews.slice(1, 4)}
         variant="light"
-        quoteLang="en-US"
+        locale="es"
         reviewsLink={{ href: "/es/resenas", label: "Ver todas las reseñas" }}
       />
 

@@ -144,7 +144,7 @@ export default function EsReviewsPage() {
           <SectionHeading eyebrow="Reseñas" sub={esReviewsPage.languageNote}>
             {esReviewsPage.carouselHeading}
           </SectionHeading>
-          <ReviewsCarousel reviews={testimonials} quoteLang="en-US" />
+          <ReviewsCarousel reviews={testimonials} locale="es" />
         </div>
       </Section>
 

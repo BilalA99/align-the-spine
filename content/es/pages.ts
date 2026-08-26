@@ -228,14 +228,14 @@ export const esReviewsPage = {
   ratingTail: "y contando",
   /** Shown above the carousel.
    *
-   * Patient reviews are published exactly as each patient wrote them —
-   * they are not translated. A translated testimonial presented as the
-   * patient's own words is no longer their testimony, and Google's review
-   * guidelines (and basic honesty) treat rewritten reviews as fabricated
-   * ones. This note explains that to a Spanish reader rather than leaving
-   * them to wonder why the quotes are in English. */
+   * The reviews are shown translated into Spanish, and this says so
+   * plainly. That distinction is not pedantry: presenting a translation as
+   * the reviewer's own wording would make it a fabricated review under
+   * Google's review policies. The translation preserves each patient's
+   * meaning and register; the words they actually typed are the English
+   * ones, and the English page shows those. */
   languageNote:
-    "Publicamos cada reseña tal como la escribió el paciente, sin traducirla — por eso algunas aparecen en inglés.",
+    "Estas reseñas fueron escritas en inglés por nuestros pacientes y están traducidas al español. El texto original en inglés se conserva sin cambios en la versión en inglés de esta página.",
   formHeading: "Reciba la misma atención de 5 estrellas",
   formFootnote:
     "Con frecuencia hay citas disponibles el mismo día. Atendemos en Deerfield Beach y comunidades cercanas del sur de la Florida.",

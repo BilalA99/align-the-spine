@@ -76,7 +76,7 @@ export default function EsContactPage() {
         />
       </div>
 
-      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" quoteLang="en-US" />
+      <HeroReviewsCarousel testimonials={heroReviewsCarousel} locale="es" />
 
       <LocationIntro locale="es" sendHref="#contact-hero-form" />
       <LocationFooter locale="es" />
