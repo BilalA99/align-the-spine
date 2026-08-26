@@ -70,13 +70,18 @@ export default function ChiropracticAdjustmentsPage() {
       />
       <JsonLd data={buildService(service)} />
       <HeroSolidPanel
+        breadcrumbs={[
+          { name: "Home", path: "" },
+          { name: "Services", path: "/services" },
+          { name: "Chiropractic Adjustments", path: "/services/chiropractic-adjustments" },
+        ]}
         background={adjustmentsHero.backgroundImage}
         eyebrow={adjustmentsHero.eyebrowChip}
         title={adjustmentsHero.h1}
         subhead={adjustmentsHero.subhead}
         callPill={{ eyebrow: "Speak with us today", phone: `Call ${siteConfig.business.phone}` }}
         form={{
-          heading: "Schedule Your Evaluation",
+          heading: "Request Your Evaluation",
           submitLabel: leadFormVariants.heroEval.submitLabel,
           variant: leadFormVariants.heroEval.variant,
           fields: leadFormVariants.heroEval.fields,
@@ -208,7 +213,7 @@ export default function ChiropracticAdjustmentsPage() {
             href={siteConfig.bookingCta.href}
             className="w-fit shrink-0 rounded-none!"
           >
-            Schedule my Evaluation
+            Request My Evaluation
           </Button>
         </Container>
       </Section>

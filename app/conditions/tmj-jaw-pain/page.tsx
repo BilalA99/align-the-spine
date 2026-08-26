@@ -10,7 +10,6 @@ import { HeroReviewsCarousel } from "@/components/sections/hero-reviews-carousel
 import { HeroSolidPanel } from "@/components/sections/hero-solid-panel";
 import { PatientReviews } from "@/components/sections/patient-reviews";
 import { RelatedConditions } from "@/components/sections/related-conditions";
-import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -19,13 +18,14 @@ import { autoAccidentAttorneyQuote } from "@/content/auto-accident";
 import { autoAccidentCondition } from "@/content/conditions/auto-accident";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { heroReviewsCarousel, homeFeaturedTestimonial, homeReviews } from "@/content/testimonials";
 import {
   tmjJawPainFaq,
   tmjJawPainHero,
-  tmjJawPainRelatedBottom,
+  tmjJawPainRelatedBottomConfig,
 } from "@/content/tmj-jaw-pain-page";
 import { buildRouteMetadata } from "@/lib/seo/metadata";
 
@@ -52,20 +52,18 @@ export const metadata: Metadata = buildRouteMetadata(getRoute("/conditions/tmj-j
 export default function TmjJawPainPage() {
   return (
     <>
-      <BreadcrumbJsonLd
-        items={[
+      <HeroSolidPanel
+        breadcrumbs={[
           { name: "Home", path: "" },
           { name: "TMJ / Jaw Pain", path: "/conditions/tmj-jaw-pain" },
         ]}
-      />
-      <HeroSolidPanel
         background={tmjJawPainHero.backgroundImage}
         eyebrow={tmjJawPainHero.eyebrowChip}
         title={tmjJawPainHero.h1}
         subhead={tmjJawPainHero.subhead}
         callPill={{ eyebrow: "Speak with us today", phone: `Call ${siteConfig.business.phone}` }}
         form={{
-          heading: "Schedule Your Evaluation",
+          heading: "Request Your Evaluation",
           submitLabel: leadFormVariants.heroEval.submitLabel,
           variant: leadFormVariants.heroEval.variant,
           fields: leadFormVariants.heroEval.fields,
@@ -145,17 +143,18 @@ export default function TmjJawPainPage() {
               Same-day visits, seven days a week — no waiting room, no driving in pain.
             </p>
           </div>
-          <Button
-            variant="teal"
-            href={siteConfig.bookingCta.href}
-            className="w-fit shrink-0 rounded-none!"
-          >
-            Schedule my Evaluation
+          <Button variant="teal" href={siteConfig.bookingCta.href} className="w-fit shrink-0">
+            Request My Evaluation
           </Button>
         </Container>
       </Section>
 
-      <RelatedConditions items={tmjJawPainRelatedBottom} />
+      <RelatedConditions
+        items={buildRelatedLinks({
+          currentPath: "/conditions/tmj-jaw-pain",
+          ...tmjJawPainRelatedBottomConfig,
+        })}
+      />
 
       <ConditionFaq faq={tmjJawPainFaq} />
     </>

@@ -73,6 +73,61 @@ export function trackLeadConversion(variant: string, values: Record<string, stri
   }
 }
 
+const PENDING_CONVERSION_KEY = "ats_pending_conversion";
+
+interface PendingConversion {
+  variant: string;
+  values: Record<string, string>;
+}
+
+/** IA-05/ATS-E7: the POST-then-redirect submit path (LeadForm/BookingForm's
+ * default, i.e. everything that lands on /thank-you) stashes the conversion
+ * payload here instead of calling trackLeadConversion() itself — the actual
+ * gtag call now happens once, on /thank-you
+ * (components/analytics/thank-you-conversion.tsx), so the conversion
+ * genuinely "fires here" per the ticket instead of firing a page earlier,
+ * before persistence was even confirmed. The inline-success `onSubmit`
+ * override path (which never navigates to /thank-you) is UNCHANGED — it
+ * still calls trackLeadConversion() directly, since nothing downstream would
+ * ever consume a stashed value for it. sessionStorage (not state/a query
+ * param) survives the full-page-ish client navigation and clears itself the
+ * moment consumePendingConversion() reads it, so a refresh of /thank-you
+ * can't double-fire. */
+export function stashPendingConversion(variant: string, values: Record<string, string>): void {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(PENDING_CONVERSION_KEY, JSON.stringify({ variant, values }));
+  } catch {
+    // Storage can throw in private-browsing/storage-restricted contexts —
+    // losing the conversion event isn't worth breaking the redirect over.
+  }
+}
+
+/** Read-once: removes the stashed payload as soon as it's read, so a
+ * duplicate mount/refresh of /thank-you never fires a second conversion for
+ * the same lead. Returns null if there's nothing pending (e.g. someone
+ * navigates to /thank-you directly). */
+export function consumePendingConversion(): PendingConversion | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(PENDING_CONVERSION_KEY);
+    if (!raw) return null;
+    window.sessionStorage.removeItem(PENDING_CONVERSION_KEY);
+    const parsed: unknown = JSON.parse(raw);
+    if (
+      typeof parsed !== "object" ||
+      parsed === null ||
+      typeof (parsed as PendingConversion).variant !== "string" ||
+      typeof (parsed as PendingConversion).values !== "object"
+    ) {
+      return null;
+    }
+    return parsed as PendingConversion;
+  } catch {
+    return null;
+  }
+}
+
 export function trackPhoneClick() {
   gtag("event", "phone_click");
 }

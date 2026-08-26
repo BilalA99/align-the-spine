@@ -13,6 +13,7 @@ import { ServicesSection } from "@/components/sections/services-section";
 import { WhyChoose } from "@/components/sections/why-choose";
 import { PracticeJsonLd } from "@/components/seo/practice-json-ld";
 import { doctorProfileContent } from "@/content/doctor-profile";
+import { leadFormVariants } from "@/content/lead-forms";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { spineOverviewContent } from "@/content/spine-overview";
@@ -33,7 +34,17 @@ export const metadata: Metadata = buildMetadata(getRoute(""));
  * the spine" diagram — condition pages keep the interactive PointToWhereItHurts
  * hotspot version) → DoctorBio → accident-injury grid → patient reviews →
  * FAQ/CTA bands → contact LeadForm → LocationIntro/LocationFooter (shared with
- * Services/About/Book — see app/book/page.tsx). */
+ * Services/About/Book — see app/book/page.tsx).
+ *
+ * ATS-SEO-050: H1 previously led with the brand name ("Align the Spine /
+ * Deerfield Beach / Chiropractor") while the <title> tag
+ * (content/seo.ts's "" route) leads with the intent phrase ("Chiropractor
+ * in Deerfield Beach, FL | Align the Spine") — misaligned order between
+ * the two, and out of step with every other page's H1 (none of them lead
+ * with the brand; /car-accident-chiropractor's H1 is just "Car Accident
+ * Chiropractor", no brand at all). Rewritten to lead with the same phrase
+ * the title tag leads with — brand stays visible elsewhere on this page
+ * (logo/nav, callPill, footer) without needing to open the H1. */
 export default function Home() {
   return (
     <>
@@ -45,11 +56,9 @@ export default function Home() {
         }}
         title={
           <>
-            Align the Spine
+            Chiropractor in
             <br />
-            Deerfield Beach
-            <br />
-            Chiropractor
+            Deerfield Beach, FL
           </>
         }
         badge="We accept cash visits"
@@ -57,8 +66,8 @@ export default function Home() {
         subhead="Chiropractic care in Deerfield Beach for back pain, neck pain, mobility concerns, and injuries — with focused evaluations after car accidents."
         callPill={{ eyebrow: "Speak with us today", phone: `Call ${siteConfig.business.phone}` }}
         form={{
-          heading: "Schedule Your Chiropractic Evaluation",
-          submitLabel: "Schedule My Evaluation",
+          heading: "Request Your Chiropractic Evaluation",
+          submitLabel: leadFormVariants.heroEval.submitLabel,
           footerNote:
             "Visit us in Deerfield Beach, or call to ask whether a home visit fits your case and location.",
         }}

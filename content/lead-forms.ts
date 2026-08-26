@@ -61,7 +61,7 @@ export const leadFormVariants = {
   heroEval: {
     variant: "heroEval",
     fields: [...baseFields, carAccidentField],
-    submitLabel: "Schedule My Evaluation",
+    submitLabel: "Request a Chiropractic Appointment",
   },
   /** /car-accident-chiropractor hero form: First/Last/Phone/Email plus
    * BOTH accidentDateField (narrows Florida's 14-day PIP window — see that
@@ -91,7 +91,7 @@ export const leadFormVariants = {
   carAccident: {
     variant: "carAccident",
     fields: [...baseFields, carAccidentField],
-    submitLabel: "Schedule My Car Accident Evaluation",
+    submitLabel: "Request My Evaluation",
   },
   /** /reviews hero form — same fields as heroEval, own variant key purely
    * so leads from this placement are distinguishable in the /api/lead log
@@ -100,7 +100,7 @@ export const leadFormVariants = {
   reviewsEval: {
     variant: "reviewsEval",
     fields: [...baseFields, carAccidentField],
-    submitLabel: "Schedule My Evaluation",
+    submitLabel: "Request a Chiropractic Appointment",
   },
   contact: {
     variant: "contact",

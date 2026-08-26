@@ -20,8 +20,9 @@ export interface ServiceCardProps {
   className?: string;
 }
 
-/** Service card per condition-page-spec §B9: image (r15, desaturated per the
- * reference design), title (Newsreader Medium 35 navy-800), description
+/** Service card per condition-page-spec §B9: image (square corners,
+ * desaturated per the reference design), title (Newsreader Medium 35
+ * navy-800), description
  * (Poppins 22/38 ink-900), "Book now" pill button (same primary style as
  * DoctorProfile's CTA). Flush against the page
  * background — no card shadow/elevation — per the reference design.
@@ -32,7 +33,10 @@ export function ServiceCard({ item, className }: ServiceCardProps) {
     <Card
       id={item.slug}
       shadow="none"
-      className={cn("group scroll-mt-[120px] flex flex-col overflow-hidden", className)}
+      className={cn(
+        "group scroll-mt-[120px] flex flex-col overflow-hidden rounded-none",
+        className,
+      )}
     >
       <div className="relative aspect-[507/360] w-full shrink-0">
         <Image

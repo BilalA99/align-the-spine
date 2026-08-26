@@ -28,7 +28,7 @@ export function LocationFooter() {
           />
           <LiquidGlass
             radius="rounded-none"
-            className="absolute inset-x-4 bottom-4 bg-gray-500/40 border border-white sm:inset-x-8 sm:bottom-8 sm:p-8"
+            className="absolute inset-x-4 bottom-4 bg-white/10 backdrop-blur-md backdrop-saturate-150 sm:inset-x-8 sm:bottom-8 sm:p-8"
           >
             <h2 className="font-display text-h2 text-navy-900">Our Location</h2>
             <address className="mt-2 font-alt text-footer-copy not-italic text-navy-900">

@@ -39,11 +39,13 @@ export function NavbarDropdown({ link }: { link: NavLinkConfig }) {
   const activeItem = items.find((item) => item.href === activeHref) ?? items[0];
   const useGrid = items.length > GRID_THRESHOLD;
 
-  /* Conditions has no real hub page, so its own href borrows /auto-accidents
-   * as a click-through destination — but that route already belongs to the
-   * separate "Auto Accidents" nav item. Without this guard, visiting
-   * /auto-accidents underlined both entries at once. Only let the
-   * borrowed href count as "active" when no sibling link actually owns it. */
+  /* ATS-SEO-040: Conditions used to have no real hub page, so its own href
+   * borrowed /car-accident-chiropractor as a click-through destination —
+   * which already belonged to the separate "Auto Accidents" nav item, so
+   * visiting that route underlined both entries at once. Conditions now
+   * owns its own /conditions hub and no longer shares an href with any
+   * sibling, but this guard is kept as a general safeguard in case a
+   * future nav item ever reuses another's href the same way. */
   const hrefOwnedBySibling = siteConfig.nav.some(
     (other) => other !== link && !other.menu && other.href === link.href,
   );

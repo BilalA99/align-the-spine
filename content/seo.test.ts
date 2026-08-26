@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { getRoute, getRouteHref, routes } from "@/content/seo";
+import { getRoute, getRouteHref, isPublished, routes } from "@/content/seo";
 
 describe("routes registry", () => {
   it("has no duplicate paths", () => {
@@ -37,6 +37,45 @@ describe("routes registry", () => {
 
   it("excludes the legacy /auto-accident route", () => {
     expect(routes.map((route) => route.path)).not.toContain("/auto-accident");
+  });
+});
+
+describe("IA-01: every route has a recorded, justified indexing decision", () => {
+  it("gives every route a non-empty justification", () => {
+    for (const route of routes) {
+      expect(route.justification.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("gives every route a non-empty primaryQuery", () => {
+    for (const route of routes) {
+      expect(route.primaryQuery.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("never lets two indexable routes target the same primary query", () => {
+    const indexableQueries = routes
+      .filter((route) => isPublished(route))
+      .map((route) => route.primaryQuery);
+    expect(new Set(indexableQueries).size).toBe(indexableQueries.length);
+  });
+});
+
+/** ATS-SEO-021: acceptance criteria "no duplicate published-page titles" /
+ * "no duplicate published-page descriptions unless deliberately justified"
+ * — structurally enforced the same way IA-01 enforces primaryQuery
+ * uniqueness above, so a future route can't silently ship a copy-pasted
+ * title/description. Draft routes are excluded (same as primaryQuery) since
+ * they're noindex/out of the sitemap — not competing for a SERP slot. */
+describe("ATS-SEO-021: metadata uniqueness across published routes", () => {
+  it("never lets two published routes share a title", () => {
+    const publishedTitles = routes.filter(isPublished).map((route) => route.title);
+    expect(new Set(publishedTitles).size).toBe(publishedTitles.length);
+  });
+
+  it("never lets two published routes share a description", () => {
+    const publishedDescriptions = routes.filter(isPublished).map((route) => route.description);
+    expect(new Set(publishedDescriptions).size).toBe(publishedDescriptions.length);
   });
 });
 

@@ -15,7 +15,6 @@ import { HowWeTreat } from "@/components/sections/how-we-treat";
 import { PatientReviews } from "@/components/sections/patient-reviews";
 import { PointToWhereItHurts } from "@/components/sections/point-to-where-it-hurts";
 import { RelatedConditions } from "@/components/sections/related-conditions";
-import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -30,11 +29,12 @@ import {
   neckPainFeelsLike,
   neckPainHero,
   neckPainHowWeTreat,
-  neckPainRelatedBottom,
-  neckPainRelatedMidPage,
+  neckPainRelatedBottomConfig,
+  neckPainRelatedMidPageConfig,
   neckPainWarning,
 } from "@/content/neck-pain-page";
 import { pointToWhereItHurtsContent } from "@/content/point-to-where-it-hurts";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { heroReviewsCarousel, homeFeaturedTestimonial, homeReviews } from "@/content/testimonials";
@@ -100,20 +100,18 @@ const neckPainTypeCategories = [
 export default function NeckPainPage() {
   return (
     <>
-      <BreadcrumbJsonLd
-        items={[
+      <HeroSolidPanel
+        breadcrumbs={[
           { name: "Home", path: "" },
           { name: "Neck Pain", path: "/conditions/neck-pain" },
         ]}
-      />
-      <HeroSolidPanel
         background={neckPainHero.backgroundImage}
         eyebrow={neckPainHero.eyebrowChip}
         title={neckPainHero.h1}
         subhead={neckPainHero.subhead}
         callPill={{ eyebrow: "Speak with us today", phone: `Call ${siteConfig.business.phone}` }}
         form={{
-          heading: "Schedule Your Evaluation",
+          heading: "Request Your Evaluation",
           submitLabel: leadFormVariants.heroEval.submitLabel,
           variant: leadFormVariants.heroEval.variant,
           fields: leadFormVariants.heroEval.fields,
@@ -179,7 +177,10 @@ export default function NeckPainPage() {
           causesHeading="Common Causes"
           causes={neckPainCauses}
           relatedHeading="Related Neck Pain conditions"
-          relatedLinks={neckPainRelatedMidPage}
+          relatedLinks={buildRelatedLinks({
+            currentPath: "/conditions/neck-pain",
+            ...neckPainRelatedMidPageConfig,
+          })}
           typesHeading="Types"
           categories={neckPainTypeCategories}
         />
@@ -228,7 +229,12 @@ export default function NeckPainPage() {
         </Container>
       </Section>
 
-      <RelatedConditions items={neckPainRelatedBottom} />
+      <RelatedConditions
+        items={buildRelatedLinks({
+          currentPath: "/conditions/neck-pain",
+          ...neckPainRelatedBottomConfig,
+        })}
+      />
 
       <ConditionFaq faq={neckPainFaq} />
     </>

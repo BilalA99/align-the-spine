@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 
+import { BreadcrumbTrail } from "@/components/seo/breadcrumb-trail";
 import { LeadForm } from "@/components/ui/lead-form";
 import { leadFormVariants } from "@/content/lead-forms";
+import type { BreadcrumbItemInput } from "@/lib/schema";
 
 /** Hero for /blog — mirrors ServiceAreaHero's structure exactly (owner
  * direction 2026-08-18: "mimic the hero section look on the service-areas
@@ -42,11 +44,16 @@ export function BlogHero({
   title,
   subhead,
   children,
+  breadcrumbs,
 }: {
   eyebrow: string;
   title: ReactNode;
   subhead: ReactNode;
   children?: ReactNode;
+  /** LINK-02: same contract as HeroSolidPanel/Hero's `breadcrumbs` prop —
+   * renders the visible trail here; pair with a BreadcrumbJsonLd call fed
+   * the same items array so the two can't drift. */
+  breadcrumbs?: BreadcrumbItemInput[];
 }) {
   // heroEval, not contactUs: a plain, standard request form (First/Last/
   // Phone/Email/car-accident?) matching every other hero's form on the
@@ -107,6 +114,7 @@ export function BlogHero({
          * the identical bleed pattern — same 124px clearance there already
          * works safely. */}
         <div className="container relative z-10 pb-16 pt-[224px] lg:pb-[60px] lg:pt-[276px] lg:pr-10">
+          {breadcrumbs && <BreadcrumbTrail items={breadcrumbs} className="mb-4" />}
           <span className="inline-flex items-center rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-teal-300 backdrop-blur-sm">
             {eyebrow}
           </span>

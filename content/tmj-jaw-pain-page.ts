@@ -1,4 +1,4 @@
-import type { ConditionFaq, ConditionRelatedLink } from "@/content/conditions/types";
+import type { ConditionFaq } from "@/content/conditions/types";
 
 /** Bespoke content for the dedicated /conditions/tmj-jaw-pain page — same
  * per-condition, hand-built approach as the other condition pages and the
@@ -51,20 +51,19 @@ export const tmjJawPainHero = {
   },
 };
 
-export const tmjJawPainRelatedBottom: ConditionRelatedLink[] = [
-  { label: "Lower Back Pain", href: "/conditions/back-pain" },
-  {
-    label: "Auto Accident Injuries",
-    href: "/car-accident-chiropractor",
-    highlighted: true,
-  },
-  { label: "Neck Pain", href: "/conditions/neck-pain" },
-  { label: "Whiplash", href: "/conditions/whiplash" },
-  { label: "Cervicogenic Headache", href: "/conditions/cervicogenic-headache" },
-  { label: "Concussion", href: "/conditions/concussion" },
-  { label: "Home Visit Care", href: "/home-visit-chiropractor" },
-  { label: "View All Treatments", href: "/services" },
-];
+// ATS-SEO-043: plain path config — see content/back-pain-page.ts's
+// identical note for why (circular import via content/seo.ts).
+export const tmjJawPainRelatedBottomConfig = {
+  paths: [
+    "/conditions/neck-pain",
+    "/conditions/cervicogenic-headache",
+    "/conditions",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+};
 
 export const tmjJawPainFaq: ConditionFaq = {
   headerTail: "TMJ and jaw pain",

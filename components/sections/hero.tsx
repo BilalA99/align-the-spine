@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 
+import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
+import { BreadcrumbTrail } from "@/components/seo/breadcrumb-trail";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -10,6 +12,7 @@ import { MobileLeadPreviewCard } from "@/components/ui/mobile-lead-preview-card"
 import { leadFormVariants, type LeadFormVariant } from "@/content/lead-forms";
 import { siteConfig } from "@/content/site";
 import { cn } from "@/lib/cn";
+import type { BreadcrumbItemInput } from "@/lib/schema";
 
 export interface HeroCta {
   label: string;
@@ -48,6 +51,10 @@ export interface HeroProps {
   /** Replaces the default LeadForm card entirely (e.g. the /book two-step
    * BookingForm, which brings its own card styling). */
   formSlot?: ReactNode;
+  /** LINK-02: same contract as HeroSolidPanel's `breadcrumbs` prop — renders
+   * both the visible trail and its matching BreadcrumbList JSON-LD from one
+   * shared items array. */
+  breadcrumbs?: BreadcrumbItemInput[];
 }
 
 /** Renders in normal flow (not absolutely offset) so it reflows with the
@@ -91,6 +98,7 @@ export function Hero({
   stat,
   form,
   formSlot,
+  breadcrumbs,
 }: HeroProps) {
   return (
     // Margins pull Hero up to bleed behind TopStatsBar/Navbar. TopStatsBar's
@@ -111,6 +119,7 @@ export function Hero({
     // to alter wrapping — see
     // docs/superpowers/specs/2026-07-15-hero-section-design.md.
     <section className="relative -mt-[460px] min-h-[975px] overflow-hidden min-[400px]:-mt-[392px] sm:-mt-[304px] md:-mt-[240px] lg:-mt-[176px]">
+      {breadcrumbs && <BreadcrumbJsonLd items={breadcrumbs} />}
       <Image
         src={background.src}
         alt={background.alt}
@@ -124,6 +133,7 @@ export function Hero({
 
       <div className="container relative z-10 grid gap-10 pt-[220px] lg:grid-cols-2 lg:items-center lg:gap-16 lg:pt-[350px]">
         <div className="flex flex-col gap-6">
+          {breadcrumbs && <BreadcrumbTrail items={breadcrumbs} className="-mb-2" />}
           {variant === "condition" && conditionChip && (
             <HeroChip className="mt-0">{conditionChip}</HeroChip>
           )}

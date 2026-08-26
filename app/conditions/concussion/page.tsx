@@ -13,7 +13,6 @@ import { HowWeTreat } from "@/components/sections/how-we-treat";
 import { PatientReviews } from "@/components/sections/patient-reviews";
 import { RelatedConditions } from "@/components/sections/related-conditions";
 import { SymptomChecklist } from "@/components/sections/symptom-checklist";
-import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -23,9 +22,9 @@ import {
   concussionCauseCategories,
   concussionFaq,
   concussionHero,
-  concussionRelatedMidPage,
+  concussionRelatedMidPageConfig,
   concussionRelatedMidPageHeading,
-  concussionRelatedTypes,
+  concussionRelatedTypesConfig,
   concussionRelatedTypesHeading,
   concussionSupportItems,
   concussionSymptomNote,
@@ -36,6 +35,7 @@ import {
 import { autoAccidentCondition } from "@/content/conditions/auto-accident";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { heroReviewsCarousel, homeFeaturedTestimonial, homeReviews } from "@/content/testimonials";
@@ -74,20 +74,18 @@ export const metadata: Metadata = buildRouteMetadata(getRoute("/conditions/concu
 export default function ConcussionPage() {
   return (
     <>
-      <BreadcrumbJsonLd
-        items={[
+      <HeroSolidPanel
+        breadcrumbs={[
           { name: "Home", path: "" },
           { name: "Concussion", path: "/conditions/concussion" },
         ]}
-      />
-      <HeroSolidPanel
         background={concussionHero.backgroundImage}
         eyebrow={concussionHero.eyebrowChip}
         title={concussionHero.h1}
         subhead={concussionHero.subhead}
         callPill={{ eyebrow: "Speak with us today", phone: `Call ${siteConfig.business.phone}` }}
         form={{
-          heading: "Schedule Your Evaluation",
+          heading: "Request Your Evaluation",
           submitLabel: leadFormVariants.heroEval.submitLabel,
           variant: leadFormVariants.heroEval.variant,
           fields: leadFormVariants.heroEval.fields,
@@ -150,7 +148,10 @@ export default function ConcussionPage() {
         symptomsHeading={concussionSymptomsHeading}
         symptoms={concussionSymptoms}
         relatedHeading={concussionRelatedTypesHeading}
-        relatedLinks={concussionRelatedTypes}
+        relatedLinks={buildRelatedLinks({
+          currentPath: "/conditions/concussion",
+          ...concussionRelatedTypesConfig,
+        })}
         categories={concussionCauseCategories}
       />
 
@@ -162,7 +163,10 @@ export default function ConcussionPage() {
       <ComparisonTable />
 
       <RelatedConditions
-        items={concussionRelatedMidPage}
+        items={buildRelatedLinks({
+          currentPath: "/conditions/concussion",
+          ...concussionRelatedMidPageConfig,
+        })}
         heading={concussionRelatedMidPageHeading}
         className="bg-[#F5F6F8]"
       />
@@ -193,12 +197,8 @@ export default function ConcussionPage() {
               Same-day visits, seven days a week — no waiting room, no driving in pain.
             </p>
           </div>
-          <Button
-            variant="teal"
-            href={siteConfig.bookingCta.href}
-            className="w-fit shrink-0 rounded-none!"
-          >
-            Schedule my Evaluation
+          <Button variant="teal" href={siteConfig.bookingCta.href} className="w-fit shrink-0">
+            Request My Evaluation
           </Button>
         </Container>
       </Section>

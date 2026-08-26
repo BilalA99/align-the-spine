@@ -4,7 +4,6 @@ import { LocationFooter } from "@/components/layout/location-footer";
 import { LocationIntro } from "@/components/layout/location-intro";
 import { Hero } from "@/components/sections/hero";
 import { HeroReviewsCarousel } from "@/components/sections/hero-reviews-carousel";
-import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
 import { FaqJsonLd } from "@/components/seo/faq-json-ld";
 import { PracticeJsonLd } from "@/components/seo/practice-json-ld";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
@@ -30,15 +29,13 @@ export default function ContactUsPage() {
   return (
     <>
       <PracticeJsonLd />
-      <BreadcrumbJsonLd
-        items={[
-          { name: "Home", path: "" },
-          { name: "Contact Us", path: "/contact-us" },
-        ]}
-      />
       <div id="contact-hero-form">
         <Hero
           variant="condition"
+          breadcrumbs={[
+            { name: "Home", path: "" },
+            { name: "Contact Us", path: "/contact-us" },
+          ]}
           background={{
             src: "/figma-exports/interior-reception.png",
             alt: "Align the Spine reception area",
@@ -48,7 +45,7 @@ export default function ContactUsPage() {
           subhead="Visit 811 SE 8th Ave, Suite 101, in Deerfield Beach, or reach us directly with questions about an appointment, insurance, or accident claim."
           callPill={{ eyebrow: "Speak with us today", phone: `Call ${siteConfig.business.phone}` }}
           form={{
-            heading: "Schedule Your Evaluation",
+            heading: "Request Your Evaluation",
             submitLabel: leadFormVariants.contactUs.submitLabel,
             variant: leadFormVariants.contactUs.variant,
             fields: leadFormVariants.contactUs.fields,

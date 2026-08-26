@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 
 import type { HeroFormConfig } from "@/components/sections/hero";
+import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
+import { BreadcrumbTrail } from "@/components/seo/breadcrumb-trail";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { FadeIn } from "@/components/ui/fade-in";
@@ -13,6 +15,7 @@ import { Rating } from "@/components/ui/rating";
 import { leadFormVariants, type LeadFormVariant } from "@/content/lead-forms";
 import { getVerifiedStats, siteConfig } from "@/content/site";
 import { isVerified } from "@/content/verified-value";
+import type { BreadcrumbItemInput } from "@/lib/schema";
 
 import { Container } from "../ui/container";
 
@@ -89,6 +92,11 @@ export interface HeroSolidPanelProps {
   form?: HeroFormConfig;
   /** Replaces the default form entirely, same escape hatch as Hero's formSlot. */
   formSlot?: ReactNode;
+  /** LINK-02: renders both the visible breadcrumb trail (BreadcrumbTrail)
+   * and its matching BreadcrumbList JSON-LD (BreadcrumbJsonLd) from one
+   * shared items array, so they can't drift. Omit on pages that don't need
+   * one (currently just Home). Always starts with `{ name: "Home", path: "" }`. */
+  breadcrumbs?: BreadcrumbItemInput[];
 }
 
 /** Alternate Hero treatment ("homepage-round-buttons-new-hero" in Figma):
@@ -132,12 +140,14 @@ export function HeroSolidPanel({
   stat,
   form,
   formSlot,
+  breadcrumbs,
 }: HeroSolidPanelProps) {
   // Pages like /about pass no form/formSlot — don't render the empty navy
   // panel there; let the photo column (lg:flex-1) fill the full width instead.
   const hasForm = Boolean(formSlot || form);
   return (
     <section className="relative flex flex-col overflow-hidden lg:-mt-[176px] lg:min-h-[860px] lg:flex-row ">
+      {breadcrumbs && <BreadcrumbJsonLd items={breadcrumbs} />}
       <div className="relative min-h-[620px] min-w-0 lg:min-h-full lg:flex-1 pt-10">
         <Image
           src={background.src}
@@ -150,9 +160,10 @@ export function HeroSolidPanel({
         <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/75 to-black/50" />
         <Container>
           <div className="container relative z-10 flex h-full flex-col justify-start pt-[120px] pb-24 lg:pb-[60px] lg:pt-[220px] lg:pr-12">
+            {breadcrumbs && <BreadcrumbTrail items={breadcrumbs} className="mb-4" />}
             {eyebrow && <Eyebrow variant="onDark">{eyebrow}</Eyebrow>}
             {badge && (
-              <span className="w-fit rounded-full bg-teal-500 px-6 py-3 font-sans text-button text-white">
+              <span className="mb-4 w-fit rounded-full bg-teal-500 px-6 py-3 font-sans text-button text-white">
                 {badge}
               </span>
             )}

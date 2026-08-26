@@ -1,8 +1,4 @@
-import type {
-  ConditionFaq,
-  ConditionRelatedLink,
-  ConditionTreatmentItem,
-} from "@/content/conditions/types";
+import type { ConditionFaq, ConditionTreatmentItem } from "@/content/conditions/types";
 import { siteConfig } from "@/content/site";
 
 /** Bespoke content for the dedicated /conditions/concussion page — same
@@ -127,11 +123,20 @@ export const concussionSymptomsHeading = "Classic symptoms";
 
 export const concussionRelatedTypesHeading = "Related concussion conditions";
 
-export const concussionRelatedTypes: ConditionRelatedLink[] = [
-  { label: "Whiplash", href: "/conditions/whiplash" },
-  { label: "Cervicogenic Headache", href: "/conditions/cervicogenic-headache" },
-  { label: "Auto Accident Injuries", href: "/car-accident-chiropractor" },
-];
+// ATS-SEO-043: plain path config, resolved by buildRelatedLinks()
+// (content/related-links.ts) from the page component — see
+// content/back-pain-page.ts's identical note for why not here directly
+// (circular import via content/seo.ts). Replaces a hand-typed label/href
+// array after an audit found several of these had drifted into real bugs
+// elsewhere (self-links, mismatched anchor text, direct links to draft
+// pages).
+export const concussionRelatedTypesConfig = {
+  paths: [
+    "/conditions/whiplash",
+    "/conditions/cervicogenic-headache",
+    "/car-accident-chiropractor",
+  ],
+};
 
 export const concussionCauseCategories = [
   {
@@ -165,20 +170,18 @@ export const concussionCauseCategories = [
 
 export const concussionRelatedMidPageHeading = "Often needed alongside other post-accident care";
 
-export const concussionRelatedMidPage: ConditionRelatedLink[] = [
-  { label: "Lower Back Pain", href: "/conditions/back-pain" },
-  {
-    label: "Auto Accident Injuries",
-    href: "/car-accident-chiropractor",
-    highlighted: true,
-  },
-  { label: "Neck Pain", href: "/conditions/neck-pain" },
-  { label: "Spinal Decompression", href: "/services/spinal-decompression" },
-  { label: "Whiplash", href: "/conditions/whiplash" },
-  { label: "Home Visit Care", href: "/home-visit-chiropractor" },
-  { label: "Herniated Disc", href: "/services/spinal-decompression" },
-  { label: "View All Treatments", href: "/services" },
-];
+// Plain path config — see concussionRelatedTypesConfig's doc comment above.
+export const concussionRelatedMidPageConfig = {
+  paths: [
+    "/conditions/whiplash",
+    "/conditions/neck-pain",
+    "/conditions",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+};
 
 export const concussionFaq: ConditionFaq = {
   headerTail: "concussion and post-concussion care",

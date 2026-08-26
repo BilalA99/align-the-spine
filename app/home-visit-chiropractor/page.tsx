@@ -5,7 +5,6 @@ import { HeroSolidPanel } from "@/components/sections/hero-solid-panel";
 import { HowWeHelpSteps } from "@/components/sections/how-we-help-steps";
 import { ReviewsStrip } from "@/components/sections/reviews-strip";
 import { ServiceAreas } from "@/components/sections/service-areas";
-import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
 import { FaqJsonLd } from "@/components/seo/faq-json-ld";
 import { Button } from "@/components/ui/button";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
@@ -29,13 +28,11 @@ export const metadata: Metadata = buildRouteMetadata(getRoute("/home-visit-chiro
 export default function HomeVisitsPage() {
   return (
     <>
-      <BreadcrumbJsonLd
-        items={[
+      <HeroSolidPanel
+        breadcrumbs={[
           { name: "Home", path: "" },
           { name: "Home Visit Chiropractor", path: "/home-visit-chiropractor" },
         ]}
-      />
-      <HeroSolidPanel
         background={{
           src: "/figma-exports/home-visits-hero.png",
           alt: "Dr. Abe Nasser setting up a treatment table in a patient's living room",

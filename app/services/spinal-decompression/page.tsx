@@ -21,9 +21,9 @@ import { Section } from "@/components/ui/section";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { autoAccidentAttorneyQuote } from "@/content/auto-accident";
 import { autoAccidentCondition } from "@/content/conditions/auto-accident";
-import type { ConditionRelatedLink } from "@/content/conditions/types";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { servicesGrid } from "@/content/services-grid";
 import { siteConfig } from "@/content/site";
@@ -44,20 +44,22 @@ const service = servicesGrid.find((item) => item.slug === "spinal-decompression"
 
 const relatedMidPageHeading = "Often needed alongside other post-accident care";
 
-const relatedMidPage: ConditionRelatedLink[] = [
-  { label: "Lower Back Pain", href: "/conditions/back-pain" },
-  {
-    label: "Auto Accident Injuries",
-    href: "/car-accident-chiropractor",
-    highlighted: true,
-  },
-  { label: "Neck Pain", href: "/conditions/neck-pain" },
-  { label: "Spinal Decompression", href: "/services/spinal-decompression" },
-  { label: "Whiplash", href: "/conditions/whiplash" },
-  { label: "Home Visit Care", href: "/home-visit-chiropractor" },
-  { label: "Herniated Disc", href: "/services/spinal-decompression" },
-  { label: "View All Treatments", href: "/services" },
-];
+// ATS-SEO-043: previously self-linked ("Spinal Decompression" ->
+// /services/spinal-decompression, this very page) and linked directly to
+// draft pages — see content/related-links.ts's doc comment.
+const relatedMidPage = buildRelatedLinks({
+  currentPath: "/services/spinal-decompression",
+  paths: [
+    "/conditions/back-pain",
+    "/conditions/sciatica",
+    "/conditions/neck-pain",
+    "/services",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+});
 
 /** /services/spinal-decompression — dedicated, hand-built page, same
  * per-page pattern as the condition pages (ATS-137) and
@@ -95,13 +97,18 @@ export default function SpinalDecompressionPage() {
       />
       <JsonLd data={buildService(service)} />
       <HeroSolidPanel
+        breadcrumbs={[
+          { name: "Home", path: "" },
+          { name: "Services", path: "/services" },
+          { name: "Spinal Decompression", path: "/services/spinal-decompression" },
+        ]}
         background={spinalDecompressionHero.backgroundImage}
         eyebrow={spinalDecompressionHero.eyebrowChip}
         title={spinalDecompressionHero.h1}
         subhead={spinalDecompressionHero.subhead}
         callPill={{ eyebrow: "Speak with us today", phone: `Call ${siteConfig.business.phone}` }}
         form={{
-          heading: "Schedule Your Evaluation",
+          heading: "Request Your Evaluation",
           submitLabel: leadFormVariants.heroEval.submitLabel,
           variant: leadFormVariants.heroEval.variant,
           fields: leadFormVariants.heroEval.fields,
@@ -251,7 +258,7 @@ export default function SpinalDecompressionPage() {
                 </div>
                 <h3
                   className={cn(
-                    "font-display text-h2 font-normal text-ink-500 group-hover:text-navy-900 transition-colors duration-300",
+                    "font-display text-3xl font-normal text-ink-500 group-hover:text-navy-900 transition-colors duration-300",
                   )}
                 >
                   {condition.name}
@@ -299,12 +306,8 @@ export default function SpinalDecompressionPage() {
               Same-day visits, seven days a week — no waiting room, no driving in pain.
             </p>
           </div>
-          <Button
-            variant="teal"
-            href={siteConfig.bookingCta.href}
-            className="w-fit shrink-0 rounded-none!"
-          >
-            Schedule my Evaluation
+          <Button variant="teal" href={siteConfig.bookingCta.href} className="w-fit shrink-0">
+            Request My Evaluation
           </Button>
         </Container>
       </Section>

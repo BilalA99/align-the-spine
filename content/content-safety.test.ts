@@ -44,6 +44,15 @@ const FORBIDDEN_STRINGS: ForbiddenString[] = [
   { label: "banned superlative", needle: "Elite spinal" },
   { label: "banned superlative", needle: "medical excellence" },
   { label: "banned superlative", needle: "Premium chiropractic care" },
+  // ATS-E4a: shipped twice already (once caught under ATS-E4, then
+  // reintroduced) — the source Figma frame carries the same misspelling, so
+  // this is the guard against a third occurrence. Deliberately doesn't ban
+  // "Myofasial"/"gratson" inside content/concussion-page.ts's own doc
+  // comment, which quotes them while documenting why that Figma copy was
+  // rejected — stripComments() already exists for exactly that case.
+  { label: "misspelling: Myofasial (should be Myofascial)", needle: "Myofasial" },
+  { label: "misspelling: gratson (should be Graston)", needle: "gratson" },
+  { label: "misspelling: Gratson (should be Graston)", needle: "Gratson" },
 ];
 
 function stripComments(source: string): string {

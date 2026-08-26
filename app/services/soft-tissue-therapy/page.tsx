@@ -27,7 +27,7 @@ import {
   massageSoftTissueHero,
   massageTechniques,
 } from "@/content/massage-soft-tissue-page";
-import { sciaticaRelatedBottom } from "@/content/sciatica-page";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { servicesGrid } from "@/content/services-grid";
 import { siteConfig } from "@/content/site";
@@ -39,6 +39,24 @@ import { buildRouteMetadata } from "@/lib/seo/metadata";
 export const metadata: Metadata = buildRouteMetadata(getRoute("/services/soft-tissue-therapy"));
 
 const service = servicesGrid.find((item) => item.slug === "massage-soft-tissue")!;
+
+// ATS-SEO-043: previously reused sciatica-page.ts's `sciaticaRelatedBottom`
+// wholesale on this unrelated page (its own doc comment above already flags
+// "No bottom RelatedConditions pill row or ... massage-specific ones" as a
+// known gap) — now a real, page-specific list.
+const relatedBottom = buildRelatedLinks({
+  currentPath: "/services/soft-tissue-therapy",
+  paths: [
+    "/conditions/whiplash",
+    "/conditions/neck-pain",
+    "/conditions/back-pain",
+    "/services",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+});
 
 /** /services/massage-soft-tissue — dedicated, hand-built page, same
  * per-page pattern as the condition pages (ATS-137) and
@@ -73,13 +91,18 @@ export default function MassageSoftTissuePage() {
       />
       <JsonLd data={buildService(service)} />
       <HeroSolidPanel
+        breadcrumbs={[
+          { name: "Home", path: "" },
+          { name: "Services", path: "/services" },
+          { name: "Massage & Soft Tissue", path: "/services/soft-tissue-therapy" },
+        ]}
         background={massageSoftTissueHero.backgroundImage}
         eyebrow={massageSoftTissueHero.eyebrowChip}
         title={massageSoftTissueHero.h1}
         subhead={massageSoftTissueHero.subhead}
         callPill={{ eyebrow: "Speak with us today", phone: `Call ${siteConfig.business.phone}` }}
         form={{
-          heading: "Schedule Your Evaluation",
+          heading: "Request Your Evaluation",
           submitLabel: leadFormVariants.heroEval.submitLabel,
           variant: leadFormVariants.heroEval.variant,
           fields: leadFormVariants.heroEval.fields,
@@ -205,7 +228,7 @@ export default function MassageSoftTissuePage() {
                 </div>
                 <h3
                   className={cn(
-                    "font-display text-h2 font-normal text-ink-500 group-hover:text-navy-900 transition-colors duration-300",
+                    "font-display text-3xl font-normal text-ink-500 group-hover:text-navy-900 transition-colors duration-300",
                   )}
                 >
                   {condition.name}
@@ -226,7 +249,7 @@ export default function MassageSoftTissuePage() {
       <ComparisonTable />
 
       <RelatedConditions
-        items={sciaticaRelatedBottom}
+        items={relatedBottom}
         heading="Often needed alongside other post-accident care"
       />
 
@@ -256,12 +279,8 @@ export default function MassageSoftTissuePage() {
               Same-day visits, seven days a week — no waiting room, no driving in pain.
             </p>
           </div>
-          <Button
-            variant="teal"
-            href={siteConfig.bookingCta.href}
-            className="w-fit shrink-0 rounded-none!"
-          >
-            Schedule my Evaluation
+          <Button variant="teal" href={siteConfig.bookingCta.href} className="w-fit shrink-0">
+            Request My Evaluation
           </Button>
         </Container>
       </Section>

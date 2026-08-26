@@ -9,7 +9,6 @@ import { HeroReviewsCarousel } from "@/components/sections/hero-reviews-carousel
 import { HeroSolidPanel } from "@/components/sections/hero-solid-panel";
 import { HowWeHelpSteps } from "@/components/sections/how-we-help-steps";
 import { PatientReviews } from "@/components/sections/patient-reviews";
-import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
 import { FaqJsonLd } from "@/components/seo/faq-json-ld";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -67,13 +66,11 @@ export const metadata: Metadata = buildMetadata(getRoute("/car-accident-chiropra
 export default function AutoAccidentsPage() {
   return (
     <>
-      <BreadcrumbJsonLd
-        items={[
+      <HeroSolidPanel
+        breadcrumbs={[
           { name: "Home", path: "" },
           { name: "Car Accident Chiropractor", path: "/car-accident-chiropractor" },
         ]}
-      />
-      <HeroSolidPanel
         background={hero.backgroundImage}
         eyebrow={hero.eyebrowChip}
         title={
@@ -96,7 +93,7 @@ export default function AutoAccidentsPage() {
         bilingualNote="¿Habla español? Dr. Abe habla su idioma."
         stat={pipStat}
         form={{
-          heading: "Schedule Your Car Accident Evaluation",
+          heading: "Request Your Evaluation",
           submitLabel: leadFormVariants.accidentEval.submitLabel,
           variant: leadFormVariants.accidentEval.variant,
           fields: leadFormVariants.accidentEval.fields,
@@ -135,7 +132,7 @@ export default function AutoAccidentsPage() {
             </p>
           </div>
           <Button variant="teal" href={siteConfig.bookingCta.href} className="w-fit shrink-0">
-            Schedule my Evaluation
+            Request My Evaluation
           </Button>
         </Container>
       </Section>
@@ -153,7 +150,7 @@ export default function AutoAccidentsPage() {
 
       <PointToWhereItHurts content={pointToWhereItHurtsContent} />
 
-      <AccidentInjuries />
+      <AccidentInjuries isAccidentPage />
 
       <Section spacing="none" className="bg-navy-900">
         <Container className="flex flex-col gap-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:py-14">

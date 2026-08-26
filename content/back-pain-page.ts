@@ -3,7 +3,6 @@ import type {
   ConditionAccident,
   ConditionFaq,
   ConditionFeelsLikeItem,
-  ConditionRelatedLink,
   ConditionTreatmentItem,
   ConditionWarning,
   ConditionWhenToSee,
@@ -46,11 +45,20 @@ export const backPainCauses: string[] = [
   "Car accidents and sudden impact",
 ];
 
-export const backPainRelatedMidPage: ConditionRelatedLink[] = [
-  { label: "Sciatica", href: "/conditions/sciatica" },
-  { label: "Herniated Disc", href: "/services/spinal-decompression", highlighted: true },
-  { label: "Auto Accident Injuries", href: "/car-accident-chiropractor" },
-];
+// ATS-SEO-043: plain path config, resolved into real links by
+// buildRelatedLinks() (content/related-links.ts) — but called from the
+// page component (app/conditions/back-pain/page.tsx), not here: this file
+// is on content/seo.ts's own load path (seo.ts imports backPainHero from
+// it), so importing related-links.ts here — which itself imports
+// content/seo.ts — would be a circular import. Keeping this file to plain
+// data avoids that entirely. See that file's doc comment for why this
+// replaced a hand-typed label/href array: it had drifted into real bugs
+// (self-links, a label naming one condition while linking to a different
+// one, direct links to draft pages).
+export const backPainRelatedMidPageConfig = {
+  paths: ["/conditions/sciatica", "/services/spinal-decompression", "/car-accident-chiropractor"],
+  highlightPath: "/services/spinal-decompression",
+};
 
 export const backPainWhenToSee: ConditionWhenToSee = {
   heading: "When to See a Chiropractor for Back Pain",
@@ -153,20 +161,19 @@ export const backPainAccident: ConditionAccident = {
   smallprint: DEFAULT_ACCIDENT_SMALLPRINT,
 };
 
-export const backPainRelatedBottom: ConditionRelatedLink[] = [
-  { label: "Lower Back Pain", href: "/conditions/back-pain" },
-  { label: "Neck Pain", href: "/conditions/neck-pain" },
-  { label: "Spinal Decompression", href: "/services/spinal-decompression" },
-  { label: "Whiplash", href: "/conditions/whiplash" },
-  { label: "Home Visit Care", href: "/home-visit-chiropractor" },
-  { label: "Herniated Disc", href: "/services/spinal-decompression" },
-  { label: "View All Treatments", href: "/services" },
-  {
-    label: "Auto Accident Injuries",
-    href: "/car-accident-chiropractor",
-    highlighted: true,
-  },
-];
+// Plain path config — see backPainRelatedMidPageConfig's doc comment above.
+export const backPainRelatedBottomConfig = {
+  paths: [
+    "/conditions/neck-pain",
+    "/conditions/whiplash",
+    "/services/spinal-decompression",
+    "/conditions",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+};
 
 export const backPainFaq: ConditionFaq = {
   headerTail: "back pain",

@@ -1,9 +1,11 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   classifyLeadPriority,
+  consumePendingConversion,
   isBookCtaLink,
   isPhoneLink,
+  stashPendingConversion,
   trackBookCtaClick,
   trackLeadConversion,
   trackPageView,
@@ -63,6 +65,49 @@ describe("tracking helpers", () => {
 
 afterEach(() => {
   delete (globalThis as { window?: unknown }).window;
+});
+
+/** No jsdom in this project — same minimal window/sessionStorage mock
+ * pattern as lib/attribution.test.ts (which these two functions mirror). */
+describe("stashPendingConversion / consumePendingConversion (IA-05/ATS-E7)", () => {
+  let store: Map<string, string>;
+
+  beforeEach(() => {
+    store = new Map();
+    (globalThis as { window?: unknown }).window = {
+      sessionStorage: {
+        getItem: (key: string) => store.get(key) ?? null,
+        setItem: (key: string, value: string) => {
+          store.set(key, value);
+        },
+        removeItem: (key: string) => {
+          store.delete(key);
+        },
+      },
+    };
+  });
+
+  afterEach(() => {
+    delete (globalThis as { window?: unknown }).window;
+  });
+
+  it("round-trips a stashed conversion payload", () => {
+    stashPendingConversion("heroEval", { firstName: "Jane", phone: "5551234567" });
+    expect(consumePendingConversion()).toEqual({
+      variant: "heroEval",
+      values: { firstName: "Jane", phone: "5551234567" },
+    });
+  });
+
+  it("is read-once — a second call returns null so a refresh can't double-fire", () => {
+    stashPendingConversion("heroEval", { firstName: "Jane" });
+    consumePendingConversion();
+    expect(consumePendingConversion()).toBeNull();
+  });
+
+  it("returns null when nothing was stashed (direct navigation to /thank-you)", () => {
+    expect(consumePendingConversion()).toBeNull();
+  });
 });
 
 describe("classifyLeadPriority", () => {

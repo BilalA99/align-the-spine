@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -52,7 +53,7 @@ export function DoctorProfile({ variant, content, extended }: DoctorProfileProps
             {isVerified(rating) && (
               <LiquidGlass
                 radius="rounded-none"
-                className="absolute inset-x-0 bottom-0 bg-gray-500/40"
+                className="absolute inset-x-0 bottom-0 bg-white/10 backdrop-blur-md backdrop-saturate-150"
               >
                 <div className="flex items-center justify-between gap-3 px-6 py-4">
                   <span className="inline-flex items-center gap-2 font-sans text-stat-label text-white">
@@ -81,9 +82,19 @@ export function DoctorProfile({ variant, content, extended }: DoctorProfileProps
             <Eyebrow>{eyebrow}</Eyebrow>
             <h2 className="font-display font-semibold text-doctor-name text-navy-900">{name}</h2>
             <p className="font-sans text-body-lg text-ink-900">{bio}</p>
-            <Button variant="primary" href={cta.href} className="w-fit px-[2em]">
-              Call {cta.label}
-            </Button>
+            <div className="flex flex-wrap items-center gap-6">
+              <Button variant="primary" href={cta.href} className="w-fit px-[2em]">
+                Call {cta.label}
+              </Button>
+              {/* ATS-SEO-050: variant "long" only ever renders on /about
+               * itself (the one page that passes it) — every "short" usage
+               * elsewhere is a real cross-page link, never a self-link. */}
+              {variant === "short" && (
+                <Link href="/about" className="font-sans text-body-lg text-navy-900 underline">
+                  Meet Dr. Abe
+                </Link>
+              )}
+            </div>
           </div>
         </Container>
       </Section>

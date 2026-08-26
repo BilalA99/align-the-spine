@@ -37,7 +37,7 @@ describe("resolveSiteUrl", () => {
   it("falls back to the real production domain outside production when unset", () => {
     vi.stubEnv("SITE_URL", undefined);
     vi.stubEnv("VERCEL_ENV", undefined);
-    expect(resolveSiteUrl()).toBe("https://chirobackpain.com");
+    expect(resolveSiteUrl()).toBe("https://www.chirobackpain.com");
   });
 
   it("throws in production when SITE_URL is unset — never falls back silently", () => {
@@ -56,5 +56,27 @@ describe("hoursVerified / social.verified gates", () => {
     for (const social of siteConfig.social) {
       expect(social.verified).toBe(false);
     }
+  });
+});
+
+/** ATS-SEO-040: the "Conditions" nav item used to click through to
+ * /car-accident-chiropractor (borrowing the "Auto Accidents" item's href
+ * because /conditions had no real hub page) — semantically misleading, and
+ * it made the two nav entries indistinguishable by destination. Now that
+ * /conditions is a real page, Conditions must own its own href. */
+describe("Conditions nav item", () => {
+  const conditions = siteConfig.nav.find((link) => link.label === "Conditions");
+  const autoAccidents = siteConfig.nav.find((link) => link.label === "Auto Accidents");
+
+  it("exists", () => {
+    expect(conditions).toBeDefined();
+  });
+
+  it("points at the real /conditions hub, not the accident page", () => {
+    expect(conditions?.href).toBe("/conditions");
+  });
+
+  it("no longer shares its href with the Auto Accidents nav item", () => {
+    expect(conditions?.href).not.toBe(autoAccidents?.href);
   });
 });

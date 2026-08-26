@@ -114,7 +114,7 @@ export function UnderlineForm({
           <div key={field.name} className={cn("flex flex-col gap-2", spanClass)}>
             <label
               htmlFor={`underline-${field.name}`}
-              className="font-sans text-stat-label uppercase tracking-[1px] text-ink-500"
+              className="font-sans text-stat-label uppercase tracking-[1px] text-navy-900"
             >
               {field.label}
             </label>

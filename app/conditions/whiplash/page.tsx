@@ -25,6 +25,7 @@ import { Section } from "@/components/ui/section";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
 import { pointToWhereItHurtsContent } from "@/content/point-to-where-it-hurts";
+import { buildRelatedLinks } from "@/content/related-links";
 import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { heroReviewsCarousel, homeFeaturedTestimonial, homeReviews } from "@/content/testimonials";
@@ -34,8 +35,8 @@ import {
   whiplashFeelsLike,
   whiplashHero,
   whiplashHowWeTreat,
-  whiplashRelatedBottom,
-  whiplashRelatedMidPage,
+  whiplashRelatedBottomConfig,
+  whiplashRelatedMidPageConfig,
   whiplashSymptoms,
   whiplashWarning,
 } from "@/content/whiplash-page";
@@ -113,13 +114,17 @@ export default function WhiplashPage() {
         ]}
       />
       <HeroSolidPanel
+        breadcrumbs={[
+          { name: "Home", path: "" },
+          { name: "Whiplash", path: "/conditions/whiplash" },
+        ]}
         background={whiplashHero.backgroundImage}
         eyebrow={whiplashHero.eyebrowChip}
         title={whiplashHero.h1}
         subhead={whiplashHero.subhead}
         callPill={{ eyebrow: "Speak with us today", phone: `Call ${siteConfig.business.phone}` }}
         form={{
-          heading: "Schedule Your Evaluation",
+          heading: "Request Your Evaluation",
           submitLabel: leadFormVariants.heroEval.submitLabel,
           variant: leadFormVariants.heroEval.variant,
           fields: leadFormVariants.heroEval.fields,
@@ -206,7 +211,10 @@ export default function WhiplashPage() {
           causesHeading="Classic Whiplash Symptoms"
           causes={whiplashSymptoms}
           relatedHeading="Related Whiplash conditions"
-          relatedLinks={whiplashRelatedMidPage}
+          relatedLinks={buildRelatedLinks({
+            currentPath: "/conditions/whiplash",
+            ...whiplashRelatedMidPageConfig,
+          })}
           typesHeading="Types"
           categories={whiplashTypes}
         />
@@ -255,7 +263,12 @@ export default function WhiplashPage() {
         </Container>
       </Section>
 
-      <RelatedConditions items={whiplashRelatedBottom} />
+      <RelatedConditions
+        items={buildRelatedLinks({
+          currentPath: "/conditions/whiplash",
+          ...whiplashRelatedBottomConfig,
+        })}
+      />
 
       <ConditionFaq faq={whiplashFaq} />
     </>

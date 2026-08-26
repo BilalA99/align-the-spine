@@ -1,11 +1,13 @@
 import type { ReactNode } from "react";
 import Image from "next/image";
 
+import { BreadcrumbTrail } from "@/components/seo/breadcrumb-trail";
 import { CheckIcon } from "@/components/ui/icons/check";
 import { LeadForm } from "@/components/ui/lead-form";
 import { MobileLeadPreviewCard } from "@/components/ui/mobile-lead-preview-card";
 import { leadFormVariants } from "@/content/lead-forms";
 import { siteConfig } from "@/content/site";
+import type { BreadcrumbItemInput } from "@/lib/schema";
 
 /** Local-office-toned hero for /service-areas and each city page — a
  * full-bleed, edge-to-edge two-tone split at `lg`+ (dark photo left, solid
@@ -39,6 +41,7 @@ export function ServiceAreaHero({
   cityName,
   county,
   children,
+  breadcrumbs,
 }: {
   eyebrow: string;
   title: ReactNode;
@@ -47,6 +50,10 @@ export function ServiceAreaHero({
   cityName?: string;
   county?: string;
   children?: ReactNode;
+  /** LINK-02: same contract as HeroSolidPanel/Hero's `breadcrumbs` prop —
+   * renders the visible trail here; pair with a BreadcrumbJsonLd call fed
+   * the same items array so the two can't drift. */
+  breadcrumbs?: BreadcrumbItemInput[];
 }) {
   const { address, phone, phoneHref } = siteConfig.business;
   const trustChips = [
@@ -121,6 +128,7 @@ export function ServiceAreaHero({
          * direction. lg:pb-[60px] unchanged (desktop's Office/Call row
          * lives in the separate navy panel below, not this photo column). */}
         <div className="container relative z-10 pb-24 pt-[224px] lg:pb-[60px] lg:pt-[276px] lg:pr-10">
+          {breadcrumbs && <BreadcrumbTrail items={breadcrumbs} className="mb-4" />}
           <span className="inline-flex items-center rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-teal-300 backdrop-blur-sm">
             {eyebrow}
           </span>

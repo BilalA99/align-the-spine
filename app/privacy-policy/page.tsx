@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { OnThisPageNav } from "@/components/layout/on-this-page-nav";
 import { LegalContent } from "@/components/sections/legal-content";
 import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
+import { BreadcrumbTrail } from "@/components/seo/breadcrumb-trail";
 import { Section } from "@/components/ui/section";
 import { privacyPolicyEffectiveDate, privacyPolicySections } from "@/content/legal/privacy-policy";
 import { getRoute } from "@/content/seo";
@@ -15,14 +16,14 @@ export const metadata: Metadata = buildMetadata(getRoute("/privacy-policy"));
  * OnThisPageNav sidebar next to the 9-section LegalContent body. Navbar/
  * standard footer come from RootShell. */
 export default function PrivacyPolicyPage() {
+  const breadcrumbs = [
+    { name: "Home", path: "" },
+    { name: "Privacy Policy", path: "/privacy-policy" },
+  ];
+
   return (
     <>
-      <BreadcrumbJsonLd
-        items={[
-          { name: "Home", path: "" },
-          { name: "Privacy Policy", path: "/privacy-policy" },
-        ]}
-      />
+      <BreadcrumbJsonLd items={breadcrumbs} />
       {/* Negative top margin matches Hero's (components/sections/hero.tsx):
           pulls this block up over TopStatsBar, which RootShell renders
           in-flow before the fixed Navbar. Hero pages hide it the same way;
@@ -38,6 +39,7 @@ export default function PrivacyPolicyPage() {
           guessed) if TopStatsBar's height changes. */}
       <div className="-mt-[460px] bg-navy-900 pb-16 pt-[340px] min-[400px]:-mt-[392px] min-[400px]:pt-[280px] sm:-mt-[304px] md:-mt-[240px] md:pt-[220px] lg:-mt-[176px] lg:pt-[260px]">
         <div className="container">
+          <BreadcrumbTrail items={breadcrumbs} className="mb-4" />
           <h1 className="font-display text-hero text-white">Privacy Policy</h1>
           <p className="mt-4 font-sans text-body-lg text-mute-300">{privacyPolicyEffectiveDate}</p>
         </div>

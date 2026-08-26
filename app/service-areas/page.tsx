@@ -5,6 +5,7 @@ import { ServiceAreaHero } from "@/components/content/service-area-hero";
 import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ArrowRightIcon } from "@/components/ui/icons/arrow-right";
+import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { listPublicContent } from "@/lib/content/public-content";
 import { buildMedicalBusiness } from "@/lib/schema";
@@ -12,29 +13,25 @@ import { buildMetadata } from "@/lib/seo/metadata";
 
 const GOOGLE_MAPS_URL = "https://share.google/9ln6JLZdTiphHnmzF";
 
-export const metadata: Metadata = buildMetadata({
-  path: "/service-areas",
-  title: "Service Areas | Deerfield Beach Chiropractic Office",
-  description:
-    "See the verified Deerfield Beach office and learn how nearby in-office visits differ from limited, case-and-location-confirmed car-accident/PIP home-visit eligibility.",
-  image: {
-    src: "/figma-exports/exterior-img.png",
-    alt: "Exterior of the Deerfield Beach office building",
-  },
-});
+// ATS-SEO-021: previously hardcoded its own title/description literal here,
+// independent of content/seo.ts's registry entry for this same path — the
+// two had drifted out of sync. Now pulls from the registry like every
+// other static page, so there's one source of truth again.
+export const metadata: Metadata = buildMetadata(getRoute("/service-areas"));
 
 export default async function ServiceAreasPage() {
   const result = await listPublicContent({ contentType: "service_area", pageSize: 24 });
+  const breadcrumbs = [
+    { name: "Home", path: "" },
+    { name: "Service areas", path: "/service-areas" },
+  ];
+
   return (
     <div className="bg-panel-100 pb-24">
       <JsonLd data={buildMedicalBusiness()} />
-      <BreadcrumbJsonLd
-        items={[
-          { name: "Home", path: "" },
-          { name: "Service areas", path: "/service-areas" },
-        ]}
-      />
+      <BreadcrumbJsonLd items={breadcrumbs} />
       <ServiceAreaHero
+        breadcrumbs={breadcrumbs}
         eyebrow="One verified office"
         title="One Deerfield Beach office. Clearly explained service areas."
         subhead={

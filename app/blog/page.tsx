@@ -6,20 +6,17 @@ import { BlogHero } from "@/components/content/blog-hero";
 import { FeaturedArticleCard } from "@/components/content/featured-article-card";
 import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
 import { LeadFormPopup } from "@/components/ui/lead-form-popup";
+import { getRoute } from "@/content/seo";
 import { siteConfig } from "@/content/site";
 import { listPublicCategories, listPublicContent } from "@/lib/content/public-content";
 import { buildMetadata } from "@/lib/seo/metadata";
 
-export const metadata: Metadata = buildMetadata({
-  path: "/blog",
-  title: "Chiropractic & Accident Recovery Resources | Align the Spine",
-  description:
-    "Helpful, source-aware chiropractic, mobility, accident-care, and Florida PIP resources from Align the Spine Chiropractic in Deerfield Beach.",
-  image: {
-    src: "/figma-exports/interior-reception.png",
-    alt: "Align the Spine Chiropractic reception area in Deerfield Beach",
-  },
-});
+// ATS-SEO-021: was a hardcoded literal identical to content/seo.ts's
+// registry entry for this path — not yet drifted, but the same
+// two-sources-of-truth risk that had already caused /service-areas' title
+// and description to silently diverge. Pulls from the registry now, same
+// as every other static page.
+export const metadata: Metadata = buildMetadata(getRoute("/blog"));
 
 export default async function BlogPage({
   searchParams,
@@ -52,15 +49,16 @@ export default async function BlogPage({
     const qs = query.toString();
     return qs ? `/blog?${qs}` : "/blog";
   };
+  const breadcrumbs = [
+    { name: "Home", path: "" },
+    { name: "Blog", path: "/blog" },
+  ];
+
   return (
     <div className="bg-panel-100 pb-24">
-      <BreadcrumbJsonLd
-        items={[
-          { name: "Home", path: "" },
-          { name: "Blog", path: "/blog" },
-        ]}
-      />
+      <BreadcrumbJsonLd items={breadcrumbs} />
       <BlogHero
+        breadcrumbs={breadcrumbs}
         eyebrow="Patient resources"
         title="Chiropractic & Accident Recovery Resources"
         subhead="Clear information for everyday mobility, preparing for care, and navigating the days after a car accident—grounded in one Deerfield Beach office and careful about what still needs confirmation."

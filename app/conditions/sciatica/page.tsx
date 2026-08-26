@@ -24,14 +24,15 @@ import { Section } from "@/components/ui/section";
 import { doctorProfileContent } from "@/content/doctor-profile";
 import { leadFormVariants } from "@/content/lead-forms";
 import { pointToWhereItHurtsContent } from "@/content/point-to-where-it-hurts";
+import { buildRelatedLinks } from "@/content/related-links";
 import {
   sciaticaAccident,
   sciaticaFaq,
   sciaticaFeelsLike,
   sciaticaHero,
   sciaticaHowWeTreat,
-  sciaticaRelatedBottom,
-  sciaticaRelatedMidPage,
+  sciaticaRelatedBottomConfig,
+  sciaticaRelatedMidPageConfig,
   sciaticaSymptoms,
   sciaticaWarning,
 } from "@/content/sciatica-page";
@@ -107,13 +108,17 @@ export default function SciaticaPage() {
         ]}
       />
       <HeroSolidPanel
+        breadcrumbs={[
+          { name: "Home", path: "" },
+          { name: "Sciatica", path: "/conditions/sciatica" },
+        ]}
         background={sciaticaHero.backgroundImage}
         eyebrow={sciaticaHero.eyebrowChip}
         title={sciaticaHero.h1}
         subhead={sciaticaHero.subhead}
         callPill={{ eyebrow: "Speak with us today", phone: `Call ${siteConfig.business.phone}` }}
         form={{
-          heading: "Schedule Your Evaluation",
+          heading: "Request Your Evaluation",
           submitLabel: leadFormVariants.heroEval.submitLabel,
           variant: leadFormVariants.heroEval.variant,
           fields: leadFormVariants.heroEval.fields,
@@ -178,7 +183,10 @@ export default function SciaticaPage() {
           causesHeading="Classic Sciatica Symptoms"
           causes={sciaticaSymptoms}
           relatedHeading="Related Sciatica Conditions"
-          relatedLinks={sciaticaRelatedMidPage}
+          relatedLinks={buildRelatedLinks({
+            currentPath: "/conditions/sciatica",
+            ...sciaticaRelatedMidPageConfig,
+          })}
           typesHeading="Types"
           categories={sciaticaTypes}
         />
@@ -227,7 +235,12 @@ export default function SciaticaPage() {
         </Container>
       </Section>
 
-      <RelatedConditions items={sciaticaRelatedBottom} />
+      <RelatedConditions
+        items={buildRelatedLinks({
+          currentPath: "/conditions/sciatica",
+          ...sciaticaRelatedBottomConfig,
+        })}
+      />
 
       <ConditionFaq faq={sciaticaFaq} />
     </>

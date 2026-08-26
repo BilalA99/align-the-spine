@@ -5,7 +5,6 @@ import { LocationIntro } from "@/components/layout/location-intro";
 import { BookingForm } from "@/components/sections/booking-form";
 import { HeroReviewsCarousel } from "@/components/sections/hero-reviews-carousel";
 import { HeroSolidPanel } from "@/components/sections/hero-solid-panel";
-import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
 import { FaqJsonLd } from "@/components/seo/faq-json-ld";
 import { FaqAccordion } from "@/components/ui/faq-accordion";
 import { Section } from "@/components/ui/section";
@@ -25,13 +24,11 @@ export const metadata: Metadata = buildMetadata(getRoute("/book-an-appointment")
 export default function BookPage() {
   return (
     <>
-      <BreadcrumbJsonLd
-        items={[
+      <HeroSolidPanel
+        breadcrumbs={[
           { name: "Home", path: "" },
           { name: "Book an Appointment", path: "/book-an-appointment" },
         ]}
-      />
-      <HeroSolidPanel
         eyebrow="Ready to schedule your evaluation?"
         background={{
           src: "/figma-exports/phone-mockup.png",

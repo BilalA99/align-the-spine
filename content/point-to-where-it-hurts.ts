@@ -1,3 +1,5 @@
+import { getRouteHref } from "@/content/seo";
+
 export interface BodyRegion {
   id: string;
   name: string;
@@ -46,13 +48,16 @@ export const pointToWhereItHurtsContent: PointToWhereItHurtsContent = {
   },
   video: "https://align-the-spine.b-cdn.net/images/spine-straight.mp4",
   videoPoster: "/figma-exports/spine-hunched-poster.jpg",
-  ctaLabel: "Schedule now",
+  ctaLabel: "Request Now",
   regions: [
     {
       id: "headaches",
       name: "Headaches",
       description:
         "Tension and cervicogenic headaches often trace back to misalignment in the upper neck.",
+      // LINK-01: falls back to the booking CTA while /conditions/cervicogenic-headache
+      // stays draft (IA-02) — getRouteHref() returns null until sign-off lands.
+      href: getRouteHref("/conditions/cervicogenic-headache") ?? undefined,
       position: { x: 52, y: 14 },
       size: 40,
       labelSide: "right",
@@ -61,6 +66,7 @@ export const pointToWhereItHurtsContent: PointToWhereItHurtsContent = {
       id: "whiplash",
       name: "Whiplash",
       description: "Neck strain, stiffness, and reduced range of motion from sudden impact.",
+      href: getRouteHref("/conditions/whiplash") ?? undefined,
       position: { x: 52, y: 25 },
       size: 48,
       labelSide: "right",
@@ -69,6 +75,9 @@ export const pointToWhereItHurtsContent: PointToWhereItHurtsContent = {
       id: "shoulder-pain",
       name: "Shoulder Pain",
       description: "Tightness and restricted movement from postural strain or old injuries.",
+      // No dedicated shoulder-pain page exists — stays on the booking CTA
+      // rather than a fabricated target (same rule as the accident-injuries
+      // "Shoulder & Extremity" card).
       position: { x: 27, y: 44 },
       size: 56,
       labelSide: "left",
@@ -78,6 +87,7 @@ export const pointToWhereItHurtsContent: PointToWhereItHurtsContent = {
       name: "Back Pain",
       description:
         "Aching or sharp pain along the mid and lower back, often tied to posture or overuse.",
+      href: getRouteHref("/conditions/back-pain") ?? undefined,
       position: { x: 58, y: 45 },
       size: 62,
       labelSide: "right",
@@ -87,6 +97,7 @@ export const pointToWhereItHurtsContent: PointToWhereItHurtsContent = {
       name: "Herniated Disc",
       description:
         "A bulging or ruptured disc pressing on nearby nerves, causing pain that radiates outward.",
+      href: getRouteHref("/services/spinal-decompression") ?? undefined,
       position: { x: 52, y: 60 },
       size: 72,
       labelSide: "left",
@@ -95,6 +106,7 @@ export const pointToWhereItHurtsContent: PointToWhereItHurtsContent = {
       id: "sciatica",
       name: "Sciatica",
       description: "Sharp, radiating pain down the leg from nerve compression in the lower spine.",
+      href: getRouteHref("/conditions/sciatica") ?? undefined,
       position: { x: 52, y: 74 },
       size: 60,
       labelSide: "right",

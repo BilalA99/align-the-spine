@@ -2,7 +2,6 @@ import type {
   ConditionAccident,
   ConditionFaq,
   ConditionFeelsLikeItem,
-  ConditionRelatedLink,
   ConditionTreatmentItem,
   ConditionWarning,
 } from "@/content/conditions/types";
@@ -45,17 +44,24 @@ export const whiplashSymptoms: string[] = [
   'Fatigue and difficulty concentrating ("brain fog")',
 ];
 
-export const whiplashRelatedMidPage: ConditionRelatedLink[] = [
-  { label: "Cervicogenic Headache", href: "/conditions/neck-pain" },
-  { label: "TMJ / Jaw Pain from Trauma", href: "/services#adjustments", highlighted: true },
-  {
-    label: "Concussion / Post-Concussion Syndrome",
-    href: "/car-accident-chiropractor",
-  },
-  { label: "Shoulder Pain", href: "/services/soft-tissue-therapy" },
-  { label: "Auto Accident Injuries", href: "/car-accident-chiropractor" },
-  { label: "Neck Pain", href: "/conditions/neck-pain" },
-];
+// ATS-SEO-043: this array previously had 3 pills whose label named one
+// condition (Cervicogenic Headache, TMJ / Jaw Pain, Concussion) while the
+// href actually pointed somewhere else entirely (neck-pain, a services
+// anchor, and the accident page respectively) — a real, live anchor/
+// destination mismatch. buildRelatedLinks() (content/related-links.ts)
+// makes that specific bug impossible: the label and href are always
+// resolved from the same input path.
+// Plain path config — see content/back-pain-page.ts's identical note for
+// why not resolved here directly (circular import via content/seo.ts).
+export const whiplashRelatedMidPageConfig = {
+  paths: [
+    "/conditions/cervicogenic-headache",
+    "/conditions/neck-pain",
+    "/services/soft-tissue-therapy",
+    "/car-accident-chiropractor",
+  ],
+  highlightPath: "/car-accident-chiropractor",
+};
 
 export const whiplashHowWeTreat: ConditionTreatmentItem[] = [
   {
@@ -147,20 +153,19 @@ export const whiplashAccident: ConditionAccident = {
     "Coverage and payment depend on your policy, eligibility, medical necessity, and the circumstances of your claim.",
 };
 
-export const whiplashRelatedBottom: ConditionRelatedLink[] = [
-  { label: "Lower Back Pain", href: "/conditions/back-pain" },
-  {
-    label: "Auto Accident Injuries",
-    href: "/car-accident-chiropractor",
-    highlighted: true,
-  },
-  { label: "Neck Pain", href: "/conditions/neck-pain" },
-  { label: "Spinal Decompression", href: "/services/spinal-decompression" },
-  { label: "Whiplash", href: "/conditions/whiplash" },
-  { label: "Home Visit Care", href: "/home-visit-chiropractor" },
-  { label: "Herniated Disc", href: "/services/spinal-decompression" },
-  { label: "View All Treatments", href: "/services" },
-];
+// Plain path config — see whiplashRelatedMidPageConfig's doc comment above.
+export const whiplashRelatedBottomConfig = {
+  paths: [
+    "/conditions/neck-pain",
+    "/conditions/back-pain",
+    "/services/spinal-decompression",
+    "/conditions",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+};
 
 export const whiplashFaq: ConditionFaq = {
   headerTail: "treating whiplash",

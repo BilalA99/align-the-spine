@@ -2,7 +2,6 @@ import type {
   ConditionAccident,
   ConditionFaq,
   ConditionFeelsLikeItem,
-  ConditionRelatedLink,
   ConditionTreatmentItem,
   ConditionWarning,
 } from "@/content/conditions/types";
@@ -41,11 +40,12 @@ export const sciaticaSymptoms: string[] = [
   "Localized pain in the buttock area",
 ];
 
-export const sciaticaRelatedMidPage: ConditionRelatedLink[] = [
-  { label: "Lower Back Pain", href: "/conditions/back-pain" },
-  { label: "Herniated Disc", href: "/services/spinal-decompression" },
-  { label: "Auto Accident Injuries", href: "/car-accident-chiropractor" },
-];
+// ATS-SEO-043: plain path config — see content/back-pain-page.ts's
+// identical note for why (circular import via content/seo.ts).
+export const sciaticaRelatedMidPageConfig = {
+  paths: ["/conditions/back-pain", "/services/spinal-decompression", "/car-accident-chiropractor"],
+  highlightPath: "/services/spinal-decompression",
+};
 
 export const sciaticaHowWeTreat: ConditionTreatmentItem[] = [
   {
@@ -137,16 +137,18 @@ export const sciaticaAccident: ConditionAccident = {
     "Coverage and payment depend on your policy, eligibility, medical necessity, and the circumstances of your claim.",
 };
 
-export const sciaticaRelatedBottom: ConditionRelatedLink[] = [
-  { label: "Lower Back Pain", href: "/conditions/back-pain" },
-  { label: "Auto Accident Injuries", href: "/car-accident-chiropractor" },
-  { label: "Neck Pain", href: "/conditions/neck-pain" },
-  { label: "Spinal Decompression", href: "/services/spinal-decompression" },
-  { label: "Whiplash", href: "/conditions/whiplash" },
-  { label: "Home Visit Care", href: "/home-visit-chiropractor" },
-  { label: "Herniated Disc", href: "/services/spinal-decompression" },
-  { label: "View All Treatments", href: "/services" },
-];
+// Plain path config — see sciaticaRelatedMidPageConfig's doc comment above.
+export const sciaticaRelatedBottomConfig = {
+  paths: [
+    "/conditions/back-pain",
+    "/services/spinal-decompression",
+    "/conditions",
+    "/car-accident-chiropractor",
+    "/blog",
+    "/book-an-appointment",
+  ],
+  highlightPath: "/book-an-appointment",
+};
 
 export const sciaticaFaq: ConditionFaq = {
   headerTail: "treating sciatica",

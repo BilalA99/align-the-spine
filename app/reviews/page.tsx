@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 
 import { LocationFooter } from "@/components/layout/location-footer";
 import { LocationIntro } from "@/components/layout/location-intro";
 import { ContactSection } from "@/components/sections/contact-section";
 import { ReviewsCarousel } from "@/components/sections/reviews-carousel";
 import { BreadcrumbJsonLd } from "@/components/seo/breadcrumb-json-ld";
+import { BreadcrumbTrail } from "@/components/seo/breadcrumb-trail";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -40,6 +42,11 @@ export const metadata: Metadata = buildRouteMetadata(getRoute("/reviews"));
 export default function ReviewsPage() {
   const reviews = siteConfig.reviewsRating;
   const otherStats = getVerifiedStats().filter((stat) => stat.label !== "Reviews");
+
+  const breadcrumbs = [
+    { name: "Home", path: "" },
+    { name: "Reviews", path: "/reviews" },
+  ];
 
   return (
     <>
@@ -84,6 +91,7 @@ export default function ReviewsPage() {
                * (previously max-w-xl on its own) reached far enough right to
                * run into her. */}
               <div className="max-w-lg">
+                <BreadcrumbTrail items={breadcrumbs} className="mb-4" />
                 <h1 className="font-display text-5xl font-medium text-white">
                   Patient Reviews for Align the Spine Chiropractic
                 </h1>
@@ -176,6 +184,18 @@ export default function ReviewsPage() {
 
       <Section spacing="lg" className="container">
         <ReviewsCarousel reviews={testimonials} />
+        {/* ATS-SEO-041: the page's own request path was a same-page form
+         * scroll (ScrollToFormButton, a <button>, not a link) plus a tel:
+         * link — no real <a href> to /book-an-appointment or /contact-us
+         * anywhere in the page's own body content. */}
+        <div className="mt-10 flex flex-wrap justify-center gap-8 text-center font-sans text-card-body">
+          <Link href="/book-an-appointment" className="text-navy-900 underline underline-offset-4">
+            Request an appointment
+          </Link>
+          <Link href="/contact-us" className="text-navy-900 underline underline-offset-4">
+            Contact our Deerfield Beach office
+          </Link>
+        </div>
       </Section>
 
       <LocationIntro />
