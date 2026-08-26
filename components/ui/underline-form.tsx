@@ -10,7 +10,7 @@ import { errorId } from "@/components/ui/field";
 import { LeadConsent } from "@/components/ui/lead-consent";
 import type { LeadFormValues } from "@/components/ui/lead-form";
 import { siteConfig } from "@/content/site";
-import { trackLeadConversion } from "@/lib/analytics";
+import { trackLeadSuccess } from "@/lib/analytics/lead-events";
 import { cn } from "@/lib/cn";
 import {
   buildLeadFormSchema,
@@ -18,6 +18,7 @@ import {
   type LeadFieldType,
 } from "@/lib/lead-form-schema";
 import { submitLead } from "@/lib/leads/client";
+import { newSubmissionId } from "@/lib/leads/submission-id";
 import { formatUsPhoneAsYouType } from "@/lib/phone-format";
 
 export interface UnderlineFormProps {
@@ -76,10 +77,16 @@ export function UnderlineForm({
     }
 
     try {
-      const stableSubmissionId = submissionId ?? crypto.randomUUID();
+      const stableSubmissionId = submissionId ?? newSubmissionId();
       if (!submissionId) setSubmissionId(stableSubmissionId);
-      await submitLead(stableSubmissionId, variant, values, honeypot?.value ?? "");
-      trackLeadConversion(variant, values);
+      const { submissionId: confirmedId } = await submitLead(
+        stableSubmissionId,
+        variant,
+        values,
+        honeypot?.value ?? "",
+      );
+      // Conversion == a durably-stored lead: only fire on the server-confirmed ID.
+      if (confirmedId) trackLeadSuccess(confirmedId);
       setSubmissionId(null);
       router.push("/thank-you");
     } catch {
@@ -89,6 +96,7 @@ export function UnderlineForm({
 
   return (
     <form
+      method="post"
       onSubmit={handleSubmit(onValid)}
       noValidate
       className={cn("grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2", className)}

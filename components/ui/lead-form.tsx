@@ -12,7 +12,7 @@ import { LeadConsent } from "@/components/ui/lead-consent";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { siteConfig } from "@/content/site";
-import { trackLeadConversion } from "@/lib/analytics";
+import { trackLeadSuccess } from "@/lib/analytics/lead-events";
 import { cn } from "@/lib/cn";
 import {
   buildLeadFormSchema,
@@ -20,6 +20,7 @@ import {
   type LeadFieldType,
 } from "@/lib/lead-form-schema";
 import { submitLead } from "@/lib/leads/client";
+import { newSubmissionId } from "@/lib/leads/submission-id";
 import { formatUsPhoneAsYouType } from "@/lib/phone-format";
 
 export type LeadFormValues = Record<string, string>;
@@ -242,10 +243,17 @@ export function LeadForm({
     }
 
     try {
-      const stableSubmissionId = submissionId ?? crypto.randomUUID();
+      const stableSubmissionId = submissionId ?? newSubmissionId();
       if (!submissionId) setSubmissionId(stableSubmissionId);
-      await submitLead(stableSubmissionId, variant, values, honeypot?.value ?? "");
-      trackLeadConversion(variant, values);
+      const { submissionId: confirmedId } = await submitLead(
+        stableSubmissionId,
+        variant,
+        values,
+        honeypot?.value ?? "",
+      );
+      // The conversion is a durably-stored lead, nothing earlier — so it only
+      // fires once the server confirms the submission ID it persisted.
+      if (confirmedId) trackLeadSuccess(confirmedId);
       setSubmissionId(null);
       if (onSubmit) {
         await onSubmit(values);
@@ -262,6 +270,7 @@ export function LeadForm({
 
   return (
     <form
+      method="post"
       onSubmit={handleSubmit(onValid)}
       noValidate
       className={cn(

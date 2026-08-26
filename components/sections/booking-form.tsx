@@ -12,9 +12,10 @@ import type { LeadFormValues } from "@/components/ui/lead-form";
 import { Select } from "@/components/ui/select";
 import { leadFormVariants } from "@/content/lead-forms";
 import { siteConfig } from "@/content/site";
-import { trackLeadConversion } from "@/lib/analytics";
+import { trackLeadSuccess } from "@/lib/analytics/lead-events";
 import { buildLeadFormSchema } from "@/lib/lead-form-schema";
 import { submitLead } from "@/lib/leads/client";
+import { newSubmissionId } from "@/lib/leads/submission-id";
 import { formatUsPhoneAsYouType } from "@/lib/phone-format";
 
 const config = leadFormVariants.booking;
@@ -66,10 +67,16 @@ export function BookingForm() {
     }
 
     try {
-      const stableSubmissionId = submissionId ?? crypto.randomUUID();
+      const stableSubmissionId = submissionId ?? newSubmissionId();
       if (!submissionId) setSubmissionId(stableSubmissionId);
-      await submitLead(stableSubmissionId, config.variant, values, "");
-      trackLeadConversion(config.variant, values);
+      const { submissionId: confirmedId } = await submitLead(
+        stableSubmissionId,
+        config.variant,
+        values,
+        "",
+      );
+      // Conversion == a durably-stored lead: only fire on the server-confirmed ID.
+      if (confirmedId) trackLeadSuccess(confirmedId);
       setSubmissionId(null);
       router.push("/thank-you");
     } catch {
@@ -78,7 +85,12 @@ export function BookingForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onValid)} noValidate className="relative flex flex-col gap-4">
+    <form
+      method="post"
+      onSubmit={handleSubmit(onValid)}
+      noValidate
+      className="relative flex flex-col gap-4"
+    >
       <h2 className="mb-2 font-display text-h1 text-white">Request an appointment</h2>
 
       <div aria-hidden="true" className="absolute h-0 w-0 overflow-hidden">

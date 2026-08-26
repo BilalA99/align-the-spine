@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { ThankYouConversion } from "@/components/analytics/thank-you-conversion";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { CheckIcon } from "@/components/ui/icons/check";
@@ -28,20 +27,17 @@ export const metadata: Metadata = buildMetadata({
  * for the client, not resolved here). Keeps the conversation open with a
  * `tel:` link and directions, and never dead-ends the visitor.
  *
- * <ThankYouConversion /> fires the Ads/GA4 lead conversion event here, on
- * this page, instead of client-side in the form right before the redirect —
- * so it fires only once the visitor has actually landed on a real
- * confirmation of a durably-persisted lead (ATS-E5), not merely once the
- * form's fetch call resolved. The inline-success form variant (which never
- * navigates here) is unaffected — see lib/analytics.ts's
- * stashPendingConversion() doc comment. */
+ * This route owns NO conversion code: the lead conversion is announced once,
+ * client-side, the moment the server confirms durable storage (each form's
+ * success handler pushes the lead-success dataLayer event GTM listens for).
+ * Direct entry, refresh, and back/forward navigation here therefore create
+ * zero conversions — see docs/conversion-tracking.md. */
 export default function ThankYouPage() {
   const todaysHours = siteConfig.hours[0];
   const hoursWindow = todaysHours ? `${todaysHours.open}–${todaysHours.close}` : null;
 
   return (
     <Section spacing="lg" className="container pt-40 md:pt-48">
-      <ThankYouConversion />
       <div className="mx-auto flex max-w-2xl flex-col items-center gap-6 text-center">
         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-[#58A0A0]">
           <CheckIcon className="h-8 w-8 text-white" />

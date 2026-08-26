@@ -1,13 +1,10 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import {
   classifyLeadPriority,
-  consumePendingConversion,
   isBookCtaLink,
   isPhoneLink,
-  stashPendingConversion,
   trackBookCtaClick,
-  trackLeadConversion,
   trackPageView,
   trackPhoneClick,
 } from "./analytics";
@@ -38,76 +35,14 @@ describe("isBookCtaLink", () => {
 
 describe("tracking helpers", () => {
   it("no-op safely without throwing when window/gtag isn't available", () => {
-    expect(() => trackLeadConversion("heroEval")).not.toThrow();
-    expect(() => trackLeadConversion("carAccident", { phone: "(954) 573-7192" })).not.toThrow();
     expect(() => trackPhoneClick()).not.toThrow();
     expect(() => trackBookCtaClick()).not.toThrow();
     expect(() => trackPageView("/about")).not.toThrow();
-  });
-
-  it("emits only non-PII lead dimensions", () => {
-    const gtag = vi.fn();
-    (globalThis as { window?: unknown }).window = { gtag };
-    trackLeadConversion("heroEval", {
-      email: "patient@example.com",
-      phone: "9545737192",
-      message: "private",
-      carAccident: "yes",
-    });
-    const serialized = JSON.stringify(gtag.mock.calls);
-    expect(serialized).toContain("generate_lead");
-    expect(serialized).toContain("high");
-    expect(serialized).not.toContain("patient@example.com");
-    expect(serialized).not.toContain("9545737192");
-    expect(serialized).not.toContain("private");
   });
 });
 
 afterEach(() => {
   delete (globalThis as { window?: unknown }).window;
-});
-
-/** No jsdom in this project — same minimal window/sessionStorage mock
- * pattern as lib/attribution.test.ts (which these two functions mirror). */
-describe("stashPendingConversion / consumePendingConversion (IA-05/ATS-E7)", () => {
-  let store: Map<string, string>;
-
-  beforeEach(() => {
-    store = new Map();
-    (globalThis as { window?: unknown }).window = {
-      sessionStorage: {
-        getItem: (key: string) => store.get(key) ?? null,
-        setItem: (key: string, value: string) => {
-          store.set(key, value);
-        },
-        removeItem: (key: string) => {
-          store.delete(key);
-        },
-      },
-    };
-  });
-
-  afterEach(() => {
-    delete (globalThis as { window?: unknown }).window;
-  });
-
-  it("round-trips a stashed conversion payload", () => {
-    stashPendingConversion("heroEval", { firstName: "Jane", phone: "5551234567" });
-    expect(consumePendingConversion()).toEqual({
-      variant: "heroEval",
-      values: { firstName: "Jane", phone: "5551234567" },
-    });
-  });
-
-  it("is read-once — a second call returns null so a refresh can't double-fire", () => {
-    stashPendingConversion("heroEval", { firstName: "Jane" });
-    consumePendingConversion();
-    expect(consumePendingConversion()).toBeNull();
-  });
-
-  it("returns null when nothing was stashed (direct navigation to /thank-you)", () => {
-    expect(consumePendingConversion()).toBeNull();
-  });
 });
 
 describe("classifyLeadPriority", () => {
