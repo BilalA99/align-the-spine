@@ -161,25 +161,47 @@ Declared in `content/i18n.ts`. Slugs are localized to Spanish search intent,
 not transliterated from the English. Trailing slashes are absent on both
 sides, matching the site's existing `trailingSlash: false` normalization.
 
-| #   | English                      | Spanish                                | Status                                 |
-| --- | ---------------------------- | -------------------------------------- | -------------------------------------- |
-| 1   | `/`                          | `/es`                                  | published                              |
-| 2   | `/car-accident-chiropractor` | `/es/quiropractico-accidentes-de-auto` | published                              |
-| 3   | `/services`                  | `/es/servicios`                        | published                              |
-| 4   | `/about`                     | `/es/dr-abe-nasser`                    | published                              |
-| 5   | `/reviews`                   | `/es/resenas`                          | published                              |
-| 6   | `/contact-us`                | `/es/contacto`                         | published                              |
-| 7   | `/book-an-appointment`       | `/es/solicitar-cita`                   | published                              |
-| —   | `/thank-you`                 | `/es/gracias`                          | both noindex, out of sitemap, unpaired |
+| #   | English                              | Spanish                                         | Status                                 |
+| --- | ------------------------------------ | ----------------------------------------------- | -------------------------------------- |
+| 1   | `/`                                  | `/es`                                           | published                              |
+| 2   | `/car-accident-chiropractor`         | `/es/quiropractico-accidentes-de-auto`          | published                              |
+| 3   | `/services`                          | `/es/servicios`                                 | published                              |
+| 4   | `/about`                             | `/es/dr-abe-nasser`                             | published                              |
+| 5   | `/reviews`                           | `/es/resenas`                                   | published                              |
+| 6   | `/contact-us`                        | `/es/contacto`                                  | published                              |
+| 7   | `/book-an-appointment`               | `/es/solicitar-cita`                            | published                              |
+| 8   | `/conditions`                        | `/es/condiciones`                               | published                              |
+| 9   | `/service-areas`                     | `/es/areas-de-servicio`                         | published                              |
+| 10  | `/conditions/back-pain`              | `/es/condiciones/dolor-de-espalda`              | draft both sides                       |
+| 11  | `/conditions/neck-pain`              | `/es/condiciones/dolor-de-cuello`               | draft both sides                       |
+| 12  | `/conditions/sciatica`               | `/es/condiciones/ciatica`                       | draft both sides                       |
+| 13  | `/conditions/whiplash`               | `/es/condiciones/latigazo-cervical`             | draft both sides                       |
+| 14  | `/conditions/cervicogenic-headache`  | `/es/condiciones/dolor-de-cabeza-cervicogenico` | draft both sides                       |
+| 15  | `/conditions/concussion`             | `/es/condiciones/conmocion-cerebral`            | draft both sides                       |
+| 16  | `/conditions/tmj-jaw-pain`           | `/es/condiciones/dolor-de-mandibula-atm`        | draft both sides                       |
+| 17  | `/services/chiropractic-adjustments` | `/es/servicios/ajustes-quiropracticos`          | draft both sides                       |
+| 18  | `/services/spinal-decompression`     | `/es/servicios/descompresion-espinal`           | draft both sides                       |
+| 19  | `/services/soft-tissue-therapy`      | `/es/servicios/terapia-de-tejidos-blandos`      | draft both sides                       |
+| 20  | `/services/cupping-therapy`          | `/es/servicios/terapia-de-ventosas`             | draft both sides                       |
+| —   | `/thank-you`                         | `/es/gracias`                                   | both noindex, out of sitemap, unpaired |
 
-**Deliberately English-only (`es: null`)** — 12 routes:
+Nine pairs are published (indexable, in the sitemap). Eleven are `draft` on
+both sides — reciprocal hreflang, `noindex`, absent from the sitemap — because
+their English originals are awaiting clinician review. `content/i18n.test.ts`
+fails the build if a published Spanish page's English original is still draft,
+in either direction.
 
-| Route                                                                                                       | Why no Spanish version                                                                                                                                                                   |
-| ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/privacy-policy`                                                                                           | A legal notice describing HIPAA/Florida obligations. A Spanish version is a legal document in its own right and needs counsel review, not a content translation. **NEEDS CONFIRMATION.** |
-| `/home-visit-chiropractor`                                                                                  | `status: "draft"` — unverified service-area/availability data (ATS-E4 4.6).                                                                                                              |
-| `/services/chiropractic-adjustments`<br>`/services/spinal-decompression`<br>`/services/soft-tissue-therapy` | `status: "draft"` — clinical guidance pending clinician sign-off.                                                                                                                        |
-| `/conditions/*` (7 pages)                                                                                   | `status: "draft"` — pending clinician review.                                                                                                                                            |
+**Deliberately English-only (`es: null`)** — 3 routes:
+
+| Route                      | Why no Spanish version                                                                                                                                                                   |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/privacy-policy`          | A legal notice describing HIPAA/Florida obligations. A Spanish version is a legal document in its own right and needs counsel review, not a content translation. **NEEDS CONFIRMATION.** |
+| `/home-visit-chiropractor` | `status: "draft"` — unverified service-area/availability data (ATS-E4 4.6).                                                                                                              |
+| `/blog`, `/blog/[slug]`    | CMS-driven, no Spanish editorial pipeline and no Spanish posts. Bulk-translating posts is out of scope. **RECOMMENDATION.**                                                              |
+
+**Paired hub, unpaired children** — `/service-areas/[slug]` (19 city pages)
+keeps no Spanish counterpart. That is a decision with measurements behind it;
+see §11b.
 
 Slug reasoning, briefly:
 
@@ -559,6 +581,148 @@ only once — the English originals clear clinical review.
 
 This is enforced, not just intended: `content/i18n.test.ts` fails the build if
 a published Spanish page's English original is still `draft`.
+
+---
+
+## 11b. Service areas — one Spanish hub, not nineteen city pages
+
+**Decision: `/service-areas` gets a Spanish counterpart. Its nineteen
+`/service-areas/[slug]` city pages do not.**
+
+### What was found — VERIFIED (measured)
+
+The nineteen English city pages are near-duplicates of one another. Measured
+on their visible prose only (every `text` / `answer` / `question` / `excerpt` /
+`directAnswer` string in `content/service-areas.ts`, whitespace normalized,
+`difflib.SequenceMatcher` ratio across all 171 pairs):
+
+| Metric                             | Value                                       |
+| ---------------------------------- | ------------------------------------------- |
+| Mean pairwise similarity           | **88.3%**                                   |
+| Maximum                            | **96.7%** (`margate` vs `tamarac`)          |
+| Minimum                            | **81.9%** (`boca-raton` vs `coral-springs`) |
+| Pairs above the gate's 40% ceiling | **171 of 171**                              |
+| Pairs above 80%                    | **171 of 171**                              |
+| Distinct tokens unique to one page | **0.6%–5.1%** (median ~2%)                  |
+
+Per page, between 2 and 18 distinct tokens appear on no other city page — the
+city name, its county, one or two road names, a crash count. Everything else
+is a single shared template.
+
+### The gate is passing on an assertion, not a measurement
+
+`lib/content/publication-gates.ts` rejects a service-area page whose
+`similarityScore` exceeds 40, and requires `uniquenessScore` ≥ 70. Every one
+of the nineteen entries declares `similarityScore: 22` and
+`uniquenessScore: 78` — the _same two numbers_, hand-entered, on all nineteen.
+The gate reads those constants. It never looks at the prose.
+
+`lib/content/service-areas.test.ts` runs the gate over all nineteen and passes,
+which is why this went unnoticed: the test is faithful to the gate, and the
+gate is faithful to a number that the content contradicts.
+
+All nineteen pages are live, indexable, and in the sitemap today
+(`app/sitemap.ts` appends them via `listPublicContent({ contentType:
+"service_area" })`; `app/(en)/service-areas/[slug]/page.tsx` sets `noindex`
+only on a 404).
+
+**This is an English-side finding. It has not been "fixed" here** — rewriting
+or deindexing nineteen live, indexed pages is the practice's decision, not a
+side effect of adding a Spanish layer. See "Recommended follow-up" below.
+
+### Why that ruled out translating them
+
+`content/seo.ts`'s own registry justification for `/service-areas` reads:
+
+> deliberately does not build thin near-duplicate per-city landing pages …
+> individual `/service-areas/[slug]` pages must stay genuinely
+> differentiated, not templated city swaps
+
+Translating the template nineteen times would run an existing
+duplicate-content problem again in a second language — the doorway pattern
+this brief prohibits (§26, §70) and that the repo already forbids itself. The
+nineteen Spanish pages would also cannibalize each other for
+`quiropráctico en [ciudad]`, since nothing would distinguish them beyond the
+city noun.
+
+The pages being code-maintained (`content/service-areas.ts`, served through a
+repository that mimics the CMS interface) means translating them was
+mechanically straightforward. It was still the wrong call.
+
+### What was built instead
+
+`/es/areas-de-servicio` — one honest Spanish coverage page:
+
+- names the single verified office and links it to Google Maps;
+- explains the three relationship tiers (office city / nearby catchment /
+  eligible accident consideration) in Spanish, with the same limits the
+  English hub states;
+- lists all nineteen communities, grouped by county, **derived from
+  `serviceAreas` rather than retyped** — a city added or removed on the
+  English side can never leave a stale name here;
+- states plainly that the detailed per-city guide is English-only, and links
+  each one with `hrefLang="en"` plus a visible "(en inglés)" label — the same
+  disclosure pattern the Spanish footer already uses for `/privacy-policy`;
+- carries the three-step eligibility explainer, promising nothing about
+  availability, pricing, or payer handling.
+
+The hub pair is registered in `content/i18n.ts`; the nineteen city pages are
+not, so `/service-areas/[slug]` never claims a Spanish alternate that doesn't
+exist.
+
+### Navigation
+
+The English nav gives Service Areas its own mega-menu of individual cities.
+The Spanish nav gives it **one link**, inside `Recursos`. A nineteen-item
+Spanish menu whose every entry leaves Spanish would be worse on mobile and
+dishonest on any screen.
+
+`Áreas de servicio` was also added to the **Spanish footer**, which matters
+more than it looks: the mega-menus are client-rendered on hover and absent
+from raw HTML (true of the English nav too). Without the footer entry the new
+page would have had a sitemap entry and no crawlable internal link at all.
+Verified over HTTP: one `href="/es/areas-de-servicio"` in the server-rendered
+HTML of every Spanish page.
+
+### Two English leaks fixed along the way
+
+`ServiceAreaHero` accepts a `locale` prop now. Threading it through revealed
+that the component never passed `locale` to `LeadForm` or
+`MobileLeadPreviewCard` — both of which already supported it. On the Spanish
+page that meant an English consent line, English field previews ("First Name"
+/ "Phone Number"), English validation messages, and a form that would have
+submitted to `/thank-you` instead of `/es/gracias`. All four now follow the
+page's language. The English pages render byte-identically (verified over
+HTTP).
+
+### Guardrails added
+
+`content/es/service-areas.test.ts`:
+
+- every English community appears in the Spanish list exactly once, with its
+  real name and county pulled from the English data;
+- **no per-city Spanish service-area route may be registered** in either
+  registry — this is the guard on the decision itself;
+- the similarity measurement runs as a live test: if the least-similar pair of
+  English city pages ever drops below 70% token overlap, the test fails and
+  per-city Spanish pages become a real question again.
+
+`scripts/check-locales.mjs` adds the hub pair, and spot-checks three city
+pages (`miami`, `fort-lauderdale`, `boca-raton`) for the _absence_ of any
+Spanish alternate.
+
+### Recommended follow-up — RECOMMENDATION (English side, not done here)
+
+1. Replace the hand-entered `similarityScore` / `uniquenessScore` constants
+   with a computed measure, so the publication gate reads the prose rather
+   than an assertion about it.
+2. Decide what to do with the nineteen live pages. The options, in order of
+   how much they cost: consolidate them into the hub and redirect;
+   substantially rewrite the ones with real local evidence and drop the rest;
+   or leave them and accept the duplicate-content exposure knowingly.
+3. A city earns a Spanish page when it has genuinely city-specific Spanish
+   material — its own patient-origin evidence, its own local sources. One at a
+   time, on evidence.
 
 ---
 

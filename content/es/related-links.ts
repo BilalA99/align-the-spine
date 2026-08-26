@@ -30,6 +30,7 @@ const ES_RELATED_LINK_LABELS: Record<string, string> = {
   "/es/dr-abe-nasser": "Sobre el Dr. Abe",
   "/es/resenas": "Reseñas de pacientes",
   "/es/contacto": "Contacto",
+  "/es/areas-de-servicio": "Áreas de servicio",
   "/es/solicitar-cita": "Solicitar una cita",
 };
 

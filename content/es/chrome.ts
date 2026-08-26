@@ -1,6 +1,7 @@
 import { ActivityIcon } from "@/components/ui/icons/activity";
 import { ExpandVerticalIcon } from "@/components/ui/icons/expand-vertical";
 import { HandIcon } from "@/components/ui/icons/hand";
+import { PinIcon } from "@/components/ui/icons/pin";
 import { RingsIcon } from "@/components/ui/icons/rings";
 import { WavesIcon } from "@/components/ui/icons/waves";
 import { ZapIcon } from "@/components/ui/icons/zap";
@@ -153,10 +154,9 @@ export const esNav: NavLink[] = [
   {
     label: "Recursos",
     href: "/es/dr-abe-nasser",
-    // No blog entry: the blog is CMS-driven and English-only, and no
-    // service-area entry for the same reason. Adding either would drop a
-    // Spanish reader into English on their first click — the Spanish nav
-    // stays inside Spanish (content/i18n.test.ts enforces it).
+    // No blog entry: the blog is CMS-driven and English-only. Adding it
+    // would drop a Spanish reader into English on their first click — the
+    // Spanish nav stays inside Spanish (content/i18n.test.ts enforces it).
     menu: [
       {
         label: "Sobre el Dr. Abe",
@@ -188,6 +188,23 @@ export const esNav: NavLink[] = [
           alt: "Pasillo de recepción de Align the Spine",
         },
       },
+      // The English nav gives Service Areas its own dropdown listing
+      // individual cities. The Spanish nav gives it one link instead, on
+      // purpose: there are no Spanish city pages to list, and a menu of
+      // nineteen items that all leave Spanish would be worse on mobile and
+      // dishonest on any screen. The hub itself names every community and
+      // links each city's English guide with a visible "(en inglés)"
+      // label. See content/es/service-areas.ts.
+      {
+        label: "Áreas de servicio",
+        href: "/es/areas-de-servicio",
+        description: "Un consultorio en Deerfield Beach y las comunidades que consideramos.",
+        icon: PinIcon,
+        image: {
+          src: "/figma-exports/exterior-img.png",
+          alt: "Exterior del edificio del consultorio en Deerfield Beach",
+        },
+      },
     ],
   },
 ];
@@ -205,6 +222,14 @@ export const esFooter = {
     { label: "Atención tras un accidente", href: "/es/quiropractico-accidentes-de-auto" },
     { label: "Sobre el Dr. Abe", href: "/es/dr-abe-nasser" },
     { label: "Reseñas", href: "/es/resenas" },
+    // Mirrors the English footer's own "Service Areas" link, and carries
+    // real weight here: the Recursos mega-menu is client-rendered on hover
+    // and absent from raw HTML (true of the English nav too — see
+    // components/layout/navbar-dropdown.tsx), so without this footer entry
+    // /es/areas-de-servicio would have no crawlable internal link at all,
+    // only a sitemap entry. footer.tsx renders this list server-side on
+    // every page.
+    { label: "Áreas de servicio", href: "/es/areas-de-servicio" },
   ] as NavLink[],
   copyrightName: "Align the Spine Chiropractic",
   /** /privacy-policy has no Spanish version (a legal notice needs counsel

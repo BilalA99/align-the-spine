@@ -95,6 +95,35 @@ export const localizedRoutes: LocalizedRoute[] = [
   { id: "contact", en: "/contact-us", es: "/es/contacto" },
   { id: "bookAppointment", en: "/book-an-appointment", es: "/es/solicitar-cita" },
 
+  // --- Hub pages whose children are NOT all paired ---------------------
+  // Both hubs are real Spanish pages. What differs is what sits under
+  // them, and why.
+  // /conditions now has a Spanish hub, because its children do too — the
+  // hub follows its children. /blog stays English-only (no Spanish
+  // editorial pipeline); /service-areas has a Spanish hub but deliberately
+  // no Spanish children — see below.
+  { id: "conditionsHub", en: "/conditions", es: "/es/condiciones" },
+  // The service-area HUB is paired: /es/areas-de-servicio is a real
+  // Spanish page (one office, named communities, honest limits).
+  //
+  // The nineteen /service-areas/[slug] city pages underneath it are NOT,
+  // and that is the point. They are served from a static data file
+  // (content/service-areas.ts) through a repository that mimics the CMS
+  // interface — so translating them was mechanically possible and was
+  // still the wrong call. Measured on their visible prose, the nineteen
+  // are 88.3% similar to one another on average (max 96.7%, min 81.9%;
+  // all 171 pairs above 80%), with only 0.6%-5.1% of each page's distinct
+  // tokens unique to it. Spinning up nineteen Spanish translations of one
+  // template is precisely the doorway-page surface this project is not
+  // allowed to build, and it would have them cannibalize each other for
+  // "quiropráctico en [ciudad]" besides.
+  //
+  // Each city keeps its English page, linked from the Spanish hub with
+  // hrefLang="en" and a visible "(en inglés)" label. A city earns a
+  // Spanish page when it has genuinely city-specific Spanish material to
+  // put on it, one city at a time, on evidence.
+  { id: "serviceAreas", en: "/service-areas", es: "/es/areas-de-servicio" },
+
   // --- English-only, deliberately (es: null) ---------------------------
   // Every route below is either noindex today or unsafe to translate
   // without sign-off. Each keeps `es: null` so no hreflang pair is
@@ -106,18 +135,10 @@ export const localizedRoutes: LocalizedRoute[] = [
   // and needs counsel review, not a content translation — see the report's
   // "Remaining work".
   { id: "privacyPolicy", en: "/privacy-policy", es: null },
-  // /conditions now has a Spanish hub, because its children do too — the
-  // hub follows its children. /blog and /service-areas stay English-only:
-  // both are CMS-driven with no Spanish records.
-  { id: "conditionsHub", en: "/conditions", es: "/es/condiciones" },
   // The blog is CMS-driven (dynamic /blog/[slug]); there is no Spanish
   // editorial pipeline and no Spanish posts. Bulk-translating posts is
   // explicitly out of scope — see the report's "Remaining work".
   { id: "blog", en: "/blog", es: null },
-  // Service-area pages are also CMS-driven (/service-areas/[slug]) and are
-  // the exact "city page" surface that turns into doorway content when
-  // spun up per locale without distinct, verified local information.
-  { id: "serviceAreas", en: "/service-areas", es: null },
   // The routes below are `status: "draft"` in content/seo.ts — noindex and
   // out of the sitemap pending a clinician's review of their medical
   // content. Translating unreviewed medical claims into a second language

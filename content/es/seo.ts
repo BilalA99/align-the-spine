@@ -342,6 +342,32 @@ export const esRoutes: RouteMeta[] = [
       "Owns 'reseñas quiropráctico Deerfield Beach' validation intent. Publishes reviews verbatim rather than translated, and says so on the page.",
   },
   {
+    path: "/es/areas-de-servicio",
+    title: `Áreas de Servicio | Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "Align the Spine Chiropractic atiende desde un solo consultorio en Deerfield Beach. Vea las comunidades del sur de Florida para las que se considera atención tras un accidente.",
+    image: {
+      src: "/figma-exports/exterior-img.png",
+      alt: "Exterior del edificio del consultorio en Deerfield Beach",
+    },
+    changeFrequency: "monthly",
+    priority: 0.6,
+    lastModified: "2026-08-26",
+    // Published, like the English /service-areas hub it pairs with. This
+    // page makes no medical claim: it states where the one office is, names
+    // the communities the practice will consider, and says what
+    // "considered" does and doesn't mean.
+    //
+    // There is deliberately no Spanish counterpart for the nineteen
+    // /service-areas/[slug] pages — see content/es/service-areas.ts for the
+    // measurements. This single hub is the whole Spanish service-area
+    // surface, which is also why it can't cannibalize anything: there is
+    // nothing else in Spanish competing for the query.
+    primaryQuery: "áreas de servicio / cobertura del consultorio en español",
+    justification:
+      "Owns the Spanish coverage-area explainer — one office, named communities, honest limits on home-visit eligibility. Deliberately does NOT spawn per-city Spanish pages: the English city pages average 88.3% textual similarity to each other, so translating them would build doorway inventory in a second language.",
+  },
+  {
     path: "/es/contacto",
     title: `Contacto | Deerfield Beach, FL | ${siteConfig.business.shortName}`,
     description:

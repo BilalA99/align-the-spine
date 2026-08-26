@@ -5,6 +5,8 @@ import { BreadcrumbTrail } from "@/components/seo/breadcrumb-trail";
 import { CheckIcon } from "@/components/ui/icons/check";
 import { LeadForm } from "@/components/ui/lead-form";
 import { MobileLeadPreviewCard } from "@/components/ui/mobile-lead-preview-card";
+import { esLeadFormVariants } from "@/content/es/lead-forms";
+import type { Locale } from "@/content/i18n";
 import { leadFormVariants } from "@/content/lead-forms";
 import { siteConfig } from "@/content/site";
 import type { BreadcrumbItemInput } from "@/lib/schema";
@@ -42,6 +44,7 @@ export function ServiceAreaHero({
   county,
   children,
   breadcrumbs,
+  locale = "en",
 }: {
   eyebrow: string;
   title: ReactNode;
@@ -54,24 +57,59 @@ export function ServiceAreaHero({
    * renders the visible trail here; pair with a BreadcrumbJsonLd call fed
    * the same items array so the two can't drift. */
   breadcrumbs?: BreadcrumbItemInput[];
+  /** Drives every string this component owns, plus which lead-form
+   * variant it submits. The Spanish hub (/es/areas-de-servicio) is the
+   * only `es` caller today; the nineteen city pages are English-only by
+   * design — see content/es/service-areas.ts. */
+  locale?: Locale;
 }) {
   const { address, phone, phoneHref } = siteConfig.business;
-  const trustChips = [
-    cityName ? `Home visits considered for ${cityName}` : "Case-by-case home-visit eligibility",
-    "Florida 14-day PIP timing guidance",
-    county ? `${county} County` : "Deerfield Beach office",
-  ];
+  const es = locale === "es";
+  const form = es ? esLeadFormVariants.eligibility : leadFormVariants.eligibility;
 
-  const eligibilityHeading = cityName
-    ? `Check eligibility in ${cityName}`
-    : "Check home-visit eligibility";
+  const trustChips = es
+    ? [
+        cityName
+          ? `Visitas a domicilio consideradas para ${cityName}`
+          : "Elegibilidad para visita a domicilio, caso por caso",
+        // "14 días" is the Florida PIP initial-care deadline
+        // (Fla. Stat. 627.736(1)(a)) — the same claim the English chip
+        // makes, not a stronger one.
+        "Orientación sobre el plazo de 14 días del PIP en Florida",
+        county ? `Condado de ${county}` : "Consultorio en Deerfield Beach",
+      ]
+    : [
+        cityName ? `Home visits considered for ${cityName}` : "Case-by-case home-visit eligibility",
+        "Florida 14-day PIP timing guidance",
+        county ? `${county} County` : "Deerfield Beach office",
+      ];
+
+  const eligibilityHeading = es
+    ? cityName
+      ? `Verifique su elegibilidad en ${cityName}`
+      : "Verifique su elegibilidad para visita a domicilio"
+    : cityName
+      ? `Check eligibility in ${cityName}`
+      : "Check home-visit eligibility";
+
+  const mobileMicrocopy = es
+    ? "Se considera disponibilidad el mismo día — sin compromiso."
+    : "Same-day availability considered — no obligation.";
+
+  const officeLabel = es ? "Consultorio" : "Office";
+  const callLabel = es ? "Llamar" : "Call";
+
+  const panelDisclaimer = es
+    ? "Un solo consultorio verificado en Deerfield Beach; las visitas a domicilio se limitan a circunstancias elegibles de accidente de auto con cobertura PIP y requieren confirmar el caso y la ubicación."
+    : "One verified office in Deerfield Beach; home visits are limited to eligible car-accident/PIP circumstances and require case and location confirmation.";
 
   const formFields = (headingAs: "h2" | "p") => (
     <LeadForm
       heading={eligibilityHeading}
-      variant={leadFormVariants.eligibility.variant}
-      fields={leadFormVariants.eligibility.fields}
-      submitLabel={leadFormVariants.eligibility.submitLabel}
+      variant={form.variant}
+      fields={form.fields}
+      submitLabel={form.submitLabel}
+      locale={locale}
       submitVariant="white"
       fieldOutline
       labelCase="none"
@@ -172,16 +210,17 @@ export function ServiceAreaHero({
           <div id="eligibility-form-mobile" className="mt-6 lg:hidden">
             <MobileLeadPreviewCard
               heading={eligibilityHeading}
-              formVariant={leadFormVariants.eligibility.variant as "eligibility"}
-              submitLabel={leadFormVariants.eligibility.submitLabel}
-              microcopy="Same-day availability considered — no obligation."
+              formVariant={form.variant as "eligibility"}
+              submitLabel={form.submitLabel}
+              locale={locale}
+              microcopy={mobileMicrocopy}
             />
           </div>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-white/15 pt-6">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-teal-300">
-                Office
+                {officeLabel}
               </p>
               <p className="mt-1 text-white">
                 {address.line1}, {address.suite}, {address.city}, {address.state} {address.zip}
@@ -189,7 +228,7 @@ export function ServiceAreaHero({
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-teal-300">
-                Call
+                {callLabel}
               </p>
               <a
                 href={phoneHref}
@@ -231,10 +270,7 @@ export function ServiceAreaHero({
            * the way to white, so white/80 text there is just as
            * low-contrast as the grey it replaced (reported: "this text
            * same issue"). */}
-          <p className="mt-4 text-sm leading-6 text-ink-900">
-            One verified office in Deerfield Beach; home visits are limited to eligible
-            car-accident/PIP circumstances and require case and location confirmation.
-          </p>
+          <p className="mt-4 text-sm leading-6 text-ink-900">{panelDisclaimer}</p>
         </div>
       </div>
 
