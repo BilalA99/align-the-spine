@@ -31,7 +31,24 @@ const EXCLUDED_PREFIXES = ["/admin"];
  * check can't see into — the page itself never types `breadcrumbs={` or
  * `<BreadcrumbTrail` literally. Verified directly in both components'
  * source rather than assumed. */
-const NESTED_BREADCRUMB_ALLOWLIST = new Set(["/blog/[slug]"]);
+const NESTED_BREADCRUMB_ALLOWLIST = new Set([
+  "/blog/[slug]",
+  // The seven Spanish condition pages compose one shared template
+  // (components/sections/es-condition-page.tsx), which builds the
+  // breadcrumb trail from the condition's own `path`/`breadcrumb` fields
+  // and passes it to HeroSolidPanel's `breadcrumbs` prop. Same situation as
+  // /blog/[slug]: real, rendered breadcrumbs this source-scanning check
+  // can't see into, because the page files never type `breadcrumbs={`
+  // literally. Verified in the template's source and in the rendered HTML,
+  // not assumed.
+  "/es/condiciones/dolor-de-espalda",
+  "/es/condiciones/dolor-de-cuello",
+  "/es/condiciones/ciatica",
+  "/es/condiciones/latigazo-cervical",
+  "/es/condiciones/dolor-de-cabeza-cervicogenico",
+  "/es/condiciones/conmocion-cerebral",
+  "/es/condiciones/dolor-de-mandibula-atm",
+]);
 
 function collectPageFiles(dir: string, routePath = ""): { route: string; file: string }[] {
   const found: { route: string; file: string }[] = [];

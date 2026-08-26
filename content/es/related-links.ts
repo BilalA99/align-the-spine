@@ -13,6 +13,14 @@ import { isPublished } from "@/content/seo";
  * of rendering a dead pill.
  */
 const ES_RELATED_LINK_LABELS: Record<string, string> = {
+  "/es/condiciones": "Todas las condiciones que tratamos",
+  "/es/condiciones/dolor-de-espalda": "Dolor de espalda baja",
+  "/es/condiciones/dolor-de-cuello": "Dolor de cuello",
+  "/es/condiciones/ciatica": "Ciática",
+  "/es/condiciones/latigazo-cervical": "Latigazo cervical",
+  "/es/condiciones/dolor-de-cabeza-cervicogenico": "Dolor de cabeza cervicogénico",
+  "/es/condiciones/conmocion-cerebral": "Conmoción cerebral",
+  "/es/condiciones/dolor-de-mandibula-atm": "ATM / dolor de mandíbula",
   "/es/servicios": "Ver todos los servicios",
   "/es/servicios/ajustes-quiropracticos": "Ajustes quiroprácticos",
   "/es/servicios/descompresion-espinal": "Descompresión espinal",

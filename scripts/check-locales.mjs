@@ -60,10 +60,32 @@ const PAIRS = [
   ["/reviews", "/es/resenas"],
   ["/contact-us", "/es/contacto"],
   ["/book-an-appointment", "/es/solicitar-cita"],
+  ["/conditions", "/es/condiciones"],
+  // Draft on both sides (noindex, out of the sitemap) but still a real
+  // hreflang pair — the annotation has to be reciprocal regardless of
+  // indexing status, so these are checked like any other pair. The sitemap
+  // assertion below deliberately only covers the published ones.
+  ["/conditions/back-pain", "/es/condiciones/dolor-de-espalda"],
+  ["/conditions/neck-pain", "/es/condiciones/dolor-de-cuello"],
+  ["/conditions/sciatica", "/es/condiciones/ciatica"],
+  ["/conditions/whiplash", "/es/condiciones/latigazo-cervical"],
+  ["/conditions/cervicogenic-headache", "/es/condiciones/dolor-de-cabeza-cervicogenico"],
+  ["/conditions/concussion", "/es/condiciones/conmocion-cerebral"],
+  ["/conditions/tmj-jaw-pain", "/es/condiciones/dolor-de-mandibula-atm"],
+  ["/services/chiropractic-adjustments", "/es/servicios/ajustes-quiropracticos"],
+  ["/services/spinal-decompression", "/es/servicios/descompresion-espinal"],
+  ["/services/soft-tissue-therapy", "/es/servicios/terapia-de-tejidos-blandos"],
+  ["/services/cupping-therapy", "/es/servicios/terapia-de-ventosas"],
 ];
 
+/** Pairs whose Spanish half is published and therefore must appear in the
+ * sitemap. The draft pairs above are deliberately absent from it. */
+const SITEMAP_PAIRS = PAIRS.filter(
+  ([, es]) => !es.startsWith("/es/condiciones/") && !es.startsWith("/es/servicios/"),
+);
+
 /** Pages that must NOT advertise a Spanish alternate. */
-const ENGLISH_ONLY = ["/privacy-policy", "/conditions/back-pain", "/home-visit-chiropractor"];
+const ENGLISH_ONLY = ["/privacy-policy", "/home-visit-chiropractor", "/blog", "/service-areas"];
 
 const failures = [];
 
@@ -192,11 +214,17 @@ if (!sitemapResponse.ok) {
   fail(`sitemap.xml: HTTP ${sitemapResponse.status}`);
 } else {
   const xml = await sitemapResponse.text();
-  for (const [, es] of PAIRS) {
+  for (const [, es] of SITEMAP_PAIRS) {
     if (!xml.includes(`<loc>${origin}${es}</loc>`)) fail(`sitemap.xml: missing ${es}`);
   }
+  // The draft Spanish pages carry reciprocal hreflang but must NOT be
+  // listed — being annotated as a language alternate and being submitted
+  // for indexing are two different things.
+  for (const [, es] of PAIRS.filter((pair) => !SITEMAP_PAIRS.includes(pair))) {
+    if (xml.includes(`<loc>${origin}${es}</loc>`)) fail(`sitemap.xml: lists draft page ${es}`);
+  }
   if (xml.includes("/es/gracias")) fail("sitemap.xml: contains the noindex /es/gracias page");
-  console.log("  OK   sitemap.xml lists every Spanish URL");
+  console.log("  OK   sitemap.xml lists published Spanish URLs and omits the draft ones");
 }
 
 console.log("");

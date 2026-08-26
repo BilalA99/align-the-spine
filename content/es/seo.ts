@@ -95,6 +95,154 @@ export const esRoutes: RouteMeta[] = [
     justification:
       "Owns 'servicios quiroprácticos Deerfield Beach' hub intent in Spanish. Individual service pages are English-only and draft today, so nothing under it competes with it.",
   },
+  // ── Condition pages + hub ────────────────────────────────────────────
+  // The seven condition pages are `status: "draft"`, mirroring their
+  // English originals:
+  // real, finished pages awaiting clinician review of their medical
+  // content. Served noindex and kept out of the sitemap, but reachable
+  // and linkable from the Spanish nav — the same treatment the English
+  // nav and /conditions hub already give their own draft pages.
+  {
+    path: "/es/condiciones",
+    title: `Condiciones que Tratamos en Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "El Dr. Abe Nasser evalúa y trata distintas condiciones quiroprácticas en Deerfield Beach, desde lesiones por accidente de auto hasta el dolor de espalda y de cuello cotidiano.",
+    image: {
+      src: "/figma-exports/dr-abe-neck.png",
+      alt: "El Dr. Abe Nasser evaluando el cuello de un paciente",
+    },
+    changeFrequency: "monthly",
+    priority: 0.8,
+    lastModified: "2026-08-26",
+    // Published, matching the English /conditions hub. A directory page
+    // introduces no medical claims of its own — it's built from the seven
+    // condition heroes — and the English hub made exactly this call
+    // (published hub, draft children). Leaving it draft would also mean the
+    // indexable English hub advertised an hreflang alternate pointing at a
+    // noindex page, which is worse than either state on its own.
+    primaryQuery: "Spanish-language conditions directory hub",
+    justification:
+      "Owns 'condiciones que trata un quiropráctico' hub intent in Spanish and is the crawlable path into the seven Spanish condition pages. Draft while its children are.",
+  },
+  {
+    path: "/es/condiciones/dolor-de-espalda",
+    title: `Quiropráctico para Dolor de Espalda en Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "Evaluación quiropráctica para el dolor de espalda baja, la rigidez y el dolor que puede extenderse hacia la cadera o la pierna, incluidos síntomas tras un accidente de auto.",
+    image: {
+      src: "/figma-exports/drabe-backpain-front.png",
+      alt: "Tratamiento manual de tejidos blandos en la espalda baja",
+    },
+    changeFrequency: "monthly",
+    priority: 0.8,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language back pain condition intent",
+    justification:
+      "Owns 'dolor de espalda quiropráctico Deerfield Beach'. Distinct from the sciatica page, which owns radiating leg pain. Draft until the English original clears clinician review.",
+  },
+  {
+    path: "/es/condiciones/dolor-de-cuello",
+    title: `Quiropráctico para Dolor de Cuello en Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "Evaluación quiropráctica para el dolor de cuello, la rigidez y la movilidad limitada, incluido el dolor que empieza después de un accidente de auto o un latigazo cervical.",
+    image: {
+      src: "/figma-exports/dr-abe-neck.png",
+      alt: "El Dr. Abe Nasser evaluando el cuello de un paciente",
+    },
+    changeFrequency: "monthly",
+    priority: 0.8,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language neck pain condition intent",
+    justification:
+      "Owns 'dolor de cuello quiropráctico Deerfield Beach'. Distinct from the whiplash page, which owns the collision-injury framing. Draft until the English original clears review.",
+  },
+  {
+    path: "/es/condiciones/ciatica",
+    title: `Quiropráctico para Ciática en Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "Evaluación y tratamiento enfocado en la descompresión para el dolor ciático y el dolor nervioso irradiado, con visitas a domicilio cuando corresponde a su caso.",
+    image: {
+      src: "/figma-exports/drabe-backpain-front.png",
+      alt: "El Dr. Abe evaluando a un paciente por ciática",
+    },
+    changeFrequency: "monthly",
+    priority: 0.8,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language sciatica condition intent",
+    justification:
+      "Owns 'ciática quiropráctico Deerfield Beach' — radiating nerve pain, distinct from the back-pain page's localized intent. Draft until the English original clears review.",
+  },
+  {
+    path: "/es/condiciones/latigazo-cervical",
+    title: `Quiropráctico para Latigazo Cervical en Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "El latigazo cervical es una lesión de cuello por movimiento brusco, frecuente en colisiones por alcance. Evaluación de rigidez, movilidad limitada y dolores de cabeza.",
+    image: {
+      src: "/figma-exports/drabe-whiplash-man.png",
+      alt: "El Dr. Abe tratando a un paciente por latigazo cervical",
+    },
+    changeFrequency: "monthly",
+    priority: 0.8,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language whiplash condition intent",
+    justification:
+      "Owns 'latigazo cervical quiropráctico' collision-injury intent, distinct from the general neck-pain page. Draft until the English original clears review.",
+  },
+  {
+    path: "/es/condiciones/dolor-de-cabeza-cervicogenico",
+    title: `Quiropráctico para Dolor de Cabeza Cervicogénico | Deerfield Beach | ${siteConfig.business.shortName}`,
+    description:
+      "El dolor de cabeza cervicogénico es dolor referido desde el cuello. Evaluación de la movilidad cervical y de otros factores musculoesqueléticos antes de recomendar atención.",
+    image: {
+      src: "/figma-exports/drabe-headache.png",
+      alt: "Evaluación de tensión cervical relacionada con dolor de cabeza",
+    },
+    changeFrequency: "monthly",
+    priority: 0.8,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language cervicogenic headache condition intent",
+    justification:
+      "Owns 'dolor de cabeza que viene del cuello' intent in Spanish, distinct from both the neck-pain and concussion pages. Draft until the English original clears review.",
+  },
+  {
+    path: "/es/condiciones/conmocion-cerebral",
+    title: `Síntomas de Conmoción Cerebral Después de un Accidente de Auto | ${siteConfig.business.shortName}`,
+    description:
+      "Una conmoción cerebral es una lesión cerebral traumática leve que necesita valoración médica. La atención quiropráctica no sustituye una evaluación de emergencia ni neurológica.",
+    image: {
+      src: "/figma-exports/drabe-headache.png",
+      alt: "El Dr. Abe evaluando a un paciente después de un accidente",
+    },
+    changeFrequency: "monthly",
+    priority: 0.8,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language concussion-after-accident informational intent",
+    justification:
+      "Owns post-accident concussion symptom queries in Spanish. Informational and safety-first by design — it routes readers to medical evaluation rather than to booking. Draft until the English original clears review.",
+  },
+  {
+    path: "/es/condiciones/dolor-de-mandibula-atm",
+    title: `Quiropráctico para ATM y Dolor de Mandíbula | Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "Evaluación del movimiento de la articulación de la mandíbula, la tensión muscular de alrededor y los factores cervicales antes de decidir si la atención quiropráctica corresponde.",
+    image: {
+      src: "/figma-exports/drabe-headache.png",
+      alt: "El Dr. Abe evaluando la mandíbula de un paciente",
+    },
+    changeFrequency: "monthly",
+    priority: 0.7,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language TMJ/jaw pain condition intent",
+    justification:
+      "Owns 'dolor de mandíbula ATM' intent in Spanish, distinct from the cervicogenic-headache page it commonly co-occurs with. Draft until the English original clears review.",
+  },
   // ── Service pages ────────────────────────────────────────────────────
   // All four are `status: "draft"`, mirroring their English originals:
   // they carry clinical guidance that hasn't had a clinician's sign-off,

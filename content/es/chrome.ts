@@ -2,6 +2,8 @@ import { ActivityIcon } from "@/components/ui/icons/activity";
 import { ExpandVerticalIcon } from "@/components/ui/icons/expand-vertical";
 import { HandIcon } from "@/components/ui/icons/hand";
 import { RingsIcon } from "@/components/ui/icons/rings";
+import { WavesIcon } from "@/components/ui/icons/waves";
+import { ZapIcon } from "@/components/ui/icons/zap";
 import type { NavLink } from "@/content/site";
 
 /** Spanish site chrome: navigation, footer, and the handful of UI strings
@@ -71,10 +73,123 @@ export const esNav: NavLink[] = [
       },
     ],
   },
+  {
+    label: "Condiciones",
+    href: "/es/condiciones",
+    menu: [
+      {
+        label: "Dolor de espalda baja",
+        href: "/es/condiciones/dolor-de-espalda",
+        description: "Dolor de disco, muscular y nervioso después de un accidente.",
+        icon: ActivityIcon,
+        image: {
+          src: "/figma-exports/drabe-backpain-front.png",
+          alt: "El Dr. Abe evaluando la espalda baja de un paciente",
+        },
+      },
+      {
+        label: "Dolor de cuello",
+        href: "/es/condiciones/dolor-de-cuello",
+        description: "Rigidez y tensión que se extiende hacia los hombros.",
+        icon: WavesIcon,
+        image: {
+          src: "/figma-exports/dr-abe-neck.png",
+          alt: "El Dr. Abe evaluando el cuello de un paciente",
+        },
+      },
+      {
+        label: "Latigazo cervical",
+        href: "/es/condiciones/latigazo-cervical",
+        description: "La lesión de cuello por impacto que causan casi todos los accidentes.",
+        icon: ZapIcon,
+        image: {
+          src: "/figma-exports/drabe-whiplash-man.png",
+          alt: "El Dr. Abe tratando a un paciente por latigazo cervical",
+        },
+      },
+      {
+        label: "Ciática",
+        href: "/es/condiciones/ciatica",
+        description: "Dolor nervioso que se irradia por la pierna.",
+        icon: ZapIcon,
+        image: {
+          src: "/figma-exports/drabe-backpain-front.png",
+          alt: "El Dr. Abe evaluando a un paciente por ciática",
+        },
+      },
+      {
+        label: "Conmoción cerebral",
+        href: "/es/condiciones/conmocion-cerebral",
+        description: "Lesión cerebral que puede ocurrir sin golpearse la cabeza.",
+        icon: RingsIcon,
+        image: {
+          src: "/figma-exports/drabe-headache.png",
+          alt: "El Dr. Abe evaluando a un paciente después de un accidente",
+        },
+      },
+      {
+        label: "Dolor de cabeza cervicogénico",
+        href: "/es/condiciones/dolor-de-cabeza-cervicogenico",
+        description: "Dolores de cabeza que en realidad empiezan en el cuello.",
+        icon: WavesIcon,
+        image: {
+          src: "/figma-exports/drabe-headache.png",
+          alt: "Evaluación de tensión cervical relacionada con dolor de cabeza",
+        },
+      },
+      {
+        label: "ATM / dolor de mandíbula",
+        href: "/es/condiciones/dolor-de-mandibula-atm",
+        description: "El mismo impacto que causa el latigazo cervical llega a la mandíbula.",
+        icon: RingsIcon,
+        image: {
+          src: "/figma-exports/drabe-headache.png",
+          alt: "El Dr. Abe evaluando la mandíbula de un paciente",
+        },
+      },
+    ],
+  },
   { label: "Accidentes de Auto", href: "/es/quiropractico-accidentes-de-auto" },
-  { label: "Dr. Abe", href: "/es/dr-abe-nasser" },
-  { label: "Reseñas", href: "/es/resenas" },
-  { label: "Contacto", href: "/es/contacto" },
+  {
+    label: "Recursos",
+    href: "/es/dr-abe-nasser",
+    // No blog entry: the blog is CMS-driven and English-only, and no
+    // service-area entry for the same reason. Adding either would drop a
+    // Spanish reader into English on their first click — the Spanish nav
+    // stays inside Spanish (content/i18n.test.ts enforces it).
+    menu: [
+      {
+        label: "Sobre el Dr. Abe",
+        href: "/es/dr-abe-nasser",
+        description: "Conozca al quiropráctico detrás del consultorio en Deerfield Beach.",
+        icon: HandIcon,
+        image: {
+          src: "/figma-exports/dr-abe-neck.png",
+          alt: "El Dr. Abe Nasser evaluando el cuello de un paciente",
+        },
+      },
+      {
+        label: "Reseñas de pacientes",
+        href: "/es/resenas",
+        description: "Lea las reseñas de pacientes, traducidas del inglés.",
+        icon: RingsIcon,
+        image: {
+          src: "/figma-exports/interior-reception.png",
+          alt: "Área de recepción de Align the Spine",
+        },
+      },
+      {
+        label: "Contacto",
+        href: "/es/contacto",
+        description: "Dirección, teléfono y horario del consultorio.",
+        icon: ActivityIcon,
+        image: {
+          src: "/figma-exports/interior-corridor.png",
+          alt: "Pasillo de recepción de Align the Spine",
+        },
+      },
+    ],
+  },
 ];
 
 /** "Solicitar Cita", not "Reservar"/"Agendar": the form sends a request and

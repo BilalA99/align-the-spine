@@ -230,6 +230,32 @@ describe("Spanish internal link graph", () => {
 });
 
 describe("publication parity", () => {
+  /** Both directions, because each failure mode is real and different:
+   *
+   *  - Spanish published while English is draft would route around the
+   *    clinician-review gate by indexing a translation of unreviewed
+   *    medical copy.
+   *  - English published while Spanish is draft makes the indexable
+   *    English page advertise an hreflang alternate that points at a
+   *    noindex URL. Google is being told "here is the Spanish version of
+   *    this page" and then told not to index it. That's how /es/condiciones
+   *    was caught: the English /conditions hub is published, so its sitemap
+   *    entry carried an alternate to a Spanish hub still marked draft.
+   */
+  it("keeps both halves of every hreflang pair at the same publication status", () => {
+    const mismatched = pairsWithSpanish
+      .map((route) => {
+        const en = routes.find((entry) => entry.path === route.en);
+        const es = esRoutes.find((entry) => entry.path === route.es);
+        if (!en || !es) return null;
+        return isPublished(en) === isPublished(es)
+          ? null
+          : `${route.en} (${isPublished(en) ? "published" : "draft"}) <-> ${route.es} (${isPublished(es) ? "published" : "draft"})`;
+      })
+      .filter(Boolean);
+    expect(mismatched).toEqual([]);
+  });
+
   it("never publishes a Spanish page whose English original is still draft", () => {
     // The draft routes are noindex pending clinician review of their medical
     // content. Indexing a Spanish translation of unreviewed medical copy

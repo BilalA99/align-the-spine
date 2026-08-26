@@ -106,12 +106,10 @@ export const localizedRoutes: LocalizedRoute[] = [
   // and needs counsel review, not a content translation — see the report's
   // "Remaining work".
   { id: "privacyPolicy", en: "/privacy-policy", es: null },
-  // /conditions, /blog and /service-areas are English-only content hubs
-  // whose children are English-only too. Translating a hub whose every
-  // destination is English would send Spanish readers straight back into
-  // English on the first click — the hub follows its children, not the
-  // other way round.
-  { id: "conditionsHub", en: "/conditions", es: null },
+  // /conditions now has a Spanish hub, because its children do too — the
+  // hub follows its children. /blog and /service-areas stay English-only:
+  // both are CMS-driven with no Spanish records.
+  { id: "conditionsHub", en: "/conditions", es: "/es/condiciones" },
   // The blog is CMS-driven (dynamic /blog/[slug]); there is no Spanish
   // editorial pipeline and no Spanish posts. Bulk-translating posts is
   // explicitly out of scope — see the report's "Remaining work".
@@ -153,13 +151,25 @@ export const localizedRoutes: LocalizedRoute[] = [
     en: "/services/cupping-therapy",
     es: "/es/servicios/terapia-de-ventosas",
   },
-  { id: "conditionBackPain", en: "/conditions/back-pain", es: null },
-  { id: "conditionNeckPain", en: "/conditions/neck-pain", es: null },
-  { id: "conditionSciatica", en: "/conditions/sciatica", es: null },
-  { id: "conditionWhiplash", en: "/conditions/whiplash", es: null },
-  { id: "conditionCervicogenic", en: "/conditions/cervicogenic-headache", es: null },
-  { id: "conditionConcussion", en: "/conditions/concussion", es: null },
-  { id: "conditionTmj", en: "/conditions/tmj-jaw-pain", es: null },
+  { id: "conditionBackPain", en: "/conditions/back-pain", es: "/es/condiciones/dolor-de-espalda" },
+  { id: "conditionNeckPain", en: "/conditions/neck-pain", es: "/es/condiciones/dolor-de-cuello" },
+  { id: "conditionSciatica", en: "/conditions/sciatica", es: "/es/condiciones/ciatica" },
+  { id: "conditionWhiplash", en: "/conditions/whiplash", es: "/es/condiciones/latigazo-cervical" },
+  {
+    id: "conditionCervicogenic",
+    en: "/conditions/cervicogenic-headache",
+    es: "/es/condiciones/dolor-de-cabeza-cervicogenico",
+  },
+  {
+    id: "conditionConcussion",
+    en: "/conditions/concussion",
+    es: "/es/condiciones/conmocion-cerebral",
+  },
+  {
+    id: "conditionTmj",
+    en: "/conditions/tmj-jaw-pain",
+    es: "/es/condiciones/dolor-de-mandibula-atm",
+  },
 ];
 
 /** Looks a pair up by its stable id — throws rather than returning
