@@ -95,6 +95,76 @@ export const esRoutes: RouteMeta[] = [
     justification:
       "Owns 'servicios quiroprácticos Deerfield Beach' hub intent in Spanish. Individual service pages are English-only and draft today, so nothing under it competes with it.",
   },
+  // ── Service pages ────────────────────────────────────────────────────
+  // All four are `status: "draft"`, mirroring their English originals:
+  // they carry clinical guidance that hasn't had a clinician's sign-off,
+  // so they're served noindex and kept out of the sitemap while remaining
+  // reachable (and linkable from the Spanish nav) by direct URL.
+  {
+    path: "/es/servicios/ajustes-quiropracticos",
+    title: `Ajustes Quiroprácticos en Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "Ajustes quiroprácticos en Deerfield Beach: presión controlada para mejorar el movimiento articular del cuello, la espalda media o la espalda baja, tras una evaluación.",
+    image: {
+      src: "/figma-exports/adjustments-hero.png",
+      alt: "Sala de tratamiento preparada para un ajuste quiropráctico",
+    },
+    changeFrequency: "monthly",
+    priority: 0.7,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language chiropractic adjustment treatment intent",
+    justification:
+      "Owns 'ajuste quiropráctico Deerfield Beach' treatment intent in Spanish. Draft until the English original clears clinician review; hreflang alternate of /services/chiropractic-adjustments.",
+  },
+  {
+    path: "/es/servicios/descompresion-espinal",
+    title: `Descompresión Espinal en Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "Descompresión espinal no quirúrgica en Deerfield Beach: tracción controlada para reducir la presión sobre discos y articulaciones, cuando la evaluación lo indica.",
+    image: {
+      src: "/figma-exports/spinal-decompression-hero.png",
+      alt: "Sala de tratamiento preparada para terapia de descompresión espinal",
+    },
+    changeFrequency: "monthly",
+    priority: 0.7,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language spinal decompression treatment intent",
+    justification:
+      "Owns 'descompresión espinal Deerfield Beach' intent in Spanish, distinct from the adjustment page's. Draft until the English original clears clinician review.",
+  },
+  {
+    path: "/es/servicios/terapia-de-tejidos-blandos",
+    title: `Masaje y Terapia de Tejidos Blandos | Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "Terapia de tejidos blandos en Deerfield Beach: liberación miofascial, técnica Graston y tejido profundo para tensión muscular y dolor posterior a una lesión.",
+    image: {
+      src: "/figma-exports/massage-soft-tissue-hero.png",
+      alt: "Sala de tratamiento de masaje y terapia de tejidos blandos",
+    },
+    changeFrequency: "monthly",
+    priority: 0.7,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language soft-tissue therapy treatment intent",
+    justification:
+      "Owns 'terapia de tejidos blandos / masaje quiropráctico' intent in Spanish. Draft until the English original clears clinician review.",
+  },
+  {
+    path: "/es/servicios/terapia-de-ventosas",
+    title: `Terapia de Ventosas en Deerfield Beach, FL | ${siteConfig.business.shortName}`,
+    description:
+      "Terapia de ventosas en Deerfield Beach: succión localizada en zonas seleccionadas de tensión muscular, usada cuando corresponde junto con una evaluación quiropráctica.",
+    image: { src: "/figma-exports/cupping-drabe.png", alt: "Sesión de terapia de ventosas" },
+    changeFrequency: "monthly",
+    priority: 0.6,
+    lastModified: "2026-08-26",
+    status: "draft",
+    primaryQuery: "Spanish-language cupping therapy treatment intent",
+    justification:
+      "Owns 'terapia de ventosas Deerfield Beach' intent in Spanish — a single technique, distinct from the broader soft-tissue page. Draft until the English original clears clinician review.",
+  },
   {
     path: "/es/dr-abe-nasser",
     title: `Dr. Abe Nasser, D.C. | Quiropráctico en Deerfield Beach`,

@@ -126,10 +126,33 @@ export const localizedRoutes: LocalizedRoute[] = [
   // doubles the exposure instead of halving it; they get Spanish pages
   // once (and only once) the English originals clear clinical review.
   { id: "homeVisit", en: "/home-visit-chiropractor", es: null },
-  { id: "serviceAdjustments", en: "/services/chiropractic-adjustments", es: null },
-  { id: "serviceDecompression", en: "/services/spinal-decompression", es: null },
-  { id: "serviceSoftTissue", en: "/services/soft-tissue-therapy", es: null },
-  { id: "serviceCupping", en: "/services/cupping-therapy", es: null },
+  // The four service pages now have Spanish counterparts. Both sides stay
+  // `status: "draft"` in their registries (noindex, out of the sitemap)
+  // until a clinician signs off on the English originals — the Spanish
+  // pages exist so the Spanish nav's Servicios dropdown has real Spanish
+  // destinations, not so unreviewed medical copy gets indexed.
+  // content/i18n.test.ts enforces that a Spanish page can't be published
+  // while its English original is draft.
+  {
+    id: "serviceAdjustments",
+    en: "/services/chiropractic-adjustments",
+    es: "/es/servicios/ajustes-quiropracticos",
+  },
+  {
+    id: "serviceDecompression",
+    en: "/services/spinal-decompression",
+    es: "/es/servicios/descompresion-espinal",
+  },
+  {
+    id: "serviceSoftTissue",
+    en: "/services/soft-tissue-therapy",
+    es: "/es/servicios/terapia-de-tejidos-blandos",
+  },
+  {
+    id: "serviceCupping",
+    en: "/services/cupping-therapy",
+    es: "/es/servicios/terapia-de-ventosas",
+  },
   { id: "conditionBackPain", en: "/conditions/back-pain", es: null },
   { id: "conditionNeckPain", en: "/conditions/neck-pain", es: null },
   { id: "conditionSciatica", en: "/conditions/sciatica", es: null },

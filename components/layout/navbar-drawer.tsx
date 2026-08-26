@@ -131,7 +131,7 @@ export function NavbarDrawer({
                   <Link
                     href={link.href}
                     onClick={onClose}
-                    className="text-nav uppercase text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                    className="inline-flex min-h-11 w-full items-center text-nav uppercase text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                   >
                     {link.label}
                   </Link>
@@ -146,7 +146,7 @@ export function NavbarDrawer({
                   type="button"
                   aria-expanded={isExpanded}
                   onClick={() => toggleExpanded(link.label)}
-                  className="flex w-full items-center justify-between text-nav uppercase text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                  className="flex min-h-11 w-full items-center justify-between text-nav uppercase text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                 >
                   {link.label}
                   <ChevronDownIcon
@@ -162,14 +162,14 @@ export function NavbarDrawer({
                       transition={{ duration: 0.25, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <ul className="mt-4 flex flex-col gap-4 border-l border-white/15 pl-4">
+                      <ul className="mt-2 flex flex-col border-l border-white/15 pl-4">
                         <li>
                           <Link
                             href={link.href}
                             onClick={onClose}
-                            className="font-alt text-alt-label text-mute-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                            className="inline-flex min-h-11 w-full items-center font-alt text-alt-label text-mute-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                           >
-                            All {link.label}
+                            {labels.viewAll(link.label)}
                           </Link>
                         </li>
                         {link.menu.map((item) => (
@@ -177,7 +177,7 @@ export function NavbarDrawer({
                             <Link
                               href={item.href}
                               onClick={onClose}
-                              className="font-alt text-alt-label text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                              className="inline-flex min-h-11 w-full items-center font-alt text-alt-label text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                             >
                               {item.label}
                             </Link>

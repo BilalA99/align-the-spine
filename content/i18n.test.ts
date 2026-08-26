@@ -203,8 +203,11 @@ describe("language switcher targets", () => {
 });
 
 describe("Spanish internal link graph", () => {
+  // Includes mega-menu items, not just the top-level nav entries — the
+  // Servicios dropdown's four destinations are exactly the kind of link
+  // that can rot unnoticed, since nothing renders them until a hover.
   const spanishHrefs = [
-    ...esNav.map((link) => link.href),
+    ...esNav.flatMap((link) => [link.href, ...(link.menu ?? []).map((item) => item.href)]),
     esBookingCta.href,
     ...esFooter.links.map((link) => link.href),
   ];

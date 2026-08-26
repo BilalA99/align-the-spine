@@ -1,25 +1,76 @@
+import { ActivityIcon } from "@/components/ui/icons/activity";
+import { ExpandVerticalIcon } from "@/components/ui/icons/expand-vertical";
+import { HandIcon } from "@/components/ui/icons/hand";
+import { RingsIcon } from "@/components/ui/icons/rings";
 import type { NavLink } from "@/content/site";
 
 /** Spanish site chrome: navigation, footer, and the handful of UI strings
  * the shell renders directly (skip link, menu button, language switch).
  *
- * Why the Spanish nav is flat where the English nav has mega-menus: the
- * English "Services" and "Conditions" dropdowns link to pages that are
- * `status: "draft"` today (noindex, pending clinician review — see
- * content/seo.ts). Reproducing those dropdowns in Spanish would either
- * link Spanish readers into English pages on every hover, or advertise
- * Spanish pages that don't exist. A flat Spanish nav that points only at
- * real, published Spanish URLs is the honest version, and it keeps the
- * Spanish internal-link graph inside Spanish (§Internal linking in the
- * report). The dropdowns come back on the Spanish side when the underlying
- * condition/service pages clear review and get translated.
+ * The Servicios entry carries the same mega-menu the English nav does, with
+ * the same four services, the same icons and the same preview photos — the
+ * dropdown behaves identically in both languages (hover panel on desktop,
+ * expandable accordion in the drawer). Its items point at the Spanish
+ * service pages under /es/servicios/*, so a Spanish reader never leaves
+ * Spanish by using the nav.
+ *
+ * Those four Spanish pages are `status: "draft"` in content/es/seo.ts,
+ * exactly like their English originals — noindex and out of the sitemap
+ * pending clinician review of the medical content, but reachable and
+ * linkable. That mirrors how the English nav already links its own draft
+ * service pages, so neither language is treated differently.
  *
  * Every href here is a Spanish route registered in content/i18n.ts;
  * content/i18n.test.ts asserts that, so a nav link can't point at a
  * Spanish URL that no page serves.
  */
 export const esNav: NavLink[] = [
-  { label: "Servicios", href: "/es/servicios" },
+  {
+    label: "Servicios",
+    href: "/es/servicios",
+    menu: [
+      {
+        label: "Ajustes quiroprácticos",
+        href: "/es/servicios/ajustes-quiropracticos",
+        description: "Devolver el movimiento que se llevó la colisión.",
+        icon: ActivityIcon,
+        image: {
+          src: "/figma-exports/adjustments-hero.png",
+          alt: "El Dr. Abe realizando un ajuste quiropráctico",
+        },
+      },
+      {
+        label: "Descompresión espinal",
+        href: "/es/servicios/descompresion-espinal",
+        description: "Tracción suave para aliviar la presión sobre discos y nervios.",
+        icon: ExpandVerticalIcon,
+        image: {
+          src: "/figma-exports/spinal-decompression-hero.png",
+          alt: "Terapia de descompresión espinal",
+        },
+      },
+      {
+        label: "Masaje / tejidos blandos",
+        href: "/es/servicios/terapia-de-tejidos-blandos",
+        description: "Terapia dirigida para la tensión muscular y el tejido cicatricial.",
+        icon: HandIcon,
+        image: {
+          src: "/figma-exports/massage-soft-tissue-hero.png",
+          alt: "Sesión de masaje y terapia de tejidos blandos",
+        },
+      },
+      {
+        label: "Terapia de ventosas",
+        href: "/es/servicios/terapia-de-ventosas",
+        description: "Succión localizada para zonas seleccionadas de tensión muscular.",
+        icon: RingsIcon,
+        image: {
+          src: "/figma-exports/cupping-drabe.png",
+          alt: "Sesión de terapia de ventosas",
+        },
+      },
+    ],
+  },
   { label: "Accidentes de Auto", href: "/es/quiropractico-accidentes-de-auto" },
   { label: "Dr. Abe", href: "/es/dr-abe-nasser" },
   { label: "Reseñas", href: "/es/resenas" },
@@ -53,6 +104,10 @@ export const esChromeLabels = {
   skipToContent: "Saltar al contenido",
   openMenu: "Abrir menú",
   closeMenu: "Cerrar menú",
+  /** Drawer submenu "view all" link, e.g. "Ver todo: Servicios".
+   * Rendered as `All {label}` before this existed, which read as
+   * "All Servicios" on the Spanish drawer. */
+  viewAll: (label: string) => `Ver todo: ${label}`,
   callUs: "Llámenos hoy",
   languageSwitch: "View this page in English",
   languageSwitchShort: "English",
@@ -82,6 +137,7 @@ export const enChromeLabels = {
   skipToContent: "Skip to content",
   openMenu: "Open menu",
   closeMenu: "Close menu",
+  viewAll: (label: string) => `All ${label}`,
   callUs: "Speak with us today",
   languageSwitch: "Ver esta página en español",
   languageSwitchShort: "Español",

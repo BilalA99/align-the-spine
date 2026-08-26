@@ -303,9 +303,47 @@ export const esCuppingHero = {
  * Spanish reader into English. */
 export const esCuppingRelatedConfig = {
   paths: [
-    "/es/condiciones/latigazo-cervical",
-    "/es/condiciones/dolor-de-cuello",
+    "/es/servicios/terapia-de-tejidos-blandos",
+    "/es/servicios/ajustes-quiropracticos",
     "/es/quiropractico-accidentes-de-auto",
+    "/es/servicios",
+    "/es/solicitar-cita",
+  ],
+  highlightPath: "/es/solicitar-cita",
+};
+
+/** Related-link rows for the other three Spanish service pages. Draft
+ * routes are dropped automatically by buildEsRelatedLinks(), so the two
+ * sibling service pages listed here simply won't render until they're
+ * published — the row gets shorter, never wrong. */
+export const esAdjustmentsRelatedConfig = {
+  paths: [
+    "/es/servicios/descompresion-espinal",
+    "/es/servicios/terapia-de-tejidos-blandos",
+    "/es/quiropractico-accidentes-de-auto",
+    "/es/servicios",
+    "/es/solicitar-cita",
+  ],
+  highlightPath: "/es/solicitar-cita",
+};
+
+export const esDecompressionRelatedConfig = {
+  paths: [
+    "/es/servicios/ajustes-quiropracticos",
+    "/es/servicios/terapia-de-tejidos-blandos",
+    "/es/quiropractico-accidentes-de-auto",
+    "/es/servicios",
+    "/es/solicitar-cita",
+  ],
+  highlightPath: "/es/solicitar-cita",
+};
+
+export const esMassageRelatedConfig = {
+  paths: [
+    "/es/servicios/ajustes-quiropracticos",
+    "/es/servicios/terapia-de-ventosas",
+    "/es/quiropractico-accidentes-de-auto",
+    "/es/servicios",
     "/es/solicitar-cita",
   ],
   highlightPath: "/es/solicitar-cita",
@@ -346,4 +384,5 @@ export const esServicePageCopy = {
   techniquesHeading: "Técnicas que utilizamos",
   conditionsHeading: "Condiciones que evaluamos",
   bestForLabel: "Indicado para",
+  relatedHeading: "Condiciones y tratamientos relacionados",
 };
