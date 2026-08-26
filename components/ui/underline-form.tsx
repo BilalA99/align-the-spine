@@ -8,8 +8,7 @@ import { useForm, type Resolver } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { errorId } from "@/components/ui/field";
 import type { LeadFormValues } from "@/components/ui/lead-form";
-import { trackLeadConversion } from "@/lib/analytics";
-import { getStoredAttribution } from "@/lib/attribution";
+import { trackLeadSuccess } from "@/lib/analytics/lead-events";
 import { cn } from "@/lib/cn";
 import {
   buildLeadFormSchema,
@@ -17,6 +16,7 @@ import {
   type LeadFieldType,
 } from "@/lib/lead-form-schema";
 import { newSubmissionId } from "@/lib/lead/submission-id";
+import { submitLead } from "@/lib/lead/submit-client";
 import { formatUsPhoneAsYouType } from "@/lib/phone-format";
 
 export interface UnderlineFormProps {
@@ -75,21 +75,13 @@ export function UnderlineForm({
     }
 
     try {
-      const response = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          variant,
-          values,
-          submissionId,
-          website: honeypot?.value ?? "",
-          attribution: getStoredAttribution(),
-        }),
+      const result = await submitLead({
+        variant,
+        values,
+        submissionId,
+        website: honeypot?.value ?? "",
       });
-      if (!response.ok) {
-        throw new Error(`Lead submission failed with status ${response.status}`);
-      }
-      trackLeadConversion(variant, values);
+      trackLeadSuccess(result.submissionId);
       router.push("/thank-you");
     } catch {
       setSubmitError("Something went wrong. Please try again.");
@@ -98,6 +90,7 @@ export function UnderlineForm({
 
   return (
     <form
+      method="post"
       onSubmit={handleSubmit(onValid)}
       noValidate
       className={cn("grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2", className)}

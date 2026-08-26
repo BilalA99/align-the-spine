@@ -1,95 +1,147 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { captureAttribution, getStoredAttribution, sanitizeAttribution } from "./attribution";
 
-/** No jsdom in this project (vitest.config.ts runs a plain node
- * environment) — these two functions only touch `window.location.search`
- * and `window.sessionStorage`, so a minimal mock covers them without
- * pulling in a browser DOM implementation for one test file. `store` lives
- * outside `navigateTo` so it persists across calls within a test, the same
- * way real sessionStorage persists across page navigations in one tab. */
-let store: Map<string, string>;
+let localStore: Map<string, string>;
+let sessionStore: Map<string, string>;
+let localUnavailable = false;
+let sessionUnavailable = false;
+
+function storage(store: Map<string, string>, unavailable: () => boolean) {
+  return {
+    getItem(key: string) {
+      if (unavailable()) throw new Error("storage unavailable");
+      return store.get(key) ?? null;
+    },
+    setItem(key: string, value: string) {
+      if (unavailable()) throw new Error("storage unavailable");
+      store.set(key, value);
+    },
+    removeItem(key: string) {
+      if (unavailable()) throw new Error("storage unavailable");
+      store.delete(key);
+    },
+  };
+}
 
 function navigateTo(search: string) {
   (globalThis as { window?: unknown }).window = {
     location: { search },
-    sessionStorage: {
-      getItem: (key: string) => store.get(key) ?? null,
-      setItem: (key: string, value: string) => {
-        store.set(key, value);
-      },
-    },
+    localStorage: storage(localStore, () => localUnavailable),
+    sessionStorage: storage(sessionStore, () => sessionUnavailable),
   };
 }
 
 describe("attribution capture", () => {
   beforeEach(() => {
-    store = new Map();
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-26T12:00:00.000Z"));
+    localStore = new Map();
+    sessionStore = new Map();
+    localUnavailable = false;
+    sessionUnavailable = false;
     navigateTo("");
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     delete (globalThis as { window?: unknown }).window;
   });
 
-  it("captures gclid from the URL", () => {
-    navigateTo("?gclid=abc123");
-    captureAttribution();
-    expect(getStoredAttribution()).toEqual({ gclid: "abc123" });
-  });
-
-  it("captures every known attribution param present, ignoring unknown ones", () => {
-    navigateTo("?gclid=abc123&utm_source=google&utm_campaign=accident-lp&irrelevant=1");
+  it("captures all whitelisted click IDs and UTMs, ignoring unknown fields", () => {
+    navigateTo(
+      "?gclid=g1&gbraid=b1&wbraid=w1&utm_source=google&utm_medium=cpc&utm_campaign=accident&utm_term=chiro&utm_content=ad1&reason=accident",
+    );
     captureAttribution();
     expect(getStoredAttribution()).toEqual({
-      gclid: "abc123",
+      gclid: "g1",
+      gbraid: "b1",
+      wbraid: "w1",
       utm_source: "google",
-      utm_campaign: "accident-lp",
+      utm_medium: "cpc",
+      utm_campaign: "accident",
+      utm_term: "chiro",
+      utm_content: "ad1",
     });
+    expect(localStore.get("ats_attribution_v3")).not.toContain("reason");
   });
 
-  it("does nothing when the URL carries no attribution params", () => {
-    navigateTo("?ref=nav");
-    captureAttribution();
-    expect(getStoredAttribution()).toEqual({});
-  });
-
-  it("merges a later page's params without dropping an earlier gclid", () => {
+  it("persists across reloads and a new session", () => {
     navigateTo("?gclid=abc123");
     captureAttribution();
-
-    navigateTo(""); // visitor navigates to a page with no query params
-    captureAttribution();
-
+    sessionStore.clear();
+    navigateTo("");
     expect(getStoredAttribution()).toEqual({ gclid: "abc123" });
   });
 
-  it("returns an empty object when nothing has been captured yet", () => {
+  it("expires after 90 days", () => {
+    navigateTo("?gclid=abc123");
+    captureAttribution();
+    vi.advanceTimersByTime(90 * 24 * 60 * 60 * 1_000 + 1);
     expect(getStoredAttribution()).toEqual({});
   });
+
+  it("new non-empty values supersede corresponding old values without blank erasure", () => {
+    navigateTo("?gclid=old&utm_source=google");
+    captureAttribution();
+    navigateTo("?gclid=&utm_campaign=next");
+    captureAttribution();
+    expect(getStoredAttribution()).toEqual({
+      gclid: "old",
+      utm_source: "google",
+      utm_campaign: "next",
+    });
+    navigateTo("?gclid=new");
+    captureAttribution();
+    expect(getStoredAttribution().gclid).toBe("new");
+  });
+
+  it("handles malformed JSON without breaking capture", () => {
+    localStore.set("ats_attribution_v3", "{bad");
+    navigateTo("?wbraid=fresh");
+    expect(() => captureAttribution()).not.toThrow();
+    expect(getStoredAttribution()).toEqual({ wbraid: "fresh" });
+  });
+
+  it("falls back safely when localStorage is unavailable", () => {
+    localUnavailable = true;
+    navigateTo("?gbraid=session-only");
+    expect(() => captureAttribution()).not.toThrow();
+    expect(getStoredAttribution()).toEqual({ gbraid: "session-only" });
+  });
+
+  it("never breaks when all storage is unavailable", () => {
+    localUnavailable = true;
+    sessionUnavailable = true;
+    navigateTo("?gclid=lost-but-safe");
+    expect(() => captureAttribution()).not.toThrow();
+    expect(getStoredAttribution()).toEqual({});
+  });
+
+  it.each(["ats_attribution", "ats_attribution_v2"])(
+    "migrates and sanitizes the exact legacy session key %s",
+    (key) => {
+      sessionStore.set(key, JSON.stringify({ gclid: "legacy", email: "do-not-migrate" }));
+      expect(getStoredAttribution()).toEqual({ gclid: "legacy" });
+      expect(localStore.get("ats_attribution_v3")).not.toContain("email");
+    },
+  );
 });
 
-describe("sanitizeAttribution (server-side, untrusted input)", () => {
-  it("keeps only known keys with string values", () => {
-    expect(sanitizeAttribution({ gclid: "abc123", evil: "<script>", nested: { a: 1 } })).toEqual({
-      gclid: "abc123",
-    });
+describe("sanitizeAttribution", () => {
+  it("keeps only non-empty whitelisted strings and caps their length", () => {
+    expect(
+      sanitizeAttribution({
+        gclid: "a".repeat(1000),
+        gbraid: "",
+        utm_source: "  google  ",
+        reason: "accident",
+      }),
+    ).toEqual({ gclid: "a".repeat(512), utm_source: "google" });
   });
 
-  it("drops non-string values for known keys instead of coercing them", () => {
-    expect(sanitizeAttribution({ gclid: 12345 })).toEqual({});
-    expect(sanitizeAttribution({ gclid: null })).toEqual({});
-    expect(sanitizeAttribution({ gclid: ["abc"] })).toEqual({});
-  });
-
-  it("caps an absurdly long value instead of rejecting the whole payload", () => {
-    const result = sanitizeAttribution({ gclid: "a".repeat(1000) });
-    expect(result.gclid).toHaveLength(512);
-  });
-
-  it("returns an empty object for non-object input", () => {
+  it("rejects non-object and non-string input", () => {
     expect(sanitizeAttribution(null)).toEqual({});
-    expect(sanitizeAttribution("not an object")).toEqual({});
-    expect(sanitizeAttribution(undefined)).toEqual({});
+    expect(sanitizeAttribution({ gclid: 123 })).toEqual({});
   });
 });

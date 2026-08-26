@@ -225,7 +225,6 @@ export function HeroSolidPanel({
                   variant={form.variant}
                   fields={form.fields ?? leadFormVariants.heroEval.fields}
                   submitLabel={form.submitLabel}
-                  onSubmit={form.onSubmit}
                   submitVariant="teal"
                   fieldOutline
                   labelCase="none"
@@ -259,7 +258,6 @@ export function HeroSolidPanel({
                 variant={form.variant}
                 fields={form.fields ?? leadFormVariants.heroEval.fields}
                 submitLabel={form.submitLabel}
-                onSubmit={form.onSubmit}
                 submitVariant="teal"
                 fieldOutline
                 labelCase="none"

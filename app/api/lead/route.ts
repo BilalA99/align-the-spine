@@ -6,13 +6,13 @@ import { sanitizeAttribution } from "@/lib/attribution";
 import { buildLeadFormSchema } from "@/lib/lead-form-schema";
 import { isSupabaseConfigured } from "@/lib/lead/env";
 import { ingestLead } from "@/lib/lead/ingest";
+import { isSubmissionId } from "@/lib/lead/submission-id";
 import { runDeliveryWorker } from "@/lib/lead/worker";
 
 /** Hard ceiling on the raw request body. Individual fields are already
  * length-capped by the zod schema; this stops an oversized blob from being
  * parsed/stored at all. */
 const MAX_BODY_BYTES = 25_000;
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 interface LeadPayload {
   variant?: unknown;
@@ -119,10 +119,10 @@ export async function POST(request: Request) {
 
   const variant = payload.variant;
   const attribution = sanitizeAttribution(payload.attribution);
-  const submissionId =
-    typeof payload.submissionId === "string" && UUID_RE.test(payload.submissionId)
-      ? payload.submissionId
-      : crypto.randomUUID();
+  if (!isSubmissionId(payload.submissionId)) {
+    return NextResponse.json({ ok: false, error: "Invalid submission ID" }, { status: 400 });
+  }
+  const submissionId = payload.submissionId;
 
   // Fail closed: without the durable store we cannot honor "no lead is ever
   // lost", so we refuse rather than silently dropping to email or faking success.
@@ -167,7 +167,7 @@ export async function POST(request: Request) {
     }
   });
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, submissionId });
 }
 
 function formatIssues(error: { issues: { path: PropertyKey[]; message: string }[] }) {

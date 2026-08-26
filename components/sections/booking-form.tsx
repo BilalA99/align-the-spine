@@ -10,10 +10,10 @@ import { Input } from "@/components/ui/input";
 import type { LeadFormValues } from "@/components/ui/lead-form";
 import { Select } from "@/components/ui/select";
 import { leadFormVariants } from "@/content/lead-forms";
-import { trackLeadConversion } from "@/lib/analytics";
-import { getStoredAttribution } from "@/lib/attribution";
+import { trackLeadSuccess } from "@/lib/analytics/lead-events";
 import { buildLeadFormSchema } from "@/lib/lead-form-schema";
 import { newSubmissionId } from "@/lib/lead/submission-id";
+import { submitLead } from "@/lib/lead/submit-client";
 import { formatUsPhoneAsYouType } from "@/lib/phone-format";
 
 const config = leadFormVariants.booking;
@@ -77,21 +77,13 @@ export function BookingForm() {
     }
 
     try {
-      const response = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          variant: config.variant,
-          values,
-          submissionId,
-          website: "",
-          attribution: getStoredAttribution(),
-        }),
+      const result = await submitLead({
+        variant: config.variant,
+        values,
+        submissionId,
+        website: "",
       });
-      if (!response.ok) {
-        throw new Error(`Lead submission failed with status ${response.status}`);
-      }
-      trackLeadConversion(config.variant, values);
+      trackLeadSuccess(result.submissionId);
       router.push("/thank-you");
     } catch {
       setSubmitError("Something went wrong. Please try again.");
@@ -99,7 +91,12 @@ export function BookingForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onValid)} noValidate className="relative flex flex-col gap-4">
+    <form
+      method="post"
+      onSubmit={handleSubmit(onValid)}
+      noValidate
+      className="relative flex flex-col gap-4"
+    >
       <h2 className="mb-2 font-display text-h1 text-white">Request an appointment</h2>
 
       <div aria-hidden="true" className="absolute h-0 w-0 overflow-hidden">

@@ -22,18 +22,17 @@ hero-eval variant when `fields` is omitted):
 
 ## `LeadFormProps`
 
-| Prop                | Type                                        | Required | Notes                                                                                                                                                   |
-| ------------------- | ------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `heading`           | `string`                                    | yes      | Rendered as an `<h2>` above the fields.                                                                                                                 |
-| `variant`           | `string`                                    | no       | Variant key for server-side validation in `/api/lead`; defaults to `"heroEval"`. Presets include it.                                                    |
-| `fields`            | `LeadFieldConfig[]`                         | yes      | Drives both rendering and the derived zod schema.                                                                                                       |
-| `submitLabel`       | `string`                                    | yes      | CTA text on the submit button.                                                                                                                          |
-| `onSubmit`          | `(values: LeadFormValues) => Promise<void>` | no       | Overrides the default submission (POST `/api/lead` → redirect `/thank-you`). Success then shows inline.                                                 |
-| `successMessage`    | `string`                                    | no       | Inline success text for the `onSubmit`-override path. Defaults to "Thanks — we'll be in touch shortly."                                                 |
-| `fieldVariant`      | `"dark" \| "light"`                         | no       | Field styling surface; defaults to `"dark"` (hero panels).                                                                                              |
-| `twoStep`           | `boolean`                                   | no       | Shows only `stepOneFieldNames` behind a "Continue" button first, revealing the rest once those validate. Defaults to `false` — full form in one screen. |
-| `stepOneFieldNames` | `string[]`                                  | no       | Field names shown in step 1 when `twoStep` is true. Defaults to `["firstName", "phone"]`.                                                               |
-| `className`         | `string`                                    | no       | Merged onto the `<form>`.                                                                                                                               |
+| Prop                | Type                | Required | Notes                                                                                                                                                   |
+| ------------------- | ------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `heading`           | `string`            | yes      | Rendered as an `<h2>` above the fields.                                                                                                                 |
+| `variant`           | `string`            | no       | Variant key for server-side validation in `/api/lead`; defaults to `"heroEval"`. Presets include it.                                                    |
+| `fields`            | `LeadFieldConfig[]` | yes      | Drives both rendering and the derived zod schema.                                                                                                       |
+| `submitLabel`       | `string`            | yes      | CTA text on the submit button.                                                                                                                          |
+| `successMessage`    | `string`            | no       | Inline success text used by the honeypot fake-success path. Defaults to "Thanks — we'll be in touch shortly."                                           |
+| `fieldVariant`      | `"dark" \| "light"` | no       | Field styling surface; defaults to `"dark"` (hero panels).                                                                                              |
+| `twoStep`           | `boolean`           | no       | Shows only `stepOneFieldNames` behind a "Continue" button first, revealing the rest once those validate. Defaults to `false` — full form in one screen. |
+| `stepOneFieldNames` | `string[]`          | no       | Field names shown in step 1 when `twoStep` is true. Defaults to `["firstName", "phone"]`.                                                               |
+| `className`         | `string`            | no       | Merged onto the `<form>`.                                                                                                                               |
 
 `LeadFormValues` is `Record<string, string>` keyed by each field's `name`.
 
@@ -56,9 +55,9 @@ Each preset is `{ fields, submitLabel }`; spread it into `<LeadForm />`. Every
 variant except `booking` carries a shared, optional `carAccident` select
 ("Is this related to a car accident?", Yes/No) — `booking`'s own "Reason for
 Visit" select serves the same purpose via its "Accident" option instead of a
-redundant second question. `lib/analytics.ts`'s `classifyLeadPriority` reads
-whichever of the two is present to flag a lead high-priority for Ads/triage —
-see that file's doc comment for the exact precedence.
+redundant second question. `lib/lead/priority.ts` privately classifies the
+stored CRM lead for office triage. That classification is never sent in the
+generic Google lead event.
 
 | Variant        | Fields                                                                         | Submit label                        |
 | -------------- | ------------------------------------------------------------------------------ | ----------------------------------- |
@@ -89,23 +88,25 @@ same schema, same `/api/lead` pipeline.
 - Errors render inline under each field through the ATS-021 primitives
   (`Input` / `Select` / `Textarea`), with `aria-invalid` + `aria-describedby`.
 - Submit button shows a loading spinner and is disabled while submitting; a
-  failed `onSubmit` renders a retryable error line, success resets the form and
-  shows `successMessage`.
+  failed durable submission renders a retryable error line.
 
 ## Submission pipeline (ATS-031)
 
-Without an `onSubmit` override, a valid submit POSTs
-`{ variant, values, website }` to `/api/lead`, fires the ATS-132 conversion
-hook (`trackLeadConversion` pushes a `lead_form_submit` event to
-`window.dataLayer`), and routes to `/thank-you`. Failures surface as an inline
-retryable error.
+A valid submit uses `submitLead()` to POST
+`{ variant, values, submissionId, website, attribution }` to `/api/lead`.
+The browser accepts success only when the response is 2xx and contains
+`{ ok: true, submissionId: <valid UUID> }`. It then calls
+`trackLeadSuccess(submissionId)`, which pushes only
+`{ event: "ats_lead_success", submission_id }` to `window.dataLayer`, and
+routes to `/thank-you`. Failures surface as an inline retryable error.
 
 The route re-validates server-side with the same `buildLeadFormSchema`
 (`lib/lead-form-schema.ts`) keyed by `variant`, re-checks the honeypot, and
 enforces origin + body-size guards. It then **durably ingests** the lead
 (`lib/lead/ingest.ts` → the `ingest_lead` RPC: lead + consent receipt + delivery
-outbox rows, one transaction) and only then responds `{ ok: true }` — it never
-reports success before the lead is stored, and never sends email synchronously.
+outbox rows, one transaction) and only then responds
+`{ ok: true, submissionId }` — it never reports success before the lead is
+stored, and never sends email synchronously.
 Office/patient emails are delivered from the outbox by the worker
 (`app/api/internal/deliver` + a post-response `after()` drain). If the durable
 store is unconfigured/unavailable the route **fails closed (503)** rather than

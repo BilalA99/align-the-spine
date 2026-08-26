@@ -6,8 +6,8 @@
  * never reach the DB (or logs) in plaintext.
  */
 import { leadFormVariants, type LeadFormVariant } from "@/content/lead-forms";
-import { classifyLeadPriority } from "@/lib/analytics";
 import type { Attribution } from "@/lib/attribution";
+import { classifyLeadPriority } from "@/lib/lead/priority";
 
 import { encryptSensitive, hashIp } from "./crypto";
 import { isEncryptionConfigured } from "./env";

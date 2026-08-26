@@ -16,3 +16,11 @@ export function newSubmissionId(): string {
     return v.toString(16);
   });
 }
+
+/** Shared client/server validation for the canonical technical submission ID. */
+export function isSubmissionId(value: unknown): value is string {
+  return (
+    typeof value === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+  );
+}

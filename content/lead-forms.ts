@@ -28,7 +28,7 @@ const zipField: LeadFieldConfig = {
 
 /** Shared across every variant so a lead can always be filtered/prioritized
  * by whether it's accident-related, regardless of which page or form it
- * came through — lib/analytics.ts's classifyLeadPriority reads this field
+ * came through — lib/lead/priority.ts's classifyLeadPriority reads this field
  * first, ahead of any page/variant-based inference. Left optional: on an
  * already accident-framed form (e.g. /car-accident-chiropractor) re-asking
  * would be pure friction, and classifyLeadPriority's variant-based fallback

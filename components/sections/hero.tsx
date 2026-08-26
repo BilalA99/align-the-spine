@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { FadeIn } from "@/components/ui/fade-in";
-import { LeadForm, type LeadFieldConfig, type LeadFormValues } from "@/components/ui/lead-form";
+import { LeadForm, type LeadFieldConfig } from "@/components/ui/lead-form";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { leadFormVariants } from "@/content/lead-forms";
 import { siteConfig } from "@/content/site";
@@ -24,7 +24,6 @@ export interface HeroFormConfig {
   /** Defaults to the hero-eval variant (First/Last/Phone/Email). */
   fields?: LeadFieldConfig[];
   footerNote?: string;
-  onSubmit?: (values: LeadFormValues) => Promise<void>;
   /** Short-form-first: shows only stepOneFieldNames behind a "Continue"
    * button before revealing the rest — keeps the hero form's mobile
    * footprint short instead of showing every field at once. */
@@ -192,7 +191,6 @@ export function Hero({
                   variant={form.variant}
                   fields={form.fields ?? leadFormVariants.heroEval.fields}
                   submitLabel={form.submitLabel}
-                  onSubmit={form.onSubmit}
                 />
               </LiquidGlass>
             ))}

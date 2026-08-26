@@ -29,6 +29,7 @@ function makeRequest(body: unknown, headers: Record<string, string> = {}): Reque
 // server schema expects each key present — mirror that here.
 const validContactUs = {
   variant: "contactUs",
+  submissionId: "11111111-1111-4111-8111-111111111111",
   values: {
     name: "Jane",
     phone: "9545550100",
@@ -45,25 +46,69 @@ describe("POST /api/lead", () => {
     runWorkerMock.mockReset();
     runWorkerMock.mockResolvedValue({ claimed: 0, sent: 0, failed: 0 });
     envState.supabase = true;
+    delete process.env.LEAD_GOOGLE_SHEETS_WEBHOOK_URL;
   });
-  afterEach(() => vi.clearAllMocks());
+  afterEach(() => {
+    delete process.env.LEAD_GOOGLE_SHEETS_WEBHOOK_URL;
+    vi.clearAllMocks();
+  });
 
   it("stores a valid lead and reports success", async () => {
     const res = await POST(makeRequest(validContactUs));
     expect(res.status).toBe(200);
-    expect(await res.json()).toEqual({ ok: true });
+    expect(await res.json()).toEqual({
+      ok: true,
+      submissionId: validContactUs.submissionId,
+    });
     expect(ingestLeadMock).toHaveBeenCalledTimes(1);
+    expect(ingestLeadMock).toHaveBeenCalledWith(
+      validContactUs.submissionId,
+      "contactUs",
+      expect.any(Object),
+      expect.any(Object),
+      expect.any(Object),
+    );
+  });
+
+  it("passes Sheets delivery enablement into the durable ingestion transaction", async () => {
+    process.env.LEAD_GOOGLE_SHEETS_WEBHOOK_URL = "https://sheets.example/webhook";
+    await POST(makeRequest(validContactUs));
+    expect(ingestLeadMock).toHaveBeenCalledWith(
+      expect.any(String),
+      "contactUs",
+      expect.any(Object),
+      expect.any(Object),
+      expect.objectContaining({ googleSheetsEnabled: true }),
+    );
   });
 
   it("silently accepts a honeypot hit without storing anything", async () => {
     const res = await POST(makeRequest({ ...validContactUs, website: "bot" }));
     expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true });
+    expect(ingestLeadMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects a missing client UUID so retries cannot create a new logical lead", async () => {
+    const withoutId = {
+      variant: validContactUs.variant,
+      values: validContactUs.values,
+    };
+    const res = await POST(makeRequest(withoutId));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ ok: false, error: "Invalid submission ID" });
     expect(ingestLeadMock).not.toHaveBeenCalled();
   });
 
   it("rejects an unknown variant without storing", async () => {
     const res = await POST(makeRequest({ variant: "nope", values: {} }));
     expect(res.status).toBe(400);
+    expect(ingestLeadMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects a cross-origin request without storing", async () => {
+    const res = await POST(makeRequest(validContactUs, { origin: "https://attacker.example" }));
+    expect(res.status).toBe(403);
     expect(ingestLeadMock).not.toHaveBeenCalled();
   });
 

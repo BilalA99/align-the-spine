@@ -11,8 +11,7 @@ import { type FieldVariant } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { trackLeadConversion } from "@/lib/analytics";
-import { getStoredAttribution } from "@/lib/attribution";
+import { trackLeadSuccess } from "@/lib/analytics/lead-events";
 import { cn } from "@/lib/cn";
 import {
   buildLeadFormSchema,
@@ -20,6 +19,7 @@ import {
   type LeadFieldType,
 } from "@/lib/lead-form-schema";
 import { newSubmissionId } from "@/lib/lead/submission-id";
+import { submitLead } from "@/lib/lead/submit-client";
 import { formatUsPhoneAsYouType } from "@/lib/phone-format";
 
 export type LeadFormValues = Record<string, string>;
@@ -35,9 +35,6 @@ export interface LeadFormProps {
   /** Field config driving both rendering and the zod validation schema. */
   fields: LeadFieldConfig[];
   submitLabel: string;
-  /** Overrides the default submission (POST /api/lead + redirect to
-   * /thank-you). When provided, success shows `successMessage` inline instead. */
-  onSubmit?: (values: LeadFormValues) => Promise<void>;
   successMessage?: string;
   /** Field styling for dark (hero) vs light surfaces. */
   fieldVariant?: FieldVariant;
@@ -190,7 +187,6 @@ export function LeadForm({
   variant = "heroEval",
   fields,
   submitLabel,
-  onSubmit,
   successMessage = "Thanks — we'll be in touch shortly.",
   fieldVariant = "dark",
   fieldOutline = false,
@@ -280,29 +276,13 @@ export function LeadForm({
     }
 
     try {
-      if (onSubmit) {
-        await onSubmit(values);
-        trackLeadConversion(variant, values);
-        setSubmitted(true);
-        reset();
-        return;
-      }
-
-      const response = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          variant,
-          values,
-          submissionId,
-          website: honeypot?.value ?? "",
-          attribution: getStoredAttribution(),
-        }),
+      const result = await submitLead({
+        variant,
+        values,
+        submissionId,
+        website: honeypot?.value ?? "",
       });
-      if (!response.ok) {
-        throw new Error(`Lead submission failed with status ${response.status}`);
-      }
-      trackLeadConversion(variant, values);
+      trackLeadSuccess(result.submissionId);
       router.push("/thank-you");
     } catch {
       setSubmitError("Something went wrong. Please try again.");
@@ -311,6 +291,7 @@ export function LeadForm({
 
   return (
     <form
+      method="post"
       onSubmit={handleSubmit(onValid)}
       noValidate
       className={cn(

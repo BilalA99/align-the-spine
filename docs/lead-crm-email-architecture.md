@@ -22,7 +22,7 @@ Browser form ──POST /api/lead──▶ validate (zod + honeypot + origin + s
                           ├─ outbox: office_notification         (always)
                           ├─ outbox: patient_acknowledgment      (valid email only)
                           └─ outbox: google_sheets               (if configured)
-                                       │  success → 200 { ok:true }
+                                       │  success → 200 { ok:true, submissionId }
                                        ▼
               after() best-effort drain  +  cron GET /api/internal/deliver
                                        │
@@ -66,9 +66,10 @@ delivery_purpose)` (unique). Send lifecycle in `status`; webhook-reported
 - Office CRM button links to `/admin/leads/{uuid}` — opaque id only.
 - No open/click tracking, no tracking pixel, no UTM/lead ids on links.
 - Provider errors are scrubbed of email addresses before storage/logging.
-- Analytics: the lead-success `generate_lead`/`conversion` event still fires
-  client-side; no email send/delivery fires a second conversion, and no PII or
-  Resend ids are sent to GA/Ads.
+- Analytics: only after this durable response, the browser pushes
+  `{ event: "ats_lead_success", submission_id }` to `dataLayer`. GTM owns
+  GA4/Google Ads lead tags. No intake classification, PII, email delivery, or
+  Resend identifier is sent in that event.
 
 ## Remaining manual actions (authorization-gated — not performed here)
 
