@@ -53,7 +53,7 @@ export function DoctorProfile({ variant, content, extended }: DoctorProfileProps
             {isVerified(rating) && (
               <LiquidGlass
                 radius="rounded-none"
-                className="absolute inset-x-0 bottom-0 bg-gray-500/40"
+                className="absolute inset-x-0 bottom-0 bg-white/10 backdrop-blur-md backdrop-saturate-150"
               >
                 <div className="flex items-center justify-between gap-3 px-6 py-4">
                   <span className="inline-flex items-center gap-2 font-sans text-stat-label text-white">

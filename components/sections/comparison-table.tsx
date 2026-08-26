@@ -49,17 +49,17 @@ export function ComparisonTable({ variant = "default", className }: ComparisonTa
           <Card radius={30} shadow="comparison" className="hidden overflow-hidden lg:block">
             <div className="grid grid-cols-3">
               <div className="bg-panel-100 px-3 py-4 md:px-8">
-                <p className="font-display text-h2 font-normal text-ink-900">
+                <p className="font-display text-3xl font-normal text-ink-900">
                   {comparisonTableColumnHeadings.careBenefits}
                 </p>
               </div>
               <div className=" bg-navy-900 px-3 py-4 md:px-8">
-                <p className="font-display text-h2 font-normal text-white">
+                <p className="font-display text-3xl font-normal text-white">
                   {comparisonTableColumnHeadings.alignTheSpine}
                 </p>
               </div>
               <div className="px-3 py-4 md:px-8">
-                <p className="font-display text-h2 font-normal text-mute-350">
+                <p className="font-display text-3xl font-normal text-mute-350">
                   {comparisonTableColumnHeadings.traditionalClinic}
                 </p>
               </div>

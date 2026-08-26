@@ -139,7 +139,7 @@ const businessHours: DayHours[] = [
   "Friday",
   "Saturday",
   "Sunday",
-].map((day) => ({ day: day as DayHours["day"], open: "7:00 AM", close: "11:00 PM" }));
+].map((day) => ({ day: day as DayHours["day"], open: "9:00 AM", close: "7:00 PM" }));
 
 /** True only for actual Vercel production deploys. Local dev, CI, and
  * Vercel preview builds are all treated as non-production so metadata/
@@ -191,9 +191,8 @@ export const siteConfig: SiteConfig = {
     geo: { latitude: 26.3067873, longitude: -80.0944778 },
   },
   hours: businessHours,
-  // Public sources currently conflict. A design is not operational evidence;
-  // omit hours from UI/schema until the owner or GBP record is confirmed.
-  hoursVerified: false,
+  // Client-confirmed 2026-08-26: 9:00 AM - 7:00 PM every day.
+  hoursVerified: true,
   nav: [
     {
       label: "Services",

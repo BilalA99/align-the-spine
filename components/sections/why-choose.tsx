@@ -44,7 +44,10 @@ export function WhyChoose({ content }: WhyChooseProps) {
             className="object-cover hover:scale-105 transition-transform duration-300"
           />
           {isVerified(rating) && (
-            <LiquidGlass radius="rounded-none" className="absolute left-4 bottom-4 bg-gray-500/40">
+            <LiquidGlass
+              radius="rounded-none"
+              className="absolute left-4 bottom-4 bg-white/10 backdrop-blur-md backdrop-saturate-150"
+            >
               <div className="flex flex-col gap-2 px-6 py-4">
                 <span className="font-sans text-stat-label text-white">
                   {rating.value.location}

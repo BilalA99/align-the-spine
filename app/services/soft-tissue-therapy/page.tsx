@@ -228,7 +228,7 @@ export default function MassageSoftTissuePage() {
                 </div>
                 <h3
                   className={cn(
-                    "font-display text-h2 font-normal text-ink-500 group-hover:text-navy-900 transition-colors duration-300",
+                    "font-display text-3xl font-normal text-ink-500 group-hover:text-navy-900 transition-colors duration-300",
                   )}
                 >
                   {condition.name}
@@ -279,11 +279,7 @@ export default function MassageSoftTissuePage() {
               Same-day visits, seven days a week — no waiting room, no driving in pain.
             </p>
           </div>
-          <Button
-            variant="teal"
-            href={siteConfig.bookingCta.href}
-            className="w-fit shrink-0 rounded-none!"
-          >
+          <Button variant="teal" href={siteConfig.bookingCta.href} className="w-fit shrink-0">
             Request My Evaluation
           </Button>
         </Container>

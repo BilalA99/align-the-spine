@@ -197,11 +197,7 @@ export default function ConcussionPage() {
               Same-day visits, seven days a week — no waiting room, no driving in pain.
             </p>
           </div>
-          <Button
-            variant="teal"
-            href={siteConfig.bookingCta.href}
-            className="w-fit shrink-0 rounded-none!"
-          >
+          <Button variant="teal" href={siteConfig.bookingCta.href} className="w-fit shrink-0">
             Request My Evaluation
           </Button>
         </Container>

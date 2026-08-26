@@ -32,7 +32,7 @@ export function ContactSection() {
               className="size-32 shrink-0"
             />
             <div className="flex flex-col">
-              <span className="text-2xl sm:text-4xl text-[#1A1A1A] font-sans">Align the Spine</span>
+              <span className="text-2xl sm:text-4xl text-navy-900 font-sans">Align the Spine</span>
               <span className="font-sans text-body-lg text-navy-900">
                 Chiropractic and Wellness Center
               </span>

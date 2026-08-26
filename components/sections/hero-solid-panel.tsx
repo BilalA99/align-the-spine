@@ -163,7 +163,7 @@ export function HeroSolidPanel({
             {breadcrumbs && <BreadcrumbTrail items={breadcrumbs} className="mb-4" />}
             {eyebrow && <Eyebrow variant="onDark">{eyebrow}</Eyebrow>}
             {badge && (
-              <span className="w-fit rounded-full bg-teal-500 px-6 py-3 font-sans text-button text-white">
+              <span className="mb-4 w-fit rounded-full bg-teal-500 px-6 py-3 font-sans text-button text-white">
                 {badge}
               </span>
             )}

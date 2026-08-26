@@ -63,7 +63,7 @@ export function LocationIntro({ sendHref = "/#contact" }: LocationIntroProps) {
               href={sendHref}
               className="group flex h-12 w-fit items-center justify-center gap-3 rounded-full bg-navy-900 px-8 font-sans text-button text-white transition-colors hover:bg-navy-700"
             >
-              <span className="pr-10">Send</span>
+              <span>Send</span>
               <ArrowRightIcon className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>

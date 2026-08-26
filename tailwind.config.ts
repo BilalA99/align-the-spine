@@ -161,7 +161,7 @@ const config: Config = {
           { lineHeight: "40px", letterSpacing: "1.25px", fontWeight: "600" },
         ],
         "panel-body": ["22px", { lineHeight: "2", fontWeight: "400" }],
-        "small-print": ["18px", { lineHeight: "2", fontWeight: "400" }],
+        "small-print": ["16px", { lineHeight: "2", fontWeight: "400" }],
       },
     },
   },
