@@ -22,11 +22,17 @@ import type { WhyChooseContent } from "@/content/why-choose";
  */
 
 export const esHomeHero = {
-  /** H1. "Quiropráctico en Deerfield Beach" is the head term plus the geo
-   * modifier, in the order a Spanish query actually puts them. Rendered as
-   * three lines to match the English hero's fixed line split. */
-  titleLines: ["Quiropráctico", "en Deerfield Beach", "Align the Spine"] as const,
-  badge: "Consulta en el consultorio: $50",
+  /** H1. Mirrors the English hero's two-line split (ATS-SEO-050 aligned it
+   * to the title tag rather than leading with the brand name) and does the
+   * same job in Spanish: the H1 now matches this route's <title>,
+   * "Quiropráctico en Deerfield Beach, FL". The head term plus geo modifier
+   * is also the order a Spanish query actually puts them in. */
+  titleLines: ["Quiropráctico en", "Deerfield Beach, FL"] as const,
+  /** Mirrors the English "We accept cash visits". This deliberately no
+   * longer states a dollar figure: upstream removed the "$50 office visit"
+   * badge from the English hero, and a Spanish page must not keep
+   * advertising a price the English site has stopped quoting. */
+  badge: "Aceptamos pagos en efectivo",
   subhead:
     "Atención quiropráctica en Deerfield Beach para dolor de espalda, dolor de cuello, movilidad y lesiones — con evaluaciones enfocadas después de un accidente de auto.",
   callPillEyebrow: "Hablemos hoy",

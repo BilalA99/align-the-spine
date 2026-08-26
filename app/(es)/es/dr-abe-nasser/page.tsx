@@ -71,8 +71,6 @@ export default function EsDoctorPage() {
             {esDoctorPage.hero.titleLines[0]}
             <br />
             {esDoctorPage.hero.titleLines[1]}
-            <br />
-            {esDoctorPage.hero.titleLines[2]}
           </>
         }
         subhead={esDoctorPage.hero.subhead}

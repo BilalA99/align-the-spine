@@ -29,7 +29,7 @@ export function ContactSection({ locale = DEFAULT_LOCALE }: { locale?: Locale } 
           ),
           lockupSubtitle: "Chiropractic and Wellness Center",
         };
-  const formVariant = locale === "es" ? esLeadFormVariants.contactUs : leadFormVariants.contact;
+  const formVariant = locale === "es" ? esLeadFormVariants.contact : leadFormVariants.contact;
 
   return (
     <Section id="contact" spacing="lg">

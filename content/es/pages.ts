@@ -144,6 +144,30 @@ export const esServicesGrid: ServiceCardItem[] = [
     },
   },
   {
+    slug: "car-accidents",
+    name: "Accidentes de auto",
+    duration: "",
+    summary:
+      "Después de un accidente de auto, solicite una evaluación quiropráctica por dolor de cuello, dolor de espalda, rigidez, síntomas de latigazo cervical y otras molestias musculoesqueléticas.",
+    image: {
+      src: "/figma-exports/drabe-consult.png",
+      alt: "Consulta con el Dr. Abe después de un accidente de auto",
+    },
+    // The one card here that DOES link: its destination is the Spanish
+    // accident page, which is published. The rest stay unlinked because
+    // their owning pages are English-only drafts.
+    href: "/es/quiropractico-accidentes-de-auto",
+    ctaLabel: "Más información",
+  },
+  {
+    slug: "cupping-therapy",
+    name: "Terapia de ventosas",
+    duration: "",
+    summary:
+      "La terapia de ventosas aplica succión localizada en zonas seleccionadas de tensión muscular y puede incluirse cuando corresponde para molestias de cuello, espalda u otros tejidos blandos.",
+    image: { src: "/figma-exports/cupping-drabe.png", alt: "Sesión de terapia de ventosas" },
+  },
+  {
     slug: "massage-soft-tissue",
     name: "Masaje / tejidos blandos",
     duration: "",
@@ -160,10 +184,13 @@ export const esServicesGrid: ServiceCardItem[] = [
 
 export const esDoctorPage = {
   hero: {
-    eyebrow: "El quiropráctico que lo va a atender",
-    titleLines: ["Dr. Abe Nasser,", "quiropráctico en", "Deerfield Beach"] as const,
+    // Mirrors content/about-page.ts's aboutHero (ATS-SEO-022), which
+    // replaced a hero copy-pasted from /services: eyebrow from the doctor
+    // profile, H1 = his name, subhead = the route's own description.
+    eyebrow: esDoctorProfileContent.eyebrow,
+    titleLines: ["Dr. Abe Nasser,", "D.C."] as const,
     subhead:
-      "El mismo doctor en cada visita, en español o en inglés — desde la primera evaluación hasta el final de su recuperación.",
+      "Conozca al Dr. Abe Nasser, el quiropráctico de Align the Spine Chiropractic en Deerfield Beach, y su forma de atender a cada paciente. Atiende en español y en inglés.",
     callPillEyebrow: "Hablemos hoy",
   },
   breadcrumb: "Dr. Abe Nasser",

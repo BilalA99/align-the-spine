@@ -81,8 +81,6 @@ export default function EsHome() {
             {esHomeHero.titleLines[0]}
             <br />
             {esHomeHero.titleLines[1]}
-            <br />
-            {esHomeHero.titleLines[2]}
           </>
         }
         badge={esHomeHero.badge}
