@@ -9,6 +9,8 @@ import { FadeIn } from "@/components/ui/fade-in";
 import { LeadForm, type LeadFieldConfig, type LeadFormValues } from "@/components/ui/lead-form";
 import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { MobileLeadPreviewCard } from "@/components/ui/mobile-lead-preview-card";
+import { esLeadFormVariants } from "@/content/es/lead-forms";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 import { leadFormVariants, type LeadFormVariant } from "@/content/lead-forms";
 import { siteConfig } from "@/content/site";
 import { cn } from "@/lib/cn";
@@ -55,6 +57,8 @@ export interface HeroProps {
    * both the visible trail and its matching BreadcrumbList JSON-LD from one
    * shared items array. */
   breadcrumbs?: BreadcrumbItemInput[];
+  /** Language for the embedded lead form. Defaults to English. */
+  locale?: Locale;
 }
 
 /** Renders in normal flow (not absolutely offset) so it reflows with the
@@ -99,7 +103,11 @@ export function Hero({
   form,
   formSlot,
   breadcrumbs,
+  locale = DEFAULT_LOCALE,
 }: HeroProps) {
+  const defaultFields =
+    locale === "es" ? esLeadFormVariants.heroEval.fields : leadFormVariants.heroEval.fields;
+
   return (
     // Margins pull Hero up to bleed behind TopStatsBar/Navbar. TopStatsBar's
     // rendered height isn't constant within a breakpoint tier — it shrinks a
@@ -208,6 +216,7 @@ export function Hero({
                     heading={form.heading}
                     formVariant={form.variant as LeadFormVariant}
                     submitLabel={form.submitLabel}
+                    locale={locale}
                   />
                 </div>
               )}
@@ -216,9 +225,10 @@ export function Hero({
                   <LeadForm
                     heading={form.heading}
                     variant={form.variant}
-                    fields={form.fields ?? leadFormVariants.heroEval.fields}
+                    fields={form.fields ?? defaultFields}
                     submitLabel={form.submitLabel}
                     onSubmit={form.onSubmit}
+                    locale={locale}
                   />
                 </LiquidGlass>
               )}

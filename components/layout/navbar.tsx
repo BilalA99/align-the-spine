@@ -7,8 +7,11 @@ import { usePathname } from "next/navigation";
 
 import { ArrowRightIcon } from "@/components/ui/icons/arrow-right";
 import { MenuIcon } from "@/components/ui/icons/menu";
+import { getBookingCta, getChromeLabels } from "@/content/chrome";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 import { siteConfig } from "@/content/site";
 
+import { LanguageSwitcher } from "./language-switcher";
 import { NavbarDrawer } from "./navbar-drawer";
 import { NavbarLinks } from "./navbar-links";
 
@@ -35,6 +38,14 @@ export const OUTLINE_CTA_ROUTES = [
   "/car-accident-chiropractor",
   "/services",
   "/reviews",
+  // Spanish counterparts of the routes above — each renders the same
+  // HeroSolidPanel/solid-navy hero, so the CTA pill needs the same outlined
+  // treatment against it. Listed explicitly rather than derived, matching
+  // how the English entries are declared.
+  "/es",
+  "/es/quiropractico-accidentes-de-auto",
+  "/es/servicios",
+  "/es/resenas",
   "/conditions/back-pain",
   "/conditions/cervicogenic-headache",
   "/conditions/concussion",
@@ -48,8 +59,14 @@ const SCROLL_THRESHOLD = 40;
 
 type NavbarVariant = "transparent" | "solid";
 
-export function Navbar({ variant }: { variant?: NavbarVariant } = {}) {
+export function Navbar({
+  variant,
+  locale = DEFAULT_LOCALE,
+}: { variant?: NavbarVariant; locale?: Locale } = {}) {
   const pathname = usePathname();
+  const bookingCta = getBookingCta(locale);
+  const labels = getChromeLabels(locale);
+  const homeHref = locale === "es" ? "/es" : "/";
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [prevPathname, setPrevPathname] = useState(pathname);
@@ -84,7 +101,7 @@ export function Navbar({ variant }: { variant?: NavbarVariant } = {}) {
             isGlass ? "bg-navy-900" : "bg-transparent"
           }`}
         >
-          <Link href="/" className="shrink-0">
+          <Link href={homeHref} className="shrink-0">
             {/* On scroll the logo scales down so it sits centered in the navy
                 pill with clear breathing room, rather than filling it edge-to-edge. */}
             <Image
@@ -98,25 +115,32 @@ export function Navbar({ variant }: { variant?: NavbarVariant } = {}) {
             />
           </Link>
 
-          <NavbarLinks isGlass={isGlass} className="hidden xl:flex" />
+          <NavbarLinks isGlass={isGlass} locale={locale} className="hidden xl:flex" />
 
-          <Link
-            href={siteConfig.bookingCta.href}
-            className={`group hidden h-[52px] items-center gap-2 whitespace-nowrap rounded-full px-6 text-button transition-colors duration-300 xl:flex ${
-              isGlass
-                ? "bg-white text-navy-900"
-                : outlineCta
-                  ? "border border-white bg-transparent text-white"
-                  : "bg-navy-900 text-white"
-            }`}
-          >
-            {siteConfig.bookingCta.label}
-            <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-          </Link>
+          <div className="hidden items-center gap-6 xl:flex">
+            {/* Always white: the navbar sits on either the navy glass pill
+             * or a dark hero photo, so the switcher's contrast doesn't
+             * change with `isGlass` the way the CTA pill's does. */}
+            <LanguageSwitcher locale={locale} className="text-white" />
+
+            <Link
+              href={bookingCta.href}
+              className={`group flex h-[52px] items-center gap-2 whitespace-nowrap rounded-full px-6 text-button transition-colors duration-300 ${
+                isGlass
+                  ? "bg-white text-navy-900"
+                  : outlineCta
+                    ? "border border-white bg-transparent text-white"
+                    : "bg-navy-900 text-white"
+              }`}
+            >
+              {bookingCta.label}
+              <ArrowRightIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </Link>
+          </div>
 
           <button
             type="button"
-            aria-label="Open menu"
+            aria-label={labels.openMenu}
             aria-expanded={drawerOpen}
             onClick={() => setDrawerOpen(true)}
             className="flex h-11 w-11 items-center justify-center text-white xl:hidden"
@@ -132,7 +156,7 @@ export function Navbar({ variant }: { variant?: NavbarVariant } = {}) {
        * — nesting the drawer inside it collapsed the drawer's fixed
        * inset-0/h-full to the header's own 100px height instead of the
        * viewport. */}
-      <NavbarDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      <NavbarDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} locale={locale} />
     </>
   );
 }

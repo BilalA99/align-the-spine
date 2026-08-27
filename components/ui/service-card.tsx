@@ -2,7 +2,8 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { siteConfig } from "@/content/site";
+import { getBookingCta } from "@/content/chrome";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 import { cn } from "@/lib/cn";
 
 export interface ServiceCardItem {
@@ -18,7 +19,14 @@ export interface ServiceCardItem {
 export interface ServiceCardProps {
   item: ServiceCardItem;
   className?: string;
+  locale?: Locale;
 }
+
+/** Fallback CTA label when an item declares no `ctaLabel` of its own. */
+const DEFAULT_CTA_LABEL: Record<Locale, string> = {
+  en: "Book now",
+  es: "Solicitar cita",
+};
 
 /** Service card per condition-page-spec §B9: image (square corners,
  * desaturated per the reference design), title (Newsreader Medium 35
@@ -28,7 +36,10 @@ export interface ServiceCardProps {
  * background — no card shadow/elevation — per the reference design.
  * ~507×618 proportions via aspect-ratio (not hardcoded px) so ServiceGrid
  * can collapse responsively. */
-export function ServiceCard({ item, className }: ServiceCardProps) {
+export function ServiceCard({ item, className, locale = DEFAULT_LOCALE }: ServiceCardProps) {
+  const bookingCta = getBookingCta(locale);
+  const defaultCtaLabel = DEFAULT_CTA_LABEL[locale];
+
   return (
     <Card
       id={item.slug}
@@ -56,10 +67,10 @@ export function ServiceCard({ item, className }: ServiceCardProps) {
         </div>
         <Button
           variant="primary"
-          href={item.href ?? siteConfig.bookingCta.href}
+          href={item.href ?? bookingCta.href}
           className="mt-auto w-fit px-[2em]"
         >
-          {item.ctaLabel ?? "Book now"}
+          {item.ctaLabel ?? defaultCtaLabel}
         </Button>
       </div>
     </Card>

@@ -12,6 +12,8 @@ import { PhoneIcon } from "@/components/ui/icons/phone";
 import { LeadForm } from "@/components/ui/lead-form";
 import { MobileLeadPreviewCard } from "@/components/ui/mobile-lead-preview-card";
 import { Rating } from "@/components/ui/rating";
+import { esLeadFormVariants } from "@/content/es/lead-forms";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 import { leadFormVariants, type LeadFormVariant } from "@/content/lead-forms";
 import { getVerifiedStats, siteConfig } from "@/content/site";
 import { isVerified } from "@/content/verified-value";
@@ -74,6 +76,13 @@ function HeroTrustLine({ className }: { className?: string }) {
   );
 }
 
+/** The handful of strings this component renders itself, rather than
+ * receiving from its caller. */
+const HERO_COPY: Record<Locale, { continueLabel: string; callNow: string; callPrefix: RegExp }> = {
+  en: { continueLabel: "Request Appointment", callNow: "Call Now:", callPrefix: /^Call / },
+  es: { continueLabel: "Solicitar cita", callNow: "Llame ahora:", callPrefix: /^Llamar al / },
+};
+
 export interface HeroSolidPanelProps {
   background: { src: string; alt: string };
   eyebrow?: string;
@@ -97,6 +106,11 @@ export interface HeroSolidPanelProps {
    * shared items array, so they can't drift. Omit on pages that don't need
    * one (currently just Home). Always starts with `{ name: "Home", path: "" }`. */
   breadcrumbs?: BreadcrumbItemInput[];
+  /** Language for the embedded lead form (validation messages, step
+   * counter, thank-you redirect) and for the labels this component renders
+   * itself — the mobile call button's prefix and the desktop form's
+   * "Continue". Defaults to English. */
+  locale?: Locale;
 }
 
 /** Alternate Hero treatment ("homepage-round-buttons-new-hero" in Figma):
@@ -141,7 +155,11 @@ export function HeroSolidPanel({
   form,
   formSlot,
   breadcrumbs,
+  locale = DEFAULT_LOCALE,
 }: HeroSolidPanelProps) {
+  const heroCopy = HERO_COPY[locale];
+  const defaultFields =
+    locale === "es" ? esLeadFormVariants.heroEval.fields : leadFormVariants.heroEval.fields;
   // Pages like /about pass no form/formSlot — don't render the empty navy
   // panel there; let the photo column (lg:flex-1) fill the full width instead.
   const hasForm = Boolean(formSlot || form);
@@ -241,6 +259,7 @@ export function HeroSolidPanel({
               heading={form.heading}
               formVariant={form.variant as LeadFormVariant}
               submitLabel={form.submitLabel}
+              locale={locale}
             />
           )
         )}
@@ -251,7 +270,7 @@ export function HeroSolidPanel({
             href={siteConfig.business.phoneHref}
             className="w-full justify-center mb-4"
           >
-            Call Now: {callPill.phone.replace(/^Call /, "")}
+            {heroCopy.callNow} {callPill.phone.replace(heroCopy.callPrefix, "")}
           </Button>
         )}
       </div>
@@ -263,9 +282,10 @@ export function HeroSolidPanel({
               <LeadForm
                 heading={form.heading}
                 variant={form.variant}
-                fields={form.fields ?? leadFormVariants.heroEval.fields}
+                fields={form.fields ?? defaultFields}
                 submitLabel={form.submitLabel}
                 onSubmit={form.onSubmit}
+                locale={locale}
                 submitVariant="teal"
                 fieldOutline
                 labelCase="none"

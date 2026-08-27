@@ -13,11 +13,18 @@ import {
   comparisonTableSubheading,
   type ComparisonRow,
 } from "@/content/comparison-table";
+import { esComparisonCopy } from "@/content/es/auto-accident";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 import { cn } from "@/lib/cn";
 
 export interface ComparisonTableProps {
   variant?: "default" | "auto-accident";
   className?: string;
+  /** Language for the headings, column labels, rows and footnote.
+   * Defaults to English; content/es/auto-accident.ts holds the Spanish
+   * set, including the Spanish rows (a translated row is still the same
+   * claim, so the two lists stay in lockstep by construction). */
+  locale?: Locale;
 }
 
 /** "Align the Spine vs Traditional Clinic" comparison per condition-page-spec
@@ -27,11 +34,32 @@ export interface ComparisonTableProps {
  * renders at `lg`+ — below that it collapsed to a horizontally scrolling
  * grid that cut columns off mid-word, so <lg renders each row as its own
  * stacked card instead (no scroll needed at any width). */
-export function ComparisonTable({ variant = "default", className }: ComparisonTableProps) {
-  const rows =
-    variant === "auto-accident"
-      ? [...comparisonTableRows, ...autoAccidentComparisonRows]
-      : comparisonTableRows;
+export function ComparisonTable({
+  variant = "default",
+  className,
+  locale = DEFAULT_LOCALE,
+}: ComparisonTableProps) {
+  const copy =
+    locale === "es"
+      ? {
+          eyebrow: esComparisonCopy.eyebrow,
+          heading: esComparisonCopy.heading,
+          subheading: esComparisonCopy.subheading,
+          columnHeadings: esComparisonCopy.columnHeadings,
+          footnote: esComparisonCopy.footnote,
+          rows: esComparisonCopy.rows,
+          autoAccidentRows: esComparisonCopy.autoAccidentRows,
+        }
+      : {
+          eyebrow: comparisonTableEyebrow,
+          heading: comparisonTableHeading,
+          subheading: comparisonTableSubheading,
+          columnHeadings: comparisonTableColumnHeadings,
+          footnote: comparisonTableFootnote,
+          rows: comparisonTableRows,
+          autoAccidentRows: autoAccidentComparisonRows,
+        };
+  const rows = variant === "auto-accident" ? [...copy.rows, ...copy.autoAccidentRows] : copy.rows;
 
   return (
     <Section className={className}>

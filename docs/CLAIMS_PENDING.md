@@ -4,7 +4,7 @@ Non-blocking log of items worth the client's attention but not worth gating the 
 
 ## Google Business Profile hours mismatch
 
-The site now states **7:00 AM – 11:00 PM, Monday–Sunday** (`content/site.ts`, `hoursVerified: true`, client-confirmed per implementation-brief update #4). The Google Business Profile listing currently shows **9:00 AM – 9:00 PM**. Google's local-pack "open now" filter reads the GBP listing, not this site, so a search during the 7–9 AM or 9–11 PM windows will currently show the practice as closed even though the site (correctly) says it's open. The client should update the GBP listing to match. Not a code fix — flagged here for follow-up.
+The site now states **8:00 AM – 9:00 PM, Monday–Sunday** (`content/site.ts`, `hoursVerified: true`, client-directed 2026-08-26). Whatever the Google Business Profile listing currently shows, it needs to match this: Google's local-pack "open now" filter reads the GBP listing, not this site, so any window where the two disagree will show the practice as closed even though the site (correctly) says it's open. These hours also feed `openingHoursSpecification` in the LocalBusiness JSON-LD (08:00–21:00), so a mismatch is visible to Google twice over. The client should update the GBP listing to 8:00 AM – 9:00 PM. Not a code fix — flagged here for follow-up.
 
 ## `reviewsRating` (5.0 / 164) sourcing
 

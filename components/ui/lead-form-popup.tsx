@@ -5,6 +5,8 @@ import { createPortal } from "react-dom";
 
 import { CloseIcon } from "@/components/ui/icons/close";
 import { LeadForm } from "@/components/ui/lead-form";
+import { esLeadFormVariants } from "@/content/es/lead-forms";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 import { leadFormVariants, type LeadFormVariant } from "@/content/lead-forms";
 
 export interface LeadFormPopupProps {
@@ -20,6 +22,9 @@ export interface LeadFormPopupProps {
    * for future popup CTAs. */
   formVariant?: LeadFormVariant;
   submitLabel?: string;
+  /** Language for the form inside the dialog and for the close button's
+   * accessible name. Defaults to English. */
+  locale?: Locale;
 }
 
 /** Modal lead-capture form (ATS-142): a CTA that used to navigate away now
@@ -32,6 +37,7 @@ export function LeadFormPopup({
   formHeading,
   formVariant = "carAccident",
   submitLabel,
+  locale = DEFAULT_LOCALE,
 }: LeadFormPopupProps) {
   const [open, setOpen] = useState(false);
 
@@ -49,7 +55,13 @@ export function LeadFormPopup({
     };
   }, [open]);
 
-  const preset = leadFormVariants[formVariant];
+  // The Spanish presets carry the same variant keys and field names as the
+  // English ones (see content/es/lead-forms.ts), so /api/lead validates a
+  // Spanish submission with exactly the same schema.
+  const preset =
+    locale === "es" && formVariant in esLeadFormVariants
+      ? esLeadFormVariants[formVariant as keyof typeof esLeadFormVariants]
+      : leadFormVariants[formVariant];
 
   // The overlay markup, portaled straight to document.body below instead of
   // rendered where this component is called: every hero section on the site
@@ -145,6 +157,7 @@ export function LeadFormPopup({
             variant={preset.variant}
             fields={preset.fields}
             submitLabel={submitLabel ?? preset.submitLabel}
+            locale={locale}
             submitVariant="white"
             fieldOutline
             labelCase="none"

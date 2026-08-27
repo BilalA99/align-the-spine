@@ -301,6 +301,13 @@ export interface ServiceAreaSchemaInput {
   slug: string;
   communityName: string;
   metaDescription: string;
+  /** Page path this Service node belongs to. Defaults to the English
+   * /service-areas/[slug] URL. The Spanish counterpart passes its own path
+   * so the two locales emit DISTINCT @ids — two nodes sharing one @id but
+   * carrying different descriptions is a contradiction, not a translation. */
+  path?: string;
+  /** Localized `name`. Defaults to the English phrasing. */
+  name?: string;
 }
 
 /** Service entity scoped to one published service-area page's own verified
@@ -309,12 +316,12 @@ export interface ServiceAreaSchemaInput {
  * an approved relationship before a service-area record can be public, so
  * any item this runs against has already passed that gate. */
 export function buildServiceAreaSchema(item: ServiceAreaSchemaInput): ServiceSchema {
-  const url = `${siteConfig.siteUrl}/service-areas/${item.slug}`;
+  const url = `${siteConfig.siteUrl}${item.path ?? `/service-areas/${item.slug}`}`;
   return {
     "@context": "https://schema.org",
     "@type": "Service",
     "@id": url,
-    name: `Chiropractic care for ${item.communityName} residents`,
+    name: item.name ?? `Chiropractic care for ${item.communityName} residents`,
     description: item.metaDescription,
     provider: { "@id": MEDICAL_BUSINESS_ID },
     areaServed: [{ "@type": "City", name: item.communityName }],
@@ -329,7 +336,7 @@ export interface MedicalWebPageSchema {
   url: string;
   name: string;
   description: string;
-  inLanguage: "en-US";
+  inLanguage: string;
   datePublished?: string;
   dateModified: string;
   author: { "@id": string };
@@ -348,6 +355,9 @@ export interface MedicalWebPageInput {
   /** What the page is substantively about, e.g. "Chiropractic care after a
    * motor vehicle accident" — kept generic/topical, not a diagnosis claim. */
   aboutTopic: string;
+  /** BCP-47 tag for the page's own language. Defaults to en-US; the Spanish
+   * pages pass es-US so the node doesn't claim Spanish prose is English. */
+  inLanguage?: string;
 }
 
 /** MedicalWebPage entity for content pages discussing chiropractic/injury
@@ -369,7 +379,7 @@ export function buildMedicalWebPage(input: MedicalWebPageInput): MedicalWebPageS
     url,
     name: input.name,
     description: input.description,
-    inLanguage: "en-US",
+    inLanguage: input.inLanguage ?? "en-US",
     ...(input.datePublished ? { datePublished: input.datePublished } : {}),
     dateModified: input.dateModified,
     author: { "@id": DR_ABE_PERSON_ID },
@@ -403,5 +413,52 @@ export function buildFAQPage(items: FAQ[]): FAQPageSchema {
       name: item.question,
       acceptedAnswer: { "@type": "Answer" as const, text: item.answer },
     })),
+  };
+}
+
+export interface WebPageSchema {
+  "@context": "https://schema.org";
+  "@type": "WebPage";
+  "@id": string;
+  url: string;
+  name: string;
+  description: string;
+  inLanguage: string;
+  isPartOf: { "@id": string };
+  about: { "@id": string };
+}
+
+/** WebPage entity for a localized page.
+ *
+ * Added with the Spanish layer, and rendered only on the /es pages. Its
+ * whole job is to state two things a Spanish page can't otherwise assert in
+ * structured data: `inLanguage` (this page is es-US, not the site's default
+ * en-US), and `about` -> the one MedicalBusiness entity, so a consumer sees
+ * the Spanish pages as the same practice rather than a second, same-named
+ * business. `name`/`description` are the page's own localized title and
+ * description — the same strings the <title>/<meta description> carry, per
+ * the rule that structured data must match visible/declared content.
+ *
+ * Deliberately not added to the English pages: they'd inherit the same
+ * WebSite/Organization graph anyway, and retrofitting a new entity type
+ * across already-indexed English URLs is an unrelated change with its own
+ * risk. Nothing here duplicates a type the English pages already emit. */
+export function buildWebPage(input: {
+  path: string;
+  name: string;
+  description: string;
+  inLanguage: string;
+}): WebPageSchema {
+  const url = `${siteConfig.siteUrl}${input.path}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: input.name,
+    description: input.description,
+    inLanguage: input.inLanguage,
+    isPartOf: { "@id": WEBSITE_ID },
+    about: { "@id": MEDICAL_BUSINESS_ID },
   };
 }

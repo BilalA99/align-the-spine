@@ -64,12 +64,53 @@ function isNotFutureDate(raw: string): boolean {
   return raw <= todayIso;
 }
 
+/** Validation messages, so a Spanish form reports errors in Spanish.
+ *
+ * Only the wording is localized — every rule (formats, length caps, the
+ * not-in-the-future accident date) is identical in both languages, so a
+ * Spanish submission can never pass validation an English one would fail.
+ * /api/lead re-validates server-side with the English defaults; those
+ * messages aren't shown to the visitor, they're for the server's own
+ * rejection path. */
+export interface LeadFormMessages {
+  required: string;
+  tooLong: string;
+  email: string;
+  zip: string;
+  date: string;
+  phone: string;
+  futureDate: string;
+}
+
+export const enLeadFormMessages: LeadFormMessages = {
+  required: "Required",
+  tooLong: "Too long",
+  email: "Enter a valid email",
+  zip: "Enter a valid ZIP code",
+  date: "Enter a valid date",
+  phone: "Enter a valid 10-digit phone number",
+  futureDate: "Date can't be in the future",
+};
+
+export const esLeadFormMessages: LeadFormMessages = {
+  required: "Campo obligatorio",
+  tooLong: "Demasiado largo",
+  email: "Ingrese un correo electrónico válido",
+  zip: "Ingrese un código postal válido",
+  date: "Ingrese una fecha válida",
+  phone: "Ingrese un número de teléfono válido de 10 dígitos",
+  futureDate: "La fecha no puede ser futura",
+};
+
 /** Each variant's schema is derived from its fields config: every field is
  * trimmed and length-capped regardless of type; required fields must be
  * non-empty after trimming; tel/email/zip enforce their format whenever
  * there's a value (always for required fields, only when non-empty for
  * optional ones). */
-export function buildLeadFormSchema(fields: LeadFieldConfig[]) {
+export function buildLeadFormSchema(
+  fields: LeadFieldConfig[],
+  messages: LeadFormMessages = enLeadFormMessages,
+) {
   const shape: Record<string, z.ZodType<string>> = {};
 
   for (const field of fields) {
@@ -77,17 +118,17 @@ export function buildLeadFormSchema(fields: LeadFieldConfig[]) {
     const required = field.required !== false;
     const maxLength = MAX_LENGTHS[type] ?? DEFAULT_MAX_LENGTH;
 
-    let schema = z.string().trim().max(maxLength, "Too long");
-    if (required) schema = schema.min(1, "Required");
-    if (type === "email") schema = schema.email("Enter a valid email");
-    else if (type === "zip") schema = schema.regex(ZIP_PATTERN, "Enter a valid ZIP code");
-    else if (type === "date") schema = schema.regex(DATE_PATTERN, "Enter a valid date");
+    let schema = z.string().trim().max(maxLength, messages.tooLong);
+    if (required) schema = schema.min(1, messages.required);
+    if (type === "email") schema = schema.email(messages.email);
+    else if (type === "zip") schema = schema.regex(ZIP_PATTERN, messages.zip);
+    else if (type === "date") schema = schema.regex(DATE_PATTERN, messages.date);
 
     let fieldSchema: z.ZodType<string> = schema;
     if (type === "tel") {
-      fieldSchema = schema.refine(isValidUsPhone, "Enter a valid 10-digit phone number");
+      fieldSchema = schema.refine(isValidUsPhone, messages.phone);
     } else if (type === "date") {
-      fieldSchema = schema.refine(isNotFutureDate, "Date can't be in the future");
+      fieldSchema = schema.refine(isNotFutureDate, messages.futureDate);
     }
 
     shape[field.name] = required ? fieldSchema : z.literal("").or(fieldSchema);

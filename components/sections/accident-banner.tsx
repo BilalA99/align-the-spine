@@ -5,10 +5,14 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { PipCalculator } from "@/components/ui/pip-calculator";
 import { Section } from "@/components/ui/section";
 import type { ConditionAccident } from "@/content/conditions/types";
+import { DEFAULT_LOCALE, type Locale } from "@/content/i18n";
 
 export interface AccidentBannerProps {
   accident: ConditionAccident;
   className?: string;
+  locale?: Locale;
+  /** Eyebrow above the headline. Defaults to the English copy. */
+  eyebrow?: string;
 }
 
 /** "Was this from an accident?" band per condition-page-spec §B4, §C:
@@ -23,7 +27,12 @@ export interface AccidentBannerProps {
  * extra overlay is layered on top. Same full-bleed structure as
  * FeelsLikeBand: Section spacing="none" + an outer relative/overflow-hidden
  * wrapper for the image, Container only wraps the inner content. */
-export function AccidentBanner({ accident, className }: AccidentBannerProps) {
+export function AccidentBanner({
+  accident,
+  className,
+  locale = DEFAULT_LOCALE,
+  eyebrow = "Was this from an accident?",
+}: AccidentBannerProps) {
   return (
     <Section spacing="none" className={className}>
       <div className="relative overflow-hidden bg-navy-900">
@@ -37,7 +46,7 @@ export function AccidentBanner({ accident, className }: AccidentBannerProps) {
         </div>
         <Container className="relative grid grid-cols-1 gap-10 py-16 md:py-20 lg:grid-cols-2 lg:items-center">
           <div className="flex flex-col gap-6">
-            <Eyebrow variant="onDark">Was this from an accident?</Eyebrow>
+            <Eyebrow variant="onDark">{eyebrow}</Eyebrow>
             <h2 className="font-display text-h2 md:text-understanding-intro text-white">
               {accident.headline}
             </h2>
@@ -55,7 +64,7 @@ export function AccidentBanner({ accident, className }: AccidentBannerProps) {
           </div>
 
           <div className="w-full lg:ml-auto lg:max-w-md">
-            <PipCalculator />
+            <PipCalculator locale={locale} />
           </div>
         </Container>
       </div>

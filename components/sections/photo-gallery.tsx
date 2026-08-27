@@ -40,14 +40,22 @@ function GalleryMedia({ photo, sizes }: { photo: GalleryPhoto; sizes: string }) 
  * one grid so the vertical gap above the row matches the horizontal gaps
  * within it — collapses to a single column below sm. Cells with a `video`
  * play their clip on hover; the layout is unchanged. */
-export function PhotoGallery() {
+export interface PhotoGalleryProps {
+  hero?: GalleryPhoto;
+  photos?: GalleryPhoto[];
+}
+
+export function PhotoGallery({
+  hero = interiorGalleryHero,
+  photos = interiorGalleryPhotos,
+}: PhotoGalleryProps = {}) {
   return (
     <Section spacing="none">
       <Container className="grid grid-cols-1 gap-6 sm:grid-cols-3">
         <div className="group relative aspect-[1566/874] overflow-hidden w-full sm:col-span-3">
-          <GalleryMedia photo={interiorGalleryHero} sizes="100vw" />
+          <GalleryMedia photo={hero} sizes="100vw" />
         </div>
-        {interiorGalleryPhotos.map((photo) => (
+        {photos.map((photo) => (
           <div key={photo.src} className="group relative aspect-[507/378] overflow-hidden w-full">
             <GalleryMedia photo={photo} sizes="(min-width: 640px) 33vw, 100vw" />
           </div>
