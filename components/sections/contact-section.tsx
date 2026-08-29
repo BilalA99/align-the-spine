@@ -36,7 +36,9 @@ export function ContactSection({ locale = DEFAULT_LOCALE }: { locale?: Locale } 
       <Container className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
         <div className="flex flex-col justify-between gap-16">
           <div className="flex flex-col gap-4">
-            <h2 className="font-display text-5xl text-navy-800">{copy.heading}</h2>
+            <h2 className="font-display text-h2 leading-tight font-normal whitespace-pre-line text-navy-800">
+              {copy.heading}
+            </h2>
             <p className="font-sans text-body-lg text-ink-900">{copy.body}</p>
           </div>
 

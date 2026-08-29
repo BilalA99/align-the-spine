@@ -73,7 +73,7 @@ export default async function BlogPage({
           <LeadFormPopup
             formHeading="Check Your Car Accident Eligibility"
             formVariant="carAccident"
-            triggerClassName="inline-flex min-h-11 items-center rounded-full border border-white px-6 font-semibold text-white transition-colors hover:border-teal-500 hover:bg-teal-500"
+            triggerClassName="inline-flex min-h-11 items-center rounded-full border border-white px-6 py-2 font-semibold text-white transition-colors hover:border-teal-500 hover:bg-teal-500"
           >
             Hurt in a car accident? See a chiropractor today
           </LeadFormPopup>

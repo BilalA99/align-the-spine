@@ -179,7 +179,11 @@ export function HeroSolidPanel({
         <Container>
           <div className="container relative z-10 flex h-full flex-col justify-start pt-[120px] pb-24 lg:pb-[60px] lg:pt-[220px] lg:pr-12">
             {breadcrumbs && <BreadcrumbTrail items={breadcrumbs} className="mb-4" />}
-            {eyebrow && <Eyebrow variant="onDark">{eyebrow}</Eyebrow>}
+            {eyebrow && (
+              <Eyebrow variant="onDark" className="pb-2">
+                {eyebrow}
+              </Eyebrow>
+            )}
             {badge && (
               <span className="mb-4 w-fit rounded-full bg-teal-500 px-6 py-3 font-sans text-button text-white">
                 {badge}

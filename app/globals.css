@@ -320,6 +320,35 @@ body:has(.lead-popup-overlay) #blog-form-mobile {
   }
 }
 
+/* Mobile QA pass (mobile/global-component feedback, item 1): every body-copy
+ * token drops to a flat 15px below `sm` (640px) — most were sized larger for
+ * desktop and read oversized on phones. Written unlayered (not inside
+ * @layer utilities) so it beats the Tailwind-generated .text-* utilities
+ * regardless of source order, since unlayered CSS always outranks layered
+ * CSS in the cascade. text-alt-label keeps its existing 24px line-height —
+ * feedback only called out a size change there, not leading. */
+@media (max-width: 639px) {
+  .text-body-lg {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .text-alt-label {
+    font-size: 15px;
+  }
+  .text-card-body {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .text-small-print {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .text-faq-a {
+    font-size: 15px;
+    line-height: 1.7;
+  }
+}
+
 @media print {
   footer,
   nav,

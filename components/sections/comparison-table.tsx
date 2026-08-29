@@ -138,10 +138,10 @@ function ComparisonRowCells({ row, isLast }: { row: ComparisonRow; isLast: boole
 function ComparisonRowCard({ row }: { row: ComparisonRow }) {
   return (
     <Card radius={20} shadow="card" className="overflow-hidden">
-      <div className="border-b border-mute-300 px-4 py-2">
+      <div className="border-b border-mute-300 p-3">
         <p className="font-sans text-stat-label font-medium text-ink-900">{row.label}</p>
       </div>
-      <div className="flex items-start gap-3 bg-navy-900 px-4 py-2">
+      <div className="flex items-start gap-3 bg-navy-900 p-3">
         <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" />
         <div className="flex flex-col gap-0.5">
           <span className="font-sans text-[11px] uppercase tracking-wide text-mute-300">
@@ -150,7 +150,7 @@ function ComparisonRowCard({ row }: { row: ComparisonRow }) {
           <span className="font-sans text-stat-label text-white">{row.alignTheSpine}</span>
         </div>
       </div>
-      <div className="flex flex-col gap-0.5 px-4 py-2">
+      <div className="flex flex-col gap-0.5 p-3">
         <span className="font-sans text-[11px] uppercase tracking-wide text-mute-400">
           {comparisonTableColumnHeadings.traditionalClinic}
         </span>

@@ -107,6 +107,8 @@ const config: Config = {
         // (card-body, faq-a, panel-body, small-print, redflag-bullet,
         // understanding-intro, footer-copy/tagline) all use the unitless "2"
         // multiplier so it scales with each token's (sometimes fluid) size.
+        // Mobile override (below `sm`) lives in globals.css — see the
+        // "Global body type sizes (mobile)" block there.
         "body-lg": ["18px", { lineHeight: "2", fontWeight: "400" }],
         button: ["16px", { lineHeight: "24px", fontWeight: "400" }],
         nav: ["16px", { lineHeight: "24px", letterSpacing: "0.85px", fontWeight: "400" }],
@@ -115,7 +117,7 @@ const config: Config = {
         "faq-toggle": ["22px", { lineHeight: "28px", fontWeight: "400" }],
         "alt-label": ["16px", { lineHeight: "24px", fontWeight: "400" }],
         "stat-label": ["15px", { lineHeight: "22px", fontWeight: "500" }],
-        "stat-value": ["24px", { lineHeight: "30px", fontWeight: "500" }],
+        "stat-value": ["18px", { lineHeight: "30px", fontWeight: "500" }],
         "btn-lg": ["22px", { lineHeight: "28px", fontWeight: "400" }],
         "btn-eyebrow": ["14px", { lineHeight: "18px", fontWeight: "400" }],
         field: ["15px", { lineHeight: "22px", fontWeight: "400" }],

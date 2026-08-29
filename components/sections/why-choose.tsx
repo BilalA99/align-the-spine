@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { StarIcon } from "@/components/ui/icons/star";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { Section } from "@/components/ui/section";
 import { isVerified } from "@/content/verified-value";
 import type { WhyChooseContent } from "@/content/why-choose";
@@ -44,10 +43,7 @@ export function WhyChoose({ content }: WhyChooseProps) {
             className="object-cover hover:scale-105 transition-transform duration-300"
           />
           {isVerified(rating) && (
-            <LiquidGlass
-              radius="rounded-none"
-              className="absolute left-4 bottom-4 bg-white/10 backdrop-blur-md backdrop-saturate-150"
-            >
+            <div className="absolute left-4 bottom-4 bg-white/10 backdrop-blur-3xl border border-white/40 backdrop-saturate-150 backdrop-brightness-90">
               <div className="flex flex-col gap-2 px-6 py-4">
                 <span className="font-sans text-stat-label text-white">
                   {rating.value.location}
@@ -59,7 +55,7 @@ export function WhyChoose({ content }: WhyChooseProps) {
                 >
                   <span className="inline-flex gap-1">
                     {Array.from({ length: rating.value.value }, (_, i) => (
-                      <StarIcon key={i} className="h-5 w-5 text-yellow-400" />
+                      <StarIcon key={i} className="h-5 w-5 text-white" />
                     ))}
                   </span>
                   <span aria-hidden="true" className="font-sans text-stat-label text-white">
@@ -67,7 +63,7 @@ export function WhyChoose({ content }: WhyChooseProps) {
                   </span>
                 </span>
               </div>
-            </LiquidGlass>
+            </div>
           )}
         </div>
       </Container>
