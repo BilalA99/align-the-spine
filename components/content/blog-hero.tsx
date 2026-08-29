@@ -63,7 +63,7 @@ export function BlogHero({
   // where it read as unreadable grey-on-white (reported, confirmed via
   // screenshot); the shorter form keeps it safely inside the solid-navy
   // area above that fade.
-  const formFields = (headingAs: "h2" | "p") => (
+  const formFields = (headingAs: "h2" | "p", consentClassName?: string) => (
     <LeadForm
       heading="Schedule Your Evaluation"
       variant={leadFormVariants.heroEval.variant}
@@ -73,12 +73,7 @@ export function BlogHero({
       fieldOutline
       labelCase="none"
       headingClassName="mb-2 font-display text-h2 !leading-[1.15] text-white"
-      // Same fix as service-area-hero.tsx's formFields: the fixed-height
-      // bottom fade means this form's consent line sits inside a
-      // background that's already faded most of the way to white by the
-      // time it renders, not solid navy — the default grey (tuned for
-      // solid navy) reads as low-contrast there (reported).
-      consentClassName="text-ink-900"
+      consentClassName={consentClassName}
       headingAs={headingAs}
       className="gap-y-4"
     />
@@ -141,7 +136,14 @@ export function BlogHero({
          * pixel heights (not percentages) is what makes the two sides
          * converge in sync. */}
         <div className="absolute inset-x-0 bottom-0 z-[1] h-64 bg-gradient-to-b from-transparent via-[#f6f6f6]/60 to-[#f6f6f6]" />
-        <div className="relative z-10">{formFields("p")}</div>
+        {/* Same fix as service-area-hero.tsx's formFields: the fixed-height
+         * bottom fade means this form's consent line sits inside a
+         * background that's already faded most of the way to white by the
+         * time it renders, not solid navy — the default grey (tuned for
+         * solid navy) reads as low-contrast there (reported). The mobile
+         * card below has no fade (solid navy-900 throughout), so it keeps
+         * LeadForm's own dark-variant white/mute-300 default instead. */}
+        <div className="relative z-10">{formFields("p", "text-ink-900")}</div>
       </div>
 
       {/* Hairline mark at the converged edge — a deliberate "section ends

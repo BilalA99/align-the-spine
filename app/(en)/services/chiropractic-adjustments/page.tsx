@@ -204,15 +204,11 @@ export default function ChiropracticAdjustmentsPage() {
         <Container className="flex flex-col gap-6 py-8 sm:flex-row sm:items-center sm:justify-between sm:py-14">
           <div className="flex flex-col gap-2">
             <h2 className="font-display text-h2 text-white font-normal">Ready when you are</h2>
-            <p className="font-sans text-body-lg text-mute-300 w-[65%]">
+            <p className="font-sans text-body-lg text-mute-300 sm:w-[65%]">
               Same-day visits, seven days a week — no waiting room, no driving in pain.
             </p>
           </div>
-          <Button
-            variant="teal"
-            href={siteConfig.bookingCta.href}
-            className="w-fit shrink-0 rounded-none!"
-          >
+          <Button variant="teal" href={siteConfig.bookingCta.href} className="w-fit shrink-0">
             Request My Evaluation
           </Button>
         </Container>

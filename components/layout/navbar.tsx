@@ -95,7 +95,7 @@ export function Navbar({
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 isolate flex h-[100px] items-center will-change-transform">
+      <header className="fixed inset-x-0 top-0 z-50 isolate flex h-[100px] items-center px-4 will-change-transform sm:px-6">
         <div
           className={`container relative flex items-center justify-between rounded-full px-6 py-2 transition-colors duration-300 ${
             isGlass ? "bg-navy-900" : "bg-transparent"
@@ -107,8 +107,8 @@ export function Navbar({
             <Image
               src="/figma-exports/logo_blue.png"
               alt={siteConfig.business.name}
-              width={65}
-              height={65}
+              width={52}
+              height={52}
               className={`origin-left transition-transform duration-300 ${
                 isGlass ? "scale-[0.8]" : "scale-100"
               }`}

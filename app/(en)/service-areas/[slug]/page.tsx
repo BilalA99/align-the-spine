@@ -104,7 +104,7 @@ export default async function ServiceAreaPage({ params }: { params: Promise<{ sl
           <LeadFormPopup
             formHeading={`Check Eligibility in ${item.serviceArea?.communityName ?? item.title}`}
             formVariant="eligibility"
-            triggerClassName="hidden min-h-11 items-center rounded-full border border-white px-6 font-semibold text-white transition-colors hover:border-teal-500 hover:bg-teal-500 lg:inline-flex"
+            triggerClassName="hidden min-h-11 items-center rounded-full border border-white px-6 py-2 font-semibold text-white transition-colors hover:border-teal-500 hover:bg-teal-500 lg:inline-flex"
           >
             Hurt in a car accident? See a chiropractor today
           </LeadFormPopup>

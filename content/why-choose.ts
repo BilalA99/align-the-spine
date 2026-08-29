@@ -26,7 +26,7 @@ export const whyChooseContent: WhyChooseContent = {
   // siteConfig.stats and DoctorProfile (content/doctor-profile.ts) rather
   // than asserting a new unverified claim.
   rating: verified<DoctorRating>(
-    { value: 5, count: 152, location: "Deerfield Beach, Florida" },
+    { value: 5, count: 164, location: "Deerfield Beach, Florida" },
     "Matches the already-verified review count in siteConfig.stats",
     "2026-08-12",
   ),

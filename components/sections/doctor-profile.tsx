@@ -7,7 +7,6 @@ import { Container } from "@/components/ui/container";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { PinIcon } from "@/components/ui/icons/pin";
 import { StarIcon } from "@/components/ui/icons/star";
-import { LiquidGlass } from "@/components/ui/liquid-glass";
 import { Section } from "@/components/ui/section";
 import type { DoctorProfileContent } from "@/content/doctor-profile";
 import { isVerified } from "@/content/verified-value";
@@ -60,10 +59,7 @@ export function DoctorProfile({
               className="object-cover hover:scale-105 transition-transform duration-300"
             />
             {isVerified(rating) && (
-              <LiquidGlass
-                radius="rounded-none"
-                className="absolute inset-x-0 bottom-0 bg-white/10 backdrop-blur-md backdrop-saturate-150"
-              >
+              <div className="absolute inset-x-0 bottom-0 bg-white/10 backdrop-blur-3xl border border-white/40 backdrop-saturate-150 backdrop-brightness-90">
                 <div className="flex items-center justify-between gap-3 px-6 py-4">
                   <span className="inline-flex items-center gap-2 font-sans text-stat-label text-white">
                     <PinIcon className="h-4 w-4 shrink-0" />
@@ -76,7 +72,7 @@ export function DoctorProfile({
                   >
                     <span className="inline-flex gap-1">
                       {Array.from({ length: rating.value.value }, (_, i) => (
-                        <StarIcon key={i} className="h-5 w-5 text-yellow-400" />
+                        <StarIcon key={i} className="h-5 w-5 text-gold-400" />
                       ))}
                     </span>
                     <span aria-hidden="true" className="font-sans text-stat-label text-white">
@@ -84,7 +80,7 @@ export function DoctorProfile({
                     </span>
                   </span>
                 </div>
-              </LiquidGlass>
+              </div>
             )}
           </div>
           <div className="flex min-w-0 flex-1 flex-col items-start gap-4">

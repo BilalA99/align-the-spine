@@ -55,7 +55,7 @@ export function LocationIntro({ sendHref, locale = DEFAULT_LOCALE }: LocationInt
     <section className="bg-white">
       <div className="container grid gap-10 pt-16 sm:py-20 lg:grid-cols-2 lg:items-center lg:gap-16">
         <div className="flex flex-col justify-between h-full sm:gap-auto gap-10">
-          <h2 className="font-display text-5xl text-navy-900">
+          <h2 className="font-display text-h2 leading-tight font-normal whitespace-pre-line text-navy-900">
             {copy.headingLines[0]}
             <br />
             {copy.headingLines[1]}
